@@ -1,0 +1,42 @@
+---
+title: Get Price History
+description: "Get historical price data for market options (chart data)"
+---
+
+## Endpoint
+
+```
+GET /bayes/market/get-market-option-price-history
+```
+
+**Auth required:** No
+
+## Query Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `marketAddress` | string | Yes | Market contract address |
+| `timeInterval` | enum | Yes | `1h`, `4h`, `1d`, `1w`, `all` |
+| `baseTokenAddress` | string | No | Base token filter |
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "total": 168,
+    "snapshots": [
+      {
+        "timestamp": "2026-02-15T10:00:00Z",
+        "options": [
+          { "optionAddress": "0x...", "price": "0.65" },
+          { "optionAddress": "0x...", "price": "0.35" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Use this data to render price charts. Each snapshot contains prices for all options at that point in time.

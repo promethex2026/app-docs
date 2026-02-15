@@ -1,0 +1,58 @@
+---
+title: Contract Addresses
+description: "Deployed contract addresses on Arbitrum"
+---
+
+## Arbitrum Sepolia (Testnet)
+
+<Warning>
+Contracts are being upgraded to support the Conditional Token Framework (CTF). Addresses will be updated after the CTF migration is complete (target: end of February 2026).
+</Warning>
+
+| Contract | Address | Status |
+|----------|---------|--------|
+| PredictionFactory (Proxy) | Deploying with CTF upgrade | Pending |
+| Prediction (Implementation) | — | Pending |
+| ConditionalTokens (CTF) | — | Pending |
+| MultisigResolution | — | Sprint 1 |
+| Test USDC | `0x934E616cA9538397E3f9a12895C40ea2E8C45E48` | Active |
+| MockOptimisticOracleV3 | — | Pending |
+
+**Network details:**
+
+| Property | Value |
+|----------|-------|
+| Chain | Arbitrum Sepolia |
+| Chain ID | `421614` |
+| RPC | `https://sepolia-rollup.arbitrum.io/rpc` |
+| Explorer | [sepolia.arbiscan.io](https://sepolia.arbiscan.io/) |
+
+## Arbitrum One (Mainnet)
+
+<Info>
+Mainnet deployment is planned for after the staging validation is complete.
+</Info>
+
+| Contract | Address | Status |
+|----------|---------|--------|
+| PredictionFactory | — | Not deployed |
+| ConditionalTokens | — | Not deployed |
+| UMA OptimisticOracleV3 | Existing UMA deployment | — |
+| USDC | `0xaf88d065e77c8cC2239327C5EDb3A432268e5831` | Native USDC |
+
+**Network details:**
+
+| Property | Value |
+|----------|-------|
+| Chain | Arbitrum One |
+| Chain ID | `42161` |
+| Explorer | [arbiscan.io](https://arbiscan.io/) |
+
+## Key External Contracts
+
+| Contract | Network | Purpose |
+|----------|---------|---------|
+| Gnosis CTF | Arbitrum | ERC1155 conditional tokens |
+| UMA OptimisticOracleV3 | Arbitrum | Dispute resolution oracle |
+| Alchemy EntryPoint | Arbitrum | ERC-4337 bundler entry point |
+| USDC | Arbitrum | Base trading token |

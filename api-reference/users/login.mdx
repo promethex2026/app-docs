@@ -1,0 +1,44 @@
+---
+title: Login
+description: "Authenticate and register a user"
+---
+
+## Endpoint
+
+```
+POST /bayes/user/login
+```
+
+**Auth required:** Yes (Privy JWT)
+
+## Request Body
+
+```json
+{
+  "address": "0x...",
+  "inviteByCode": "ABC123",
+  "userName": "alice",
+  "avatarUrl": "https://..."
+}
+```
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `address` | string | No | Smart account address |
+| `inviteByCode` | string | No | Referral code |
+| `userName` | string | No | Display name (for new users) |
+| `avatarUrl` | string | No | Avatar URL (for new users) |
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "uid": "12345",
+    "isNewUser": true
+  }
+}
+```
+
+Call this on every session start. If the user doesn't exist, they're automatically created.

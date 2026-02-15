@@ -1,0 +1,106 @@
+---
+title: API Overview
+description: "Base URL, response format, error codes, and rate limits"
+---
+
+## Base URL
+
+| Environment | URL |
+|-------------|-----|
+| Staging | `https://api-staging.promethex.market` |
+| Production | `https://api.promethex.market` |
+
+All endpoints are prefixed with `/bayes/`.
+
+## Response Format
+
+Every API response follows this structure:
+
+```json
+{
+  "code": 0,
+  "reason": "",
+  "msg": "success",
+  "data": { ... }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `code` | number | `0` = success, non-zero = error |
+| `reason` | string | Machine-readable error reason |
+| `msg` | string | Human-readable message |
+| `data` | object | Response payload (varies by endpoint) |
+
+## Error Codes
+
+### Client Errors
+
+| Code | Name | Description |
+|------|------|-------------|
+| `110101` | PARAM | Invalid or missing parameter |
+| `110102` | NOT_FOUND | Resource not found |
+| `110103` | PLEASE_WAIT | Rate limited — try again later |
+
+### Server Errors
+
+| Code | Name | Description |
+|------|------|-------------|
+| `110201` | INTERNAL | Internal server error |
+| `110202` | NETWORK | Network connectivity issue |
+| `110203` | DATABASE | Database error |
+| `110204` | REDIS | Cache error |
+| `110205` | RPC | Internal service communication error |
+
+### Third-Party Errors
+
+| Code | Name | Description |
+|------|------|-------------|
+| `110301` | S3 | File storage error |
+| `110302` | ALCHEMY | Blockchain RPC / bundler error |
+| `110303` | PRIVY | Authentication provider error |
+| `110304` | OPENAI | AI service error |
+
+## Common Parameters
+
+### Base Token Filter
+
+Most endpoints accept an optional `baseTokenAddress` query parameter to filter results by base token (e.g., USDC vs Points).
+
+```
+GET /bayes/market/get-markets?page=1&pageSize=10&baseTokenAddress=0x...
+```
+
+### Pagination
+
+List endpoints use `page` (1-indexed) and `pageSize`:
+
+```
+GET /bayes/market/get-markets?page=1&pageSize=20
+```
+
+Response includes `totalCount` for calculating total pages.
+
+## HTTP Methods
+
+- **GET** — Read operations (markets, users, positions)
+- **POST** — Write operations (trading, profile updates) and complex queries
+
+## CORS
+
+All origins are allowed. Supported methods: `GET`, `POST`.
+
+## Rate Limiting
+
+The API uses BBR (Bottleneck Bandwidth and Round-trip propagation time) adaptive rate limiting. If you receive error code `110103`, back off and retry.
+
+## Endpoint Overview
+
+| Domain | Count | Auth | Key Operations |
+|--------|:-----:|:----:|----------------|
+| [Markets](/api-reference/markets/list-markets) | 19 | Mixed | List, detail, trade, claim, follow |
+| [Users](/api-reference/users/login) | 12 | Mostly | Login, profile, notifications |
+| [Community](/api-reference/community/posts) | 6 | Mixed | Posts, comments, likes |
+| [Real-time](/api-reference/realtime/sse-events) | 3 | Yes | SSE event stream |
+| Utility | 5 | Mixed | Search, upload, translate |
+| Tasks | 3 | Mixed | Rewards and gamification |

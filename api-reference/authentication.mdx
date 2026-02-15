@@ -1,0 +1,81 @@
+---
+title: Authentication
+description: "Privy JWT authentication for the PrometheX API"
+---
+
+## Overview
+
+PrometheX uses **Privy** for authentication. After a user logs in via the Privy SDK, your app receives a JWT token that authenticates API requests.
+
+## Auth Flow
+
+```
+1. User logs in via Privy SDK (email, social, or wallet)
+2. Privy issues a JWT (ES256 signed)
+3. Your app sends the JWT in the Authorization header
+4. PrometheX backend validates: aud, iss, exp, signature
+5. User DID extracted → mapped to PrometheX UID
+```
+
+## Using the Token
+
+Include the Privy JWT in the `Authorization` header:
+
+```bash
+curl -X POST "https://api-staging.promethex.market/bayes/user/login" \
+  -H "Authorization: Bearer eyJhbGciOiJFUzI1NiIs..." \
+  -H "Content-Type: application/json" \
+  -d '{"address": "0x..."}'
+```
+
+## Token Validation
+
+The backend validates:
+
+| Field | Expected Value |
+|-------|---------------|
+| `alg` | ES256 |
+| `iss` | privy.io |
+| `aud` | Your Privy App ID |
+| `exp` | Not expired |
+| `sub` | User's Privy DID |
+
+## Which Endpoints Need Auth?
+
+Endpoints are marked with auth requirements:
+
+| Auth Required | Examples |
+|:---:|---------|
+| **Yes** | `place-order`, `claim-result`, `login`, `set-avatar`, `follow-user` |
+| **No** | `get-markets`, `get-market-detail`, `get-hot-markets`, `search` |
+
+Read-only market data is public. Any action that modifies state (trading, profile updates, following) requires authentication.
+
+## First-Time Login
+
+When a user authenticates for the first time, call the login endpoint to register them:
+
+```bash
+POST /bayes/user/login
+```
+
+```json Request
+{
+  "address": "0x...",          // Smart account address
+  "inviteByCode": "ABC123",   // Optional referral code
+  "userName": "alice",         // Optional display name
+  "avatarUrl": "https://..."  // Optional avatar
+}
+```
+
+```json Response
+{
+  "code": 0,
+  "data": {
+    "uid": "12345",
+    "isNewUser": true
+  }
+}
+```
+
+If `isNewUser` is `true`, the user was just created. Otherwise, they're an existing user logging in again.

@@ -1,0 +1,44 @@
+---
+title: Get User Info
+description: "Retrieve user profile information"
+---
+
+## Endpoint
+
+```
+GET /bayes/user/get-user-base-info
+```
+
+**Auth required:** No
+
+## Query Parameters
+
+Look up a user by any one of these fields:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `uid` | string | PrometheX user ID |
+| `address` | string | Smart account address |
+| `eoaAddress` | string | External wallet address |
+| `email` | string | Email address |
+| `name` | string | Display name |
+| `inviteCode` | string | User's invite code |
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "uid": "12345",
+    "name": "alice",
+    "avatarUrl": "https://...",
+    "description": "Prediction market enthusiast",
+    "address": "0x...",
+    "inviteCode": "ABC123",
+    "followersCount": 42,
+    "followingCount": 15,
+    "isFollowed": false
+  }
+}
+```

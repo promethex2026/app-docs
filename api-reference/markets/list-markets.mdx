@@ -1,0 +1,73 @@
+---
+title: List Markets
+description: "Get paginated list of prediction markets with filters"
+---
+
+## Endpoint
+
+```
+GET /bayes/market/get-markets
+```
+
+**Auth required:** No
+
+## Query Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `page` | number | Yes | Page number (1-indexed) |
+| `pageSize` | number | Yes | Items per page (max 50) |
+| `tag` | string | No | Filter by tag |
+| `status` | string | No | Filter by status (`running`, `settling`, `ended`) |
+| `sortType` | string | No | Sort order (`hot`, `newest`, `ending_soon`, `volume`) |
+| `categoryId` | string | No | Filter by category |
+| `hotWords` | string | No | Filter by trending keywords |
+| `followed` | boolean | No | Only followed markets (requires auth) |
+| `newMarket` | boolean | No | Only recently created |
+| `soonExpired` | boolean | No | Ending within 24 hours |
+| `baseTokenAddress` | string | No | Filter by base token |
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "totalCount": 142,
+    "markets": [
+      {
+        "marketAddress": "0x1234...abcd",
+        "title": "Will BTC exceed $100k by March 2026?",
+        "description": "Resolves Yes if Bitcoin price...",
+        "status": "running",
+        "volume": "52340000000",
+        "participantCount": 1823,
+        "endTime": "2026-03-31T00:00:00Z",
+        "options": [
+          {
+            "optionAddress": "0xaaaa...1111",
+            "title": "Yes",
+            "price": "0.65",
+            "volume": "34000000000"
+          },
+          {
+            "optionAddress": "0xbbbb...2222",
+            "title": "No",
+            "price": "0.35",
+            "volume": "18340000000"
+          }
+        ],
+        "tags": ["crypto", "bitcoin"],
+        "categoryId": "1",
+        "createdAt": "2026-02-01T10:00:00Z"
+      }
+    ]
+  }
+}
+```
+
+## Example
+
+```bash
+curl "https://api-staging.promethex.market/bayes/market/get-markets?page=1&pageSize=5&sortType=hot"
+```

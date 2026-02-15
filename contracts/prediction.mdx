@@ -1,0 +1,105 @@
+---
+title: Prediction Contract
+description: "APMM prediction market contract interface"
+---
+
+## Overview
+
+The `Prediction` contract is the core of each prediction market. It implements the APMM (Automated Prediction Market Maker) and handles the full market lifecycle: trading, liquidity management, settlement, and claims.
+
+## Key Functions
+
+### Trading
+
+#### `deposit` — Buy option tokens
+
+```solidity
+function deposit(
+    uint256 optionIndex,  // Which option to buy
+    uint256 amount,       // Base token amount to spend
+    uint256 minReceive    // Minimum option tokens to receive (slippage)
+) external
+```
+
+Swaps base tokens (USDC) for option tokens via the APMM.
+
+#### `withdraw` — Sell option tokens
+
+```solidity
+function withdraw(
+    uint256 optionIndex,  // Which option to sell
+    uint256 amount,       // Option token amount to sell
+    uint256 minReceive    // Minimum base tokens to receive
+) external
+```
+
+Swaps option tokens back for base tokens.
+
+### Liquidity
+
+#### `addLiquidity`
+
+```solidity
+function addLiquidity(uint256 amount) external
+```
+
+Deposit base tokens to provide liquidity. Receives LP tokens (the Prediction contract itself is an ERC20 LP token). Increases reserves proportionally across all options.
+
+#### `removeLiquidity`
+
+```solidity
+function removeLiquidity(uint256 lpAmount) external
+```
+
+Burn LP tokens to withdraw base tokens. Also claims any accumulated trading fees.
+
+### Settlement
+
+#### `settle`
+
+```solidity
+function settle(uint256 optionIndex) external onlyOwner
+```
+
+Assert that `optionIndex` is the winning outcome. Posts a bond to the UMA oracle and starts the challenge period.
+
+#### `claimAll`
+
+```solidity
+function claimAll() external
+```
+
+After market settles, redeem all winning option tokens for base tokens at 1:1 ratio.
+
+## State
+
+```solidity
+struct State {
+    SD59x18[] weights;      // Price weights per option
+    SD59x18[] reserves;     // Liquidity reserves per option
+    Option[] options;       // Option token contracts
+    uint256 fee;            // Trading fee (basis points)
+    uint256 rewardPerShare; // Fee distribution tracker
+}
+```
+
+## Events
+
+| Event | Emitted when |
+|-------|-------------|
+| `Deposit(user, optionIndex, amountIn, amountOut)` | User buys option tokens |
+| `Withdraw(user, optionIndex, amountIn, amountOut)` | User sells option tokens |
+| `LiquidityAdded(user, amount, lpTokens)` | Liquidity provided |
+| `LiquidityRemoved(user, amount, lpTokens)` | Liquidity withdrawn |
+| `MarketSettled(optionIndex)` | Market outcome asserted |
+| `Claimed(user, amount)` | User claims winnings |
+
+## APMM Pricing
+
+The contract uses a weighted constant-product formula. See the [APMM deep dive](/concepts/apmm) for the full mathematical explanation.
+
+```
+Price[i] = weight[i] × total_reserves / reserve[i]
+```
+
+For binary markets: `Price_Yes = reserve_No / (reserve_Yes + reserve_No)`

@@ -1,0 +1,91 @@
+---
+title: How PrometheX Works
+description: "Prediction markets, automated market making, and oracle-based resolution"
+---
+
+## What is a Prediction Market?
+
+A prediction market lets people trade on the outcome of future events. Each outcome is represented by a token whose price reflects the market's collective belief in that outcome's probability.
+
+- **Price = Probability** — If "Yes" trades at $0.65, the market thinks there's a 65% chance it happens.
+- **Binary markets** — Two outcomes (Yes/No). Prices always sum to $1.00.
+- **Multi-option markets** — Three or more outcomes. Prices still sum to $1.00.
+
+## The PrometheX Stack
+
+<Steps>
+  <Step title="Market Creation">
+    Admin creates a market via the dashboard. A `Prediction` contract is deployed on Arbitrum with the specified options, initial liquidity, and resolution parameters.
+  </Step>
+  <Step title="Trading (APMM)">
+    Users buy and sell option tokens through the on-chain Automated Prediction Market Maker. The APMM algorithmically prices each option based on supply and demand. [Learn more →](/concepts/apmm)
+  </Step>
+  <Step title="Resolution">
+    When the event occurs, the market owner asserts the correct outcome. The assertion goes through a challenge period (UMA Optimistic Oracle). If unchallenged, the market settles.
+  </Step>
+  <Step title="Settlement">
+    Winners redeem their option tokens for base tokens (USDC) at a 1:1 ratio. Losing tokens become worthless.
+  </Step>
+</Steps>
+
+## Market Lifecycle
+
+```
+Created ──→ Running ──→ Settling ──→ Ended
+                           │
+                           └──→ Disputed ──→ Ended
+```
+
+| Status | What's happening | Who triggers it |
+|--------|-----------------|-----------------|
+| **Created** | Market deployed, not yet open | Admin |
+| **Running** | Trading open, APMM active | Automatic |
+| **Settling** | Outcome asserted, challenge window open | Market owner |
+| **Disputed** | Assertion challenged, awaiting arbitration | Any user |
+| **Ended** | Settled — winners can claim | Oracle resolution |
+
+## Token Model
+
+### Current: ERC20 Option Tokens
+
+Each market has separate ERC20 tokens for each outcome. When you buy "Yes", you receive Yes tokens. On settlement, winning tokens are redeemable 1:1 for USDC.
+
+### Migrating to: Conditional Token Framework (CTF)
+
+We're upgrading to the Gnosis Conditional Token Framework (ERC1155), the same standard used by Polymarket:
+
+- **ERC1155** instead of separate ERC20s
+- **Composable** with the CTF ecosystem
+- **Split / Merge / Redeem** positions natively
+- Standard tooling and indexer support
+
+## Resolution & Disputes
+
+PrometheX uses a **modular resolution system**:
+
+<AccordionGroup>
+  <Accordion title="UMA Optimistic Oracle (default)">
+    1. Market owner asserts the outcome and posts a bond
+    2. **Challenge window** — anyone can dispute by posting a counter-bond
+    3. No dispute → outcome accepted, market settles
+    4. Disputed → escalates to UMA DVM (decentralized voting)
+    5. Winner gets loser's bond (minus oracle fee)
+  </Accordion>
+  <Accordion title="Multisig Resolution">
+    An N-of-M multisig of trusted resolvers votes on the outcome. Faster than oracle-based resolution, suitable for markets where speed matters.
+  </Accordion>
+  <Accordion title="Token Governance (planned)">
+    Token holders vote on the outcome. Decentralized but slower. Best for high-stakes or controversial markets.
+  </Accordion>
+</AccordionGroup>
+
+## Gasless Experience
+
+All transactions use **ERC-4337 Account Abstraction**:
+
+1. User signs a `UserOperation` (not a raw transaction)
+2. Platform's paymaster sponsors the gas
+3. Bundler submits to Arbitrum's EntryPoint contract
+4. Transaction executes — user pays nothing
+
+Users never need ETH. They sign in with email and trade immediately.

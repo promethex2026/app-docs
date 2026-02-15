@@ -1,0 +1,96 @@
+---
+title: Posts
+description: "Market discussion posts"
+---
+
+## Get Market Posts
+
+```
+GET /bayes/community/get-market-posts
+```
+
+**Auth required:** No
+
+### Query Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `marketAddress` | string | Yes | Market contract address |
+| `page` | number | No | Page number |
+| `pageSize` | number | No | Items per page |
+
+### Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "total": 15,
+    "posts": [
+      {
+        "postUuid": "post-123",
+        "marketAddress": "0x...",
+        "title": "Strong Yes signal from on-chain data",
+        "content": "Looking at the latest whale movements...",
+        "likesCount": 12,
+        "commentsCount": 3,
+        "isLiked": false,
+        "publisher": {
+          "uid": "12345",
+          "name": "alice",
+          "avatarUrl": "https://..."
+        },
+        "createdAt": "2026-02-15T08:00:00Z"
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Publish Post
+
+```
+POST /bayes/community/publish-post
+```
+
+**Auth required:** Yes
+
+```json Request
+{
+  "marketAddress": "0x...",
+  "title": "My analysis",
+  "content": "Here's what I think will happen..."
+}
+```
+
+```json Response
+{
+  "code": 0,
+  "data": { "postUuid": "post-456" }
+}
+```
+
+---
+
+## Like / Unlike
+
+```
+POST /bayes/community/like-content
+```
+
+```json Request
+{
+  "contentUuid": "post-123",
+  "contentType": 1
+}
+```
+
+Content types: `1` = post, `2` = comment.
+
+```
+POST /bayes/community/unlike-content
+```
+
+Same request format.

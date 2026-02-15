@@ -1,0 +1,121 @@
+---
+title: Quickstart
+description: "Start building with PrometheX in 5 minutes"
+---
+
+## Prerequisites
+
+- A PrometheX API key (contact us for access)
+- Node.js 18+ or any HTTP client
+
+## Base URL
+
+<CodeGroup>
+```bash Testnet (Staging)
+https://api-staging.promethex.market
+```
+
+```bash Production
+https://api.promethex.market
+```
+</CodeGroup>
+
+All API endpoints are prefixed with `/bayes/`. For example, to list markets:
+
+```bash
+GET https://api-staging.promethex.market/bayes/market/get-markets?page=1&pageSize=10
+```
+
+## 1. List Available Markets
+
+No authentication required.
+
+```bash
+curl "https://api-staging.promethex.market/bayes/market/get-markets?page=1&pageSize=5"
+```
+
+```json Response
+{
+  "code": 0,
+  "msg": "success",
+  "data": {
+    "totalCount": 42,
+    "markets": [
+      {
+        "marketAddress": "0x...",
+        "title": "Will BTC hit $100k by March 2026?",
+        "status": "running",
+        "options": [
+          { "title": "Yes", "price": "0.65" },
+          { "title": "No", "price": "0.35" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## 2. Get Market Detail
+
+```bash
+curl "https://api-staging.promethex.market/bayes/market/get-market-detail?marketAddress=0x..."
+```
+
+Returns full market info: options, prices, volume, trade history, rules.
+
+## 3. Authenticate (for Trading)
+
+PrometheX uses **Privy** for authentication. After your user logs in via Privy, you receive a JWT token.
+
+```bash
+curl -X POST "https://api-staging.promethex.market/bayes/user/login" \
+  -H "Authorization: Bearer <privy-jwt-token>" \
+  -H "Content-Type: application/json" \
+  -d '{"address": "0x..."}'
+```
+
+## 4. Place a Trade
+
+Requires a signed ERC-4337 UserOperation. See the [Gasless Transactions guide](/guides/gasless-transactions) for details.
+
+```bash
+curl -X POST "https://api-staging.promethex.market/bayes/market/place-order" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketAddress": "0x...",
+    "optionAddress": "0x...",
+    "side": 1,
+    "price": "650000",
+    "amount": "10000000",
+    "minReceiveAmount": "9500000",
+    "deadline": "1740000000",
+    "userOperation": { ... }
+  }'
+```
+
+## 5. Subscribe to Real-time Updates
+
+```bash
+curl -X POST "https://api-staging.promethex.market/bayes/sse/connect" \
+  -H "Authorization: Bearer <token>"
+```
+
+Returns a Server-Sent Events stream with price changes, trade notifications, and position updates.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="How It Works" icon="lightbulb" href="/concepts/how-it-works">
+    Understand the APMM, CTF tokens, and resolution
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/overview">
+    Full endpoint documentation
+  </Card>
+  <Card title="Contract Addresses" icon="link" href="/contracts/addresses">
+    Deployed contract addresses on Arbitrum
+  </Card>
+  <Card title="Embed Widget" icon="window" href="/guides/embed-widget">
+    Add prediction markets to your app
+  </Card>
+</CardGroup>

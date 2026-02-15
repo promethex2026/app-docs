@@ -1,0 +1,132 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "PrometheX",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6366F1",
+    "light": "#818CF8",
+    "dark": "#4F46E5",
+    "anchors": {
+      "from": "#6366F1",
+      "to": "#8B5CF6"
+    }
+  },
+  "topbarLinks": [
+    {
+      "name": "App",
+      "url": "https://staging.promethex.market"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Launch App",
+    "url": "https://staging.promethex.market"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    },
+    {
+      "name": "Contracts",
+      "url": "contracts"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/AchievedTech"
+    },
+    {
+      "name": "Community",
+      "icon": "discord",
+      "url": "https://discord.gg/promethex"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "Concepts",
+      "pages": [
+        "concepts/how-it-works",
+        "concepts/apmm",
+        "concepts/architecture",
+        "concepts/user-flow"
+      ]
+    },
+    {
+      "group": "Guides",
+      "pages": [
+        "guides/gasless-transactions",
+        "guides/embed-widget"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/overview",
+        "api-reference/authentication"
+      ]
+    },
+    {
+      "group": "Markets",
+      "pages": [
+        "api-reference/markets/list-markets",
+        "api-reference/markets/get-market-detail",
+        "api-reference/markets/get-hot-markets",
+        "api-reference/markets/get-market-trades",
+        "api-reference/markets/get-price-history",
+        "api-reference/markets/place-order",
+        "api-reference/markets/claim-result",
+        "api-reference/markets/follow-market"
+      ]
+    },
+    {
+      "group": "Users",
+      "pages": [
+        "api-reference/users/login",
+        "api-reference/users/get-user-info",
+        "api-reference/users/update-profile",
+        "api-reference/users/notifications",
+        "api-reference/users/positions-and-trades"
+      ]
+    },
+    {
+      "group": "Community",
+      "pages": [
+        "api-reference/community/posts",
+        "api-reference/community/comments"
+      ]
+    },
+    {
+      "group": "Real-time",
+      "pages": [
+        "api-reference/realtime/sse-events"
+      ]
+    },
+    {
+      "group": "Contracts",
+      "pages": [
+        "contracts/overview",
+        "contracts/addresses",
+        "contracts/prediction",
+        "contracts/resolution"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "x": "https://x.com/promethex",
+    "github": "https://github.com/AchievedTech",
+    "discord": "https://discord.gg/promethex"
+  }
+}

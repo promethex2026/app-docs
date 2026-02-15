@@ -1,0 +1,114 @@
+---
+title: APMM — Market Making
+description: "How PrometheX's Automated Prediction Market Maker prices outcomes"
+---
+
+## Overview
+
+PrometheX uses an **Automated Prediction Market Maker (APMM)** — a weighted constant-product AMM designed specifically for prediction markets. Unlike Uniswap's `x·y=k` for two tokens, APMM generalizes to **N options with configurable weights**.
+
+## The Math
+
+### Core Invariant
+
+The APMM maintains a constant product across all option reserves:
+
+$$
+\prod_{i=0}^{N-1} r_i^{w_i} = k
+$$
+
+Where:
+- $r_i$ = liquidity reserve for option $i$
+- $w_i$ = weight for option $i$ (all weights sum to 1.0)
+- $k$ = constant (changes only when liquidity is added/removed)
+
+### Price Formula
+
+The instantaneous price of option $i$ is:
+
+$$
+p_i = \frac{w_i \cdot \sum_j r_j}{r_i}
+$$
+
+For a binary market with equal weights ($w_0 = w_1 = 0.5$):
+
+$$
+p_{yes} = \frac{r_{no}}{r_{yes} + r_{no}}
+$$
+
+This means: more demand for "Yes" → lower Yes reserve → higher Yes price. Prices always sum to 1.0, representing probabilities.
+
+### Swap Calculation
+
+When a user buys option tokens, the APMM solves for the output amount that preserves the invariant:
+
+```
+Input: user deposits Δ base tokens, wants option[j]
+Fee:   δ = Δ × (1 - fee/10000)
+
+Solve: ∏ (r[i])^w[i]  =  ∏ (r'[i])^w[i]
+
+Where: r'[i] = r[i] + δ  for i ≠ j
+       r'[j] = r[j] - output
+
+Output = r[j] - (∏ r[i]^w[i] / ∏ r'[i≠j]^w[i])^(1/w[j])
+```
+
+### Multi-Option Markets
+
+For markets with 3+ options, the APMM uses **Newton iteration** to solve the constant-product equation when multiple reserves change simultaneously. This enables complex trades like "sell Option A and buy Option B" in a single transaction.
+
+## Properties
+
+<CardGroup cols={2}>
+  <Card title="Bounded Prices" icon="chart-line">
+    Prices always between 0 and 1, interpretable as probabilities.
+  </Card>
+  <Card title="No Arbitrage" icon="scale-balanced">
+    Sum of all option prices always equals 1.0.
+  </Card>
+  <Card title="Depth = Stability" icon="water">
+    Deeper liquidity pools mean less slippage per trade.
+  </Card>
+  <Card title="Dynamic Weights" icon="sliders">
+    For binary markets, weights auto-adjust to prevent extreme imbalance.
+  </Card>
+</CardGroup>
+
+## Fee Model
+
+- Default trading fee: **1% (100 basis points)**
+- Configurable per market at creation
+- Fees accrue to liquidity providers via `rewardPerShare`
+- LP token holders can claim accumulated fees
+
+## Liquidity Operations
+
+| Operation | What happens |
+|-----------|-------------|
+| `addLiquidity` | Deposit base tokens → receive LP tokens. Increases all reserves proportionally. |
+| `removeLiquidity` | Burn LP tokens → receive base tokens back. Decreases all reserves proportionally. |
+| `deposit` | Buy option tokens. Base tokens in → option tokens out. |
+| `withdraw` | Sell option tokens. Option tokens in → base tokens out. |
+
+## Comparison with Other AMMs
+
+| Feature | APMM (PrometheX) | LMSR (Augur) | CPMM (Polymarket) |
+|---------|:-:|:-:|:-:|
+| N-option support | ✅ Native | ✅ Native | ❌ Binary only |
+| Configurable weights | ✅ | ❌ | ❌ |
+| Capital efficiency | Medium | Low | High (binary) |
+| Dynamic rebalancing | ✅ | ❌ | ❌ |
+| On-chain computation | Medium | High | Low |
+
+## Coming Soon: Hybrid Liquidity
+
+We're integrating a **Central Limit Order Book (CLOB)** alongside the APMM. A smart order router will split orders between the AMM and order book for optimal execution:
+
+```
+User Order → Smart Router
+               ├── APMM (guaranteed liquidity, higher spread)
+               └── CLOB (limit orders, tighter spread)
+```
+
+This gives passive liquidity via APMM and active market making via CLOB — the best of both worlds.

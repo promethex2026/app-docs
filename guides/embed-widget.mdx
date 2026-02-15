@@ -1,0 +1,94 @@
+---
+title: Embed Widget
+description: "Embed PrometheX prediction markets in your application"
+---
+
+<Warning>
+The embed widget SDK is under active development and will be available in March 2026. This page describes the planned integration interface.
+</Warning>
+
+## Overview
+
+Embed PrometheX prediction markets directly in your website or application. Your users can view and trade on markets without leaving your platform.
+
+## Quick Start (Coming Soon)
+
+### Script Tag
+
+```html
+<script src="https://cdn.promethex.market/embed/v1/promethex.js"></script>
+
+<div
+  id="promethex-market"
+  data-market-address="0x1234...abcd"
+  data-theme="dark"
+  data-width="400"
+  data-height="600"
+></div>
+
+<script>
+  PrometheX.init({
+    container: '#promethex-market',
+    apiKey: 'your-api-key'
+  });
+</script>
+```
+
+### iframe
+
+```html
+<iframe
+  src="https://embed.promethex.market/market/0x1234...abcd?theme=dark"
+  width="400"
+  height="600"
+  frameborder="0"
+></iframe>
+```
+
+## Configuration Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `marketAddress` | string | required | Market to display |
+| `theme` | `light` \| `dark` | `light` | Color theme |
+| `width` | number | `100%` | Widget width (px or %) |
+| `height` | number | `600` | Widget height (px) |
+| `locale` | string | `en` | Language (`en`, `zh`) |
+| `hideHeader` | boolean | `false` | Hide market title |
+| `tradingEnabled` | boolean | `true` | Allow trading (vs. view-only) |
+
+## White-Label
+
+For white-label partners, the embed widget supports full customization:
+
+- Custom color scheme and branding
+- Custom domain (`markets.yoursite.com`)
+- Feature flags (enable/disable trading, community, etc.)
+- Tenant-specific configuration via Admin API
+
+Contact us for white-label setup.
+
+## React Component (Planned)
+
+```tsx
+import { PrometheXMarket } from '@promethex/react';
+
+function App() {
+  return (
+    <PrometheXMarket
+      marketAddress="0x1234...abcd"
+      theme="dark"
+      onTradeComplete={(trade) => console.log(trade)}
+    />
+  );
+}
+```
+
+## API Integration
+
+If you prefer building your own UI, use the [Public API](/api-reference/overview) directly:
+
+1. **List markets** → `GET /bayes/market/get-markets`
+2. **Show market** → `GET /bayes/market/get-market-detail`
+3. **Enable trading** → Integrate Privy for auth + ERC-4337 for gasless tx
+4. **Real-time data** → SSE events for live prices

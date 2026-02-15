@@ -1,0 +1,113 @@
+---
+title: Contract Overview
+description: "Smart contract architecture for PrometheX prediction markets"
+---
+
+## Architecture
+
+```
+PredictionFactory (TransparentUpgradeableProxy)
+│
+├── cloneDeterministic(Prediction)
+│   │
+│   ├── Prediction.sol — APMM core
+│   │   ├── deposit()        Buy option tokens
+│   │   ├── withdraw()       Sell option tokens
+│   │   ├── claimAll()       Redeem winning tokens
+│   │   ├── settle()         Assert outcome via oracle
+│   │   ├── addLiquidity()   Provide liquidity
+│   │   └── removeLiquidity()
+│   │
+│   ├── Option tokens
+│   │   ├── Current: ERC20 (Option.sol)
+│   │   └── Target: ERC1155 (Gnosis CTF)
+│   │
+│   └── Resolution Module (IResolutionModule)
+│       ├── UMA OptimisticOracleV3
+│       └── MultisigResolution (building)
+│
+└── Token Whitelist (approved base tokens)
+```
+
+## Core Contracts
+
+### PredictionFactory
+
+The factory contract creates new prediction markets using deterministic cloning (`Clones.cloneDeterministic`). It manages:
+
+- **Market creation** — Deploys a new Prediction contract for each market
+- **Token whitelist** — Approved base tokens (e.g., USDC)
+- **Access control** — `CREATOR_ROLE` for market creation, `UPGRADER_ROLE` for upgrades
+- **Upgradeability** — TransparentUpgradeableProxy pattern (OpenZeppelin)
+
+### Prediction
+
+The main market contract implementing the APMM. Each market is a clone of the Prediction implementation.
+
+**Key functions:**
+
+| Function | Description |
+|----------|-------------|
+| `deposit(optionIndex, amount, minReceive)` | Buy option tokens with base tokens |
+| `withdraw(optionIndex, amount, minReceive)` | Sell option tokens for base tokens |
+| `addLiquidity(amount)` | Provide liquidity, receive LP tokens |
+| `removeLiquidity(amount)` | Burn LP tokens, receive base tokens |
+| `settle(optionIndex)` | Assert outcome (triggers oracle) |
+| `claimAll()` | Redeem all winning tokens |
+
+**Inheritance:**
+- `ERC20Upgradeable` — LP token
+- `OptimisticOracleV3CallbackRecipientInterface` — UMA callbacks
+- `Ownable2StepUpgradeable` — Two-step ownership transfer
+
+### Option
+
+ERC20 token representing a market outcome. Mintable and burnable only by the parent Prediction contract.
+
+<Note>
+Being replaced by Gnosis Conditional Token Framework (ERC1155) for ecosystem compatibility.
+</Note>
+
+## Market States
+
+```
+Created ──→ Running ──→ Settling ──→ Ended
+                           │
+                           └──→ Disputed ──→ Ended
+```
+
+| State | Trading | Claims | Transitions |
+|-------|:-------:|:------:|-------------|
+| Created | No | No | → Running (automatic) |
+| Running | Yes | No | → Settling (owner settles) |
+| Settling | No | No | → Ended or Disputed |
+| Disputed | No | No | → Ended (oracle resolves) |
+| Ended | No | Yes | Terminal state |
+
+## Resolution Flow
+
+<Steps>
+  <Step title="Owner asserts outcome">
+    Calls `settle(optionIndex)` with a bond deposited to the oracle.
+  </Step>
+  <Step title="Liveness period">
+    Configurable challenge window (default: 2 hours). Anyone can dispute by posting a counter-bond.
+  </Step>
+  <Step title="Resolution">
+    **No dispute** → `assertionResolvedCallback()` fires, market moves to Ended.
+    **Disputed** → `assertionDisputedCallback()` fires, escalates to UMA DVM voting.
+  </Step>
+  <Step title="Settlement">
+    Winning option tokens become redeemable 1:1 for base tokens. Losing tokens are worthless.
+  </Step>
+</Steps>
+
+## Upgradeability
+
+All contracts use OpenZeppelin's upgradeable patterns:
+
+- **PredictionFactory** — TransparentUpgradeableProxy
+- **Prediction** — Cloned from upgradeable implementation
+- **Option** — Cloned from upgradeable implementation
+
+Upgrades require `UPGRADER_ROLE` and follow a timelock process.

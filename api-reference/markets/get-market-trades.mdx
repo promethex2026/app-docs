@@ -1,0 +1,48 @@
+---
+title: Get Market Trades
+description: "Get trade history for a market"
+---
+
+## Endpoint
+
+```
+GET /bayes/market/get-market-trades
+```
+
+**Auth required:** No
+
+## Query Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `marketAddress` | string | Yes | Market contract address |
+| `page` | number | No | Page number (default 1) |
+| `pageSize` | number | No | Items per page (default 20) |
+| `baseTokenAddress` | string | No | Base token filter |
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "total": 456,
+    "orders": [
+      {
+        "orderUuid": "abc-123",
+        "marketAddress": "0x...",
+        "optionTitle": "Yes",
+        "side": "buy",
+        "price": "0.65",
+        "amount": "10000000",
+        "timestamp": "2026-02-15T10:30:00Z",
+        "user": {
+          "uid": "12345",
+          "name": "alice",
+          "avatarUrl": "https://..."
+        }
+      }
+    ]
+  }
+}
+```

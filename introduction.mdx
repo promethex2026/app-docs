@@ -1,0 +1,55 @@
+---
+title: Introduction
+description: "PrometheX — Prediction Market as a Service on Arbitrum"
+---
+
+## What is PrometheX?
+
+PrometheX is a **Prediction Market as a Service (PMaaS)** platform built on Arbitrum. Users trade on the outcomes of real-world events — politics, sports, crypto, culture — anything with a verifiable result.
+
+The platform provides:
+
+- **On-chain market making** via APMM (Automated Prediction Market Maker)
+- **Gasless trading** through ERC-4337 account abstraction
+- **Modular resolution** with UMA Optimistic Oracle and pluggable modules
+- **White-label capabilities** for partners who want their own prediction market
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Zero Gas Fees" icon="gas-pump">
+    All transactions are sponsored. Users never need ETH to trade.
+  </Card>
+  <Card title="Instant Onboarding" icon="rocket">
+    Sign in with email, Google, or Twitter. Smart wallet created automatically.
+  </Card>
+  <Card title="On-Chain Settlement" icon="link">
+    All trades settle on Arbitrum. Fully transparent and verifiable.
+  </Card>
+  <Card title="Embeddable" icon="code">
+    Integrate prediction markets into any app with our embed SDK.
+  </Card>
+</CardGroup>
+
+## How It Works (30 seconds)
+
+1. **Connect** — Log in with email or wallet via Privy. A smart account is created for you.
+2. **Discover** — Browse trending markets or search by topic.
+3. **Trade** — Pick an outcome, set your amount, confirm. No gas needed.
+4. **Win** — When the market resolves, claim your winnings instantly.
+
+## Architecture at a Glance
+
+```
+Frontend (React + Cloudflare Workers)
+    ↓ HTTPS + SSE
+Market Backend (Go, port 8000)
+    ↓ gRPC
+Market Service (Go, port 9000)
+    ↓
+PostgreSQL + Redis + Arbitrum
+```
+
+<Card title="Dive Deeper" icon="book-open" href="/concepts/how-it-works">
+  Learn about the APMM pricing mechanism, conditional tokens, and resolution flow.
+</Card>
