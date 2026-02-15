@@ -115,5 +115,10 @@
     "x": "https://x.com/promethex",
     "github": "https://github.com/promethex2026",
     "discord": "https://discord.gg/promethex"
-  }
+  },
+  "logo": {
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
+  },
+  "favicon": "/favicon.png"
 }
