@@ -3,17 +3,14 @@
   "theme": "mint",
   "name": "PrometheX",
   "logo": {
-    "dark": "/logo/dark.png",
-    "light": "/logo/light.png"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png"
   },
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#6C5CE7",
     "light": "#A29BFE",
-    "dark": "#5A4FCF",
-    "background": {
-      "dark": "#0D0B1A"
-    }
+    "dark": "#5A4FCF"
   },
   "topbarLinks": [
     { "name": "App", "url": "https://staging.promethex.market" }
@@ -22,164 +19,175 @@
     "name": "Launch App",
     "url": "https://staging.promethex.market"
   },
-  "tabs": [
-    { "name": "User Guide", "url": "user-guide" },
-    { "name": "Platform", "url": "platform" },
-    { "name": "API Reference", "url": "api-reference" },
-    { "name": "Smart Contracts", "url": "contracts" }
-  ],
-  "anchors": [
-    { "name": "GitHub", "icon": "github", "url": "https://github.com/AchievedTech" },
-    { "name": "Discord", "icon": "discord", "url": "https://discord.gg/promethex" },
-    { "name": "Twitter", "icon": "x-twitter", "url": "https://x.com/promethex" }
-  ],
-  "navigation": [
-    {
-      "group": "Get Started",
-      "pages": [
-        "user-guide/what-is-promethex",
-        "user-guide/getting-started/connect-wallet",
-        "user-guide/getting-started/get-usdc",
-        "user-guide/getting-started/first-trade"
-      ]
-    },
-    {
-      "group": "Trading",
-      "pages": [
-        "user-guide/trading/how-trading-works",
-        "user-guide/trading/providing-liquidity",
-        "user-guide/trading/fees"
-      ]
-    },
-    {
-      "group": "Markets",
-      "pages": [
-        "user-guide/markets/how-markets-work",
-        "user-guide/markets/resolution",
-        "user-guide/markets/disputes"
-      ]
-    },
-    {
-      "group": "FAQ",
-      "pages": [
-        "user-guide/faq/is-my-money-safe",
-        "user-guide/faq/supported-chains",
-        "user-guide/faq/geographic-restrictions",
-        "user-guide/faq/glossary"
-      ]
-    },
-    {
-      "group": "Platform Overview",
-      "pages": [
-        "platform/overview",
-        "platform/why-promethex",
-        "platform/architecture"
-      ]
-    },
-    {
-      "group": "Integration",
-      "pages": [
-        "platform/integration/integration-overview",
-        "platform/integration/white-label",
-        "platform/integration/embedded",
-        "platform/integration/api-only"
-      ]
-    },
-    {
-      "group": "Deployment",
-      "pages": [
-        "platform/deployment/supported-chains",
-        "platform/deployment/staging-environment",
-        "platform/deployment/contract-addresses"
-      ]
-    },
-    {
-      "group": "Security & Roadmap",
-      "pages": [
-        "platform/security/security-model",
-        "platform/security/audits",
-        "platform/roadmap"
-      ]
-    },
-    {
-      "group": "API Overview",
-      "pages": [
-        "api-reference/overview",
-        "api-reference/quickstart",
-        "api-reference/authentication"
-      ]
-    },
-    {
-      "group": "Markets API",
-      "pages": [
-        "api-reference/markets/list-markets",
-        "api-reference/markets/get-market",
-        "api-reference/markets/create-market"
-      ]
-    },
-    {
-      "group": "Trading API",
-      "pages": [
-        "api-reference/trading/deposit",
-        "api-reference/trading/withdraw",
-        "api-reference/trading/get-positions",
-        "api-reference/trading/claim"
-      ]
-    },
-    {
-      "group": "Liquidity API",
-      "pages": [
-        "api-reference/liquidity/add-liquidity",
-        "api-reference/liquidity/remove-liquidity"
-      ]
-    },
-    {
-      "group": "Resolution API",
-      "pages": [
-        "api-reference/resolution/settle-market",
-        "api-reference/resolution/get-resolution-status"
-      ]
-    },
-    {
-      "group": "Developer Resources",
-      "pages": [
-        "api-reference/websocket",
-        "api-reference/sdks",
-        "api-reference/errors",
-        "api-reference/rate-limits",
-        "api-reference/changelog"
-      ]
-    },
-    {
-      "group": "Contract Architecture",
-      "pages": [
-        "contracts/overview",
-        "contracts/addresses",
-        "contracts/prediction-factory",
-        "contracts/prediction",
-        "contracts/option"
-      ]
-    },
-    {
-      "group": "Resolution Modules",
-      "pages": [
-        "contracts/resolution/overview",
-        "contracts/resolution/uma-oracle",
-        "contracts/resolution/multisig"
-      ]
-    },
-    {
-      "group": "Advanced",
-      "pages": [
-        "contracts/ctf-migration",
-        "contracts/security",
-        "contracts/audit-reports"
-      ]
-    }
-  ],
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "User Guide",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "user-guide/what-is-promethex",
+              "user-guide/getting-started/connect-wallet",
+              "user-guide/getting-started/get-usdc",
+              "user-guide/getting-started/first-trade"
+            ]
+          },
+          {
+            "group": "Trading",
+            "pages": [
+              "user-guide/trading/how-trading-works",
+              "user-guide/trading/providing-liquidity",
+              "user-guide/trading/fees"
+            ]
+          },
+          {
+            "group": "Markets",
+            "pages": [
+              "user-guide/markets/how-markets-work",
+              "user-guide/markets/resolution",
+              "user-guide/markets/disputes"
+            ]
+          },
+          {
+            "group": "FAQ",
+            "pages": [
+              "user-guide/faq/is-my-money-safe",
+              "user-guide/faq/supported-chains",
+              "user-guide/faq/geographic-restrictions",
+              "user-guide/faq/glossary"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Platform",
+        "groups": [
+          {
+            "group": "Platform Overview",
+            "pages": [
+              "platform/overview",
+              "platform/why-promethex",
+              "platform/architecture"
+            ]
+          },
+          {
+            "group": "Integration",
+            "pages": [
+              "platform/integration/integration-overview",
+              "platform/integration/white-label",
+              "platform/integration/embedded",
+              "platform/integration/api-only"
+            ]
+          },
+          {
+            "group": "Deployment",
+            "pages": [
+              "platform/deployment/supported-chains",
+              "platform/deployment/staging-environment",
+              "platform/deployment/contract-addresses"
+            ]
+          },
+          {
+            "group": "Security & Roadmap",
+            "pages": [
+              "platform/security/security-model",
+              "platform/security/audits",
+              "platform/roadmap"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API Overview",
+            "pages": [
+              "api-reference/overview",
+              "api-reference/quickstart",
+              "api-reference/authentication"
+            ]
+          },
+          {
+            "group": "Markets",
+            "pages": [
+              "api-reference/markets/list-markets",
+              "api-reference/markets/get-market",
+              "api-reference/markets/create-market"
+            ]
+          },
+          {
+            "group": "Trading",
+            "pages": [
+              "api-reference/trading/deposit",
+              "api-reference/trading/withdraw",
+              "api-reference/trading/get-positions",
+              "api-reference/trading/claim"
+            ]
+          },
+          {
+            "group": "Liquidity",
+            "pages": [
+              "api-reference/liquidity/add-liquidity",
+              "api-reference/liquidity/remove-liquidity"
+            ]
+          },
+          {
+            "group": "Resolution",
+            "pages": [
+              "api-reference/resolution/settle-market",
+              "api-reference/resolution/get-resolution-status"
+            ]
+          },
+          {
+            "group": "Developer Resources",
+            "pages": [
+              "api-reference/websocket",
+              "api-reference/sdks",
+              "api-reference/errors",
+              "api-reference/rate-limits",
+              "api-reference/changelog"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Smart Contracts",
+        "groups": [
+          {
+            "group": "Contract Architecture",
+            "pages": [
+              "contracts/overview",
+              "contracts/addresses",
+              "contracts/prediction-factory",
+              "contracts/prediction",
+              "contracts/option"
+            ]
+          },
+          {
+            "group": "Resolution Modules",
+            "pages": [
+              "contracts/resolution/overview",
+              "contracts/resolution/uma-oracle",
+              "contracts/resolution/multisig"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "contracts/ctf-migration",
+              "contracts/security",
+              "contracts/audit-reports"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "footerSocials": {
     "x": "https://x.com/promethex",
-    "github": "https://github.com/AchievedTech",
+    "github": "https://github.com/promethex2026",
     "discord": "https://discord.gg/promethex"
   }
 }
