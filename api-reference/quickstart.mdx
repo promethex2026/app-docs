@@ -1,0 +1,274 @@
+---
+title: Quickstart
+description: "Go from zero to your first trade in 5 steps"
+---
+
+## Prerequisites
+
+- A Privy account (email, social login, or wallet)
+- A Privy JWT token (obtained via the Privy SDK)
+- `curl` or any HTTP client
+
+<Info>
+All examples use the **staging** environment. Replace `api-staging` with `api` for production.
+</Info>
+
+---
+
+## Step 1: Authenticate
+
+Log in via the Privy SDK to obtain a JWT, then register with PrometheX:
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/user/login" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "address": "0xYourSmartAccountAddress",
+    "userName": "alice"
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch('https://api-staging.promethex.market/api/v1/user/login', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${privyJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    address: '0xYourSmartAccountAddress',
+    userName: 'alice',
+  }),
+});
+const { data } = await res.json();
+console.log(data.uid, data.isNewUser);
+```
+
+</CodeGroup>
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "uid": "12345",
+    "isNewUser": true
+  }
+}
+```
+
+---
+
+## Step 2: List Markets
+
+Browse available prediction markets:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/market/get-markets?page=1&pageSize=5&sortType=hot"
+```
+
+```javascript JavaScript
+const res = await fetch(
+  'https://api-staging.promethex.market/api/v1/market/get-markets?page=1&pageSize=5&sortType=hot'
+);
+const { data } = await res.json();
+data.markets.forEach(m => {
+  console.log(`${m.title} — ${m.options.map(o => `${o.title}: ${o.price}`).join(', ')}`);
+});
+```
+
+</CodeGroup>
+
+**Response (truncated):**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "totalCount": 142,
+    "markets": [
+      {
+        "marketAddress": "0x1234...abcd",
+        "title": "Will BTC exceed $100k by March 2026?",
+        "status": "running",
+        "options": [
+          { "optionAddress": "0xaaaa...1111", "title": "Yes", "price": "0.65" },
+          { "optionAddress": "0xbbbb...2222", "title": "No", "price": "0.35" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Step 3: Get Market Detail
+
+Fetch full details for a specific market:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/market/get-market-detail?marketAddress=0x1234...abcd"
+```
+
+```javascript JavaScript
+const res = await fetch(
+  'https://api-staging.promethex.market/api/v1/market/get-market-detail?marketAddress=0x1234...abcd'
+);
+const { data } = await res.json();
+console.log(data.title, data.volume, data.liquidity);
+```
+
+</CodeGroup>
+
+---
+
+## Step 4: Execute a Trade
+
+Buy "Yes" tokens on the market. This requires a signed ERC-4337 UserOperation for gasless execution:
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/market/place-order" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketAddress": "0x1234...abcd",
+    "optionAddress": "0xaaaa...1111",
+    "side": 1,
+    "price": "650000",
+    "amount": "10000000",
+    "minReceiveAmount": "9500000",
+    "deadline": "1740000000",
+    "userOperation": {
+      "sender": "0x...",
+      "nonce": "0x...",
+      "initCode": "0x",
+      "callData": "0x...",
+      "callGasLimit": "0x...",
+      "verificationGasLimit": "0x...",
+      "preVerificationGas": "0x...",
+      "maxFeePerGas": "0x...",
+      "maxPriorityFeePerGas": "0x...",
+      "paymasterAndData": "0x...",
+      "signature": "0x..."
+    }
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch('https://api-staging.promethex.market/api/v1/market/place-order', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${privyJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    marketAddress: '0x1234...abcd',
+    optionAddress: '0xaaaa...1111',
+    side: 1,              // 1 = buy
+    price: '650000',
+    amount: '10000000',
+    minReceiveAmount: '9500000',
+    deadline: '1740000000',
+    userOperation: signedUserOp,
+  }),
+});
+const { data } = await res.json();
+console.log('opHash:', data.opHash);
+```
+
+</CodeGroup>
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "opHash": "0xabcdef...",
+    "orderUuid": "order-123-456"
+  }
+}
+```
+
+<Warning>
+The `userOperation` must be properly constructed and signed via ERC-4337. See the [Gasless Transactions guide](/guides/gasless-transactions) for the full flow.
+</Warning>
+
+---
+
+## Step 5: Check Your Position
+
+View your open positions:
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/market/get-user-positions?page=1&pageSize=10" \
+  -H "Authorization: Bearer $PRIVY_JWT"
+```
+
+```javascript JavaScript
+const res = await fetch(
+  'https://api-staging.promethex.market/api/v1/market/get-user-positions?page=1&pageSize=10',
+  { headers: { 'Authorization': `Bearer ${privyJwt}` } }
+);
+const { data } = await res.json();
+data.positions.forEach(p => {
+  console.log(`${p.marketTitle} — ${p.optionTitle}: ${p.amount} @ ${p.avgPrice} (PnL: ${p.pnlPercent}%)`);
+});
+```
+
+</CodeGroup>
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "total": 1,
+    "positions": [
+      {
+        "marketAddress": "0x1234...abcd",
+        "marketTitle": "Will BTC exceed $100k by March 2026?",
+        "optionTitle": "Yes",
+        "amount": "10000000",
+        "avgPrice": "0.65",
+        "currentPrice": "0.67",
+        "pnl": "200000",
+        "pnlPercent": "3.1"
+      }
+    ]
+  }
+}
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Trading API" icon="chart-line" href="/api-reference/trading/deposit">
+    Full trading documentation with UserOperation details
+  </Card>
+  <Card title="Real-time Events" icon="bolt" href="/api-reference/websocket">
+    Subscribe to live price updates via SSE
+  </Card>
+  <Card title="Error Handling" icon="circle-exclamation" href="/api-reference/errors">
+    Handle error codes gracefully
+  </Card>
+  <Card title="Gasless Transactions" icon="gas-pump" href="/guides/gasless-transactions">
+    Build and sign UserOperations
+  </Card>
+</CardGroup>

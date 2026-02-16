@@ -1,0 +1,114 @@
+---
+title: Add Liquidity
+description: "Add liquidity to a prediction market's APMM pool"
+---
+
+```
+POST /api/v1/market/add-liquidity
+```
+
+**Auth required:** Yes
+
+Adds base token liquidity to a prediction market's Automated Prediction Market Maker (APMM) pool. Liquidity providers earn a share of trading fees proportional to their pool share.
+
+## Request Body
+
+<ParamField body="marketAddress" type="string" required>
+  Prediction market contract address.
+</ParamField>
+
+<ParamField body="amount" type="string" required>
+  Amount of base tokens to deposit (e.g., `"50000000"` = 50 USDC).
+</ParamField>
+
+<ParamField body="minLpAmount" type="string" required>
+  Minimum LP tokens to receive. Reverts if actual LP tokens minted are below this. Protects against unfavorable pool ratios.
+</ParamField>
+
+<ParamField body="deadline" type="string" required>
+  Unix timestamp. Transaction reverts if not executed before this time.
+</ParamField>
+
+<ParamField body="userOperation" type="object" required>
+  Signed ERC-4337 UserOperation. See [Buy Tokens](/api-reference/trading/deposit) for full UserOperation field documentation.
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/market/add-liquidity" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketAddress": "0x1234...abcd",
+    "amount": "50000000",
+    "minLpAmount": "49000000",
+    "deadline": "1740000000",
+    "userOperation": {
+      "sender": "0x...",
+      "nonce": "0x...",
+      "initCode": "0x",
+      "callData": "0x...",
+      "callGasLimit": "0x...",
+      "verificationGasLimit": "0x...",
+      "preVerificationGas": "0x...",
+      "maxFeePerGas": "0x...",
+      "maxPriorityFeePerGas": "0x...",
+      "paymasterAndData": "0x...",
+      "signature": "0x..."
+    }
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch('https://api-staging.promethex.market/api/v1/market/add-liquidity', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${privyJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    marketAddress: '0x1234...abcd',
+    amount: '50000000',
+    minLpAmount: '49000000',
+    deadline: String(Math.floor(Date.now() / 1000) + 300),
+    userOperation: signedUserOp,
+  }),
+});
+const { data } = await res.json();
+console.log('Add liquidity tx:', data.opHash);
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "opHash": "0xAddLiqOpHash..."
+  }
+}
+```
+
+<ResponseField name="opHash" type="string">
+  UserOperation hash for the liquidity deposit transaction.
+</ResponseField>
+
+## How Liquidity Works
+
+The APMM pool uses deposited liquidity to facilitate trades. When users buy or sell outcome tokens, the pool adjusts prices algorithmically.
+
+| Aspect | Detail |
+|--------|--------|
+| **Fee share** | LP providers earn a pro-rata share of trading fees |
+| **Impermanent loss** | Possible if market prices move significantly |
+| **Withdrawal** | LP tokens can be redeemed via [Remove Liquidity](/api-reference/liquidity/remove-liquidity) |
+| **Settlement** | After market settles, remaining liquidity is returned to LPs |
+
+<Info>
+Liquidity can only be added to markets in `running` status. Adding liquidity to settled markets is not supported.
+</Info>

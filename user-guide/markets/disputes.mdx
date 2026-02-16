@@ -1,0 +1,95 @@
+---
+title: Disputes
+description: "What happens when someone disagrees with a market's outcome."
+---
+
+## When Things Don't Look Right
+
+After a market's outcome is asserted, there's a **challenge window** — a period of time where anyone can review the result. If someone believes the asserted outcome is wrong, they can file a **dispute**.
+
+Disputes are rare (most markets resolve smoothly), but the system exists to make sure every market is resolved correctly.
+
+## How Disputes Work
+
+<Steps>
+  <Step title="An outcome is asserted">
+    Someone submits a result to the blockchain — for example, "Yes, Bitcoin hit $100k." They back this assertion with a **bond** (a deposit of money that they're willing to lose if they're wrong).
+  </Step>
+  <Step title="Someone disagrees">
+    During the challenge window (typically 2 hours), another person reviews the assertion and believes it's incorrect. They file a dispute by posting their own **counter-bond** — matching the original bond amount.
+  </Step>
+  <Step title="It goes to a vote">
+    The dispute is escalated to the **UMA DVM** (Data Verification Mechanism) — a decentralized voting system where **UMA token holders** review the evidence and vote on the correct outcome.
+
+    <Info>
+    The **UMA DVM** is a community of independent voters who get paid to verify facts. They have no stake in the market itself — their job is just to determine the truth.
+    </Info>
+  </Step>
+  <Step title="Voters decide">
+    UMA token holders review the market question, the asserted outcome, and any available evidence. They vote on what the correct outcome should be. The process typically takes **24-48 hours**.
+  </Step>
+  <Step title="Resolution is final">
+    The vote determines the correct outcome. The market settles based on the vote result, and the bond is awarded:
+    - **Winner** (whether asserter or disputer) gets their bond back **plus** the loser's bond, minus a small oracle fee
+    - **Loser** forfeits their bond
+  </Step>
+</Steps>
+
+## The Bond System
+
+Bonds are what keep the system honest. Here's how the economics work:
+
+| Who | If they're right | If they're wrong |
+|-----|:---:|:---:|
+| **Asserter** (submitted the original result) | Gets bond back + disputer's bond (minus fee) | Loses their bond |
+| **Disputer** (challenged the result) | Gets bond back + asserter's bond (minus fee) | Loses their bond |
+
+<Note>
+**Why bonds matter:** Posting a bond means you're putting real money behind your claim. This discourages frivolous disputes and false assertions. You only dispute if you're confident the outcome is genuinely wrong — because you'll lose money if you're wrong.
+</Note>
+
+## What This Means for Regular Traders
+
+As a regular trader, you'll rarely need to interact with the dispute system directly. Here's what you should know:
+
+<AccordionGroup>
+  <Accordion title="Do I need to do anything during a dispute?">
+    No. If a market you traded in gets disputed, just wait. The dispute will be resolved by UMA voters, and then you can claim your winnings as normal. Your shares are safe regardless of the dispute process.
+  </Accordion>
+  <Accordion title="How long does a dispute take?">
+    Disputes typically resolve within **24-48 hours** through the UMA voting process. It's longer than the normal 2-hour challenge window, but it ensures the correct outcome is reached.
+  </Accordion>
+  <Accordion title="Can I file a dispute?">
+    Technically, anyone can dispute an assertion. However, you need to post a counter-bond (matching the original bond amount), and you'll lose that money if you're wrong. Only dispute if you're certain the asserted outcome is incorrect.
+  </Accordion>
+  <Accordion title="What if I disagree but don't want to post a bond?">
+    If you see an outcome you think is wrong but don't want to risk a bond, you can raise the issue in the PrometheX community on [Discord](https://discord.gg/promethex). Someone who agrees with you may be willing to file the dispute.
+  </Accordion>
+  <Accordion title="Has a dispute ever overturned a result?">
+    The dispute system is designed as a safety net. In practice, the bond incentive is strong enough that most assertions are correct from the start. The dispute mechanism exists to catch the rare mistake.
+  </Accordion>
+</AccordionGroup>
+
+## Dispute Timeline
+
+| Phase | Duration | What's happening |
+|-------|----------|-----------------|
+| **Challenge window** | ~2 hours | Anyone can review the assertion and file a dispute |
+| **Dispute filed** | Instant | Counter-bond posted, escalated to UMA DVM |
+| **Voting period** | 24-48 hours | UMA token holders vote on the correct outcome |
+| **Resolution** | Instant | Market settles, bonds awarded, winners can claim |
+
+<Warning>
+Filing a dispute costs real money (the counter-bond). Only dispute if you have strong evidence that the asserted outcome is factually wrong. Disagreeing with the market price or wishing for a different outcome is not grounds for a dispute — the dispute process is about factual accuracy.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Resolution" icon="gavel" href="/user-guide/markets/resolution">
+    Understand the full resolution process from assertion to payout.
+  </Card>
+  <Card title="Is My Money Safe?" icon="shield-halved" href="/user-guide/faq/is-my-money-safe">
+    Learn about the security model that protects your funds.
+  </Card>
+</CardGroup>

@@ -1,0 +1,138 @@
+---
+title: Sell Tokens (Withdraw)
+description: "Sell outcome tokens to withdraw base tokens from a prediction market"
+---
+
+```
+POST /api/v1/market/place-order
+```
+
+**Auth required:** Yes
+
+Sells outcome tokens back to the APMM pool to receive base tokens (e.g., USDC). Uses the same endpoint as buying but with `side: 2`.
+
+<Info>
+This endpoint uses `side: 2` for selling. For buying, see [Buy Tokens (Deposit)](/api-reference/trading/deposit).
+</Info>
+
+## Request Body
+
+<ParamField body="marketAddress" type="string" required>
+  Prediction market contract address.
+</ParamField>
+
+<ParamField body="optionAddress" type="string" required>
+  Option token to sell.
+</ParamField>
+
+<ParamField body="side" type="number" required>
+  Must be `2` (sell/withdraw).
+</ParamField>
+
+<ParamField body="price" type="string" required>
+  Price per token in base token units.
+</ParamField>
+
+<ParamField body="amount" type="string" required>
+  Amount of option tokens to sell.
+</ParamField>
+
+<ParamField body="minReceiveAmount" type="string" required>
+  Minimum base tokens to receive. Slippage protection — transaction reverts if actual output is below this.
+</ParamField>
+
+<ParamField body="deadline" type="string" required>
+  Unix timestamp. Transaction reverts if not executed before this time.
+</ParamField>
+
+<ParamField body="userOperation" type="object" required>
+  Signed ERC-4337 UserOperation. See [Buy Tokens](/api-reference/trading/deposit) for full field documentation.
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/market/place-order" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketAddress": "0x1234...abcd",
+    "optionAddress": "0xaaaa...1111",
+    "side": 2,
+    "price": "700000",
+    "amount": "15000000",
+    "minReceiveAmount": "10000000",
+    "deadline": "1740000000",
+    "userOperation": {
+      "sender": "0x...",
+      "nonce": "0x...",
+      "initCode": "0x",
+      "callData": "0x...",
+      "callGasLimit": "0x...",
+      "verificationGasLimit": "0x...",
+      "preVerificationGas": "0x...",
+      "maxFeePerGas": "0x...",
+      "maxPriorityFeePerGas": "0x...",
+      "paymasterAndData": "0x...",
+      "signature": "0x..."
+    }
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch('https://api-staging.promethex.market/api/v1/market/place-order', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${privyJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    marketAddress: '0x1234...abcd',
+    optionAddress: '0xaaaa...1111',
+    side: 2,              // sell
+    price: '700000',
+    amount: '15000000',
+    minReceiveAmount: '10000000',
+    deadline: String(Math.floor(Date.now() / 1000) + 300),
+    userOperation: signedUserOp,
+  }),
+});
+const { data } = await res.json();
+console.log('Sell order submitted:', data.opHash);
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "opHash": "0xabcdef...",
+    "orderUuid": "order-789-012"
+  }
+}
+```
+
+<ResponseField name="opHash" type="string">
+  UserOperation hash for tracking the transaction.
+</ResponseField>
+
+<ResponseField name="orderUuid" type="string">
+  Internal order identifier.
+</ResponseField>
+
+## Notes
+
+- You can only sell tokens you hold. The amount cannot exceed your position.
+- Selling removes tokens from the APMM pool and returns base tokens.
+- Price impact depends on pool liquidity — larger sells relative to pool size will have higher slippage.
+- Set `minReceiveAmount` appropriately to avoid unfavorable fills.
+- After confirmation, an SSE event `user:position_changed` is emitted.
+
+<Warning>
+Selling tokens in a market that is in `settling` or `ended` status is not allowed. Use [Claim](/api-reference/trading/claim) instead to redeem winning tokens after settlement.
+</Warning>

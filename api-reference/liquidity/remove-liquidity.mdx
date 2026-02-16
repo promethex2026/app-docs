@@ -1,0 +1,110 @@
+---
+title: Remove Liquidity
+description: "Withdraw liquidity from a prediction market's APMM pool"
+---
+
+```
+POST /api/v1/market/remove-liquidity
+```
+
+**Auth required:** Yes
+
+Removes liquidity from a prediction market's APMM pool by burning LP tokens and receiving base tokens in return. The returned amount depends on the current pool composition.
+
+## Request Body
+
+<ParamField body="marketAddress" type="string" required>
+  Prediction market contract address.
+</ParamField>
+
+<ParamField body="lpAmount" type="string" required>
+  Amount of LP tokens to burn.
+</ParamField>
+
+<ParamField body="minReceiveAmount" type="string" required>
+  Minimum base tokens to receive. Slippage protection — transaction reverts if the actual output is below this value.
+</ParamField>
+
+<ParamField body="deadline" type="string" required>
+  Unix timestamp. Transaction reverts if not executed before this time.
+</ParamField>
+
+<ParamField body="userOperation" type="object" required>
+  Signed ERC-4337 UserOperation. See [Buy Tokens](/api-reference/trading/deposit) for full UserOperation field documentation.
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/market/remove-liquidity" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketAddress": "0x1234...abcd",
+    "lpAmount": "25000000",
+    "minReceiveAmount": "24000000",
+    "deadline": "1740000000",
+    "userOperation": {
+      "sender": "0x...",
+      "nonce": "0x...",
+      "initCode": "0x",
+      "callData": "0x...",
+      "callGasLimit": "0x...",
+      "verificationGasLimit": "0x...",
+      "preVerificationGas": "0x...",
+      "maxFeePerGas": "0x...",
+      "maxPriorityFeePerGas": "0x...",
+      "paymasterAndData": "0x...",
+      "signature": "0x..."
+    }
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch('https://api-staging.promethex.market/api/v1/market/remove-liquidity', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${privyJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    marketAddress: '0x1234...abcd',
+    lpAmount: '25000000',
+    minReceiveAmount: '24000000',
+    deadline: String(Math.floor(Date.now() / 1000) + 300),
+    userOperation: signedUserOp,
+  }),
+});
+const { data } = await res.json();
+console.log('Remove liquidity tx:', data.opHash);
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "opHash": "0xRemoveLiqOpHash..."
+  }
+}
+```
+
+<ResponseField name="opHash" type="string">
+  UserOperation hash for the liquidity withdrawal transaction.
+</ResponseField>
+
+## Notes
+
+- The amount of base tokens received depends on the current pool state and may differ from the original deposit due to trading activity and impermanent loss.
+- You can remove partial or full liquidity at any time while the market is `running`.
+- After market settlement, any remaining LP positions are automatically redeemable.
+- Set `minReceiveAmount` to protect against unexpected pool ratio changes.
+
+<Warning>
+Removing a large percentage of pool liquidity may significantly impact market depth and increase slippage for traders. Consider the impact on the market before large withdrawals.
+</Warning>

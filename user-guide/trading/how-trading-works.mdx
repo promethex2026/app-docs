@@ -1,0 +1,141 @@
+---
+title: How Trading Works
+description: "Understand share pricing, buying, selling, and payouts on PrometheX."
+---
+
+## Shares, Not Bets
+
+On PrometheX, you don't place "bets" — you **buy and sell shares** that represent outcomes. This is an important distinction because it means you can trade in and out of positions anytime, just like stocks.
+
+Every market has a question (e.g., "Will the Fed cut rates in July 2026?") and two or more possible outcomes. Each outcome has its own shares that you can buy and sell.
+
+## How Share Prices Work
+
+Every share on PrometheX is priced between **$0.00** and **$1.00 USDC**.
+
+Here's the key rule:
+
+<Note>
+**Yes shares + No shares always equal $1.00.** If Yes is $0.72, then No is $0.28. Always.
+</Note>
+
+The price of a share reflects the crowd's view on the probability of that outcome:
+
+| Yes price | No price | What the market thinks |
+|-----------|----------|----------------------|
+| $0.80 | $0.20 | 80% chance Yes happens |
+| $0.50 | $0.50 | Coin flip — market is undecided |
+| $0.15 | $0.85 | Only 15% chance Yes happens |
+
+### Why Prices Move
+
+Prices move based on supply and demand:
+- **More people buy Yes** → Yes price goes up, No price goes down
+- **More people buy No** → No price goes up, Yes price goes down
+
+This is handled automatically by the **APMM** (Automated Prediction Market Maker) — a smart contract that acts as a trading pool. Think of it as a robot that always stands ready to buy or sell shares from you. It adjusts prices based on how much buying and selling is happening on each side.
+
+<Tip>
+You never need to wait for another person to take the other side of your trade. The APMM pool always provides liquidity, so you can trade instantly at any time.
+</Tip>
+
+## Buying Shares
+
+When you buy shares, here's what happens:
+
+<Steps>
+  <Step title="You spend USDC">
+    You enter how much USDC you want to spend (e.g., $10).
+  </Step>
+  <Step title="The APMM calculates your shares">
+    Based on the current price and pool state, the APMM figures out how many shares you receive. If Yes shares cost $0.60 each, $10 gets you roughly 16.6 shares (minus a small fee).
+  </Step>
+  <Step title="Shares go to your account">
+    The shares appear in your portfolio immediately. You now own a position in that market.
+  </Step>
+</Steps>
+
+<Info>
+**Slippage** is the difference between the price you expect and the price you actually get. Larger trades move the price more, which means more slippage. For most normal-sized trades, slippage is minimal.
+</Info>
+
+## Selling Shares
+
+You can sell your shares at any time before the market resolves:
+
+<Steps>
+  <Step title="Go to the market">
+    Open the market where you hold shares.
+  </Step>
+  <Step title="Select Sell">
+    Choose how many shares you want to sell.
+  </Step>
+  <Step title="Receive USDC">
+    The APMM buys your shares back at the current market price. USDC is returned to your account instantly.
+  </Step>
+</Steps>
+
+If the price has gone up since you bought, you make a profit. If it's gone down, you take a loss. Either way, you don't have to wait for the market to end — you can exit whenever you want.
+
+## When a Market Resolves
+
+When the real-world event happens (or doesn't), the market **resolves** — one outcome is declared the winner:
+
+| What you hold | Outcome | Payout per share |
+|---------------|---------|-----------------|
+| **Winning** shares | Your side wins | **$1.00 USDC** |
+| **Losing** shares | The other side wins | **$0.00** |
+
+After resolution, just tap **Claim** on the market page to collect your winnings. The USDC goes directly to your smart account.
+
+<Tip>
+**The profit math is simple:** If you bought Yes shares at $0.35 and Yes wins, you get $1.00 per share. That's a $0.65 profit per share — nearly a 186% return on what you paid.
+</Tip>
+
+## A Complete Example
+
+Let's walk through a full trade:
+
+<Steps>
+  <Step title="You see a market">
+    "Will the Lakers win the NBA championship?" — Yes is priced at $0.25, No at $0.75.
+  </Step>
+  <Step title="You buy Yes shares">
+    You think the Lakers have a better shot than 25%, so you spend $20 USDC and receive about 80 Yes shares (at $0.25 each).
+  </Step>
+  <Step title="The price moves">
+    Other people start buying Yes too. The price rises to $0.40. Your 80 shares are now worth $32 — a $12 unrealized profit.
+  </Step>
+  <Step title="You decide">
+    **Option A:** Sell now at $0.40 for a $12 profit.  
+    **Option B:** Hold and wait. If the Lakers win, your 80 shares pay out $80 (a $60 profit). If they lose, you get $0.
+  </Step>
+</Steps>
+
+## Key Things to Remember
+
+<AccordionGroup>
+  <Accordion title="You can only lose what you put in">
+    Your maximum loss is the amount of USDC you spent. You can never owe more than your initial trade.
+  </Accordion>
+  <Accordion title="You can sell anytime">
+    Don't want to wait for the market to end? Sell your shares back at the current price whenever you like.
+  </Accordion>
+  <Accordion title="Prices reflect crowd wisdom">
+    When lots of smart people trade on a market, the price often becomes a remarkably good estimate of the true probability. This is called the "wisdom of crowds."
+  </Accordion>
+  <Accordion title="No gas fees">
+    Every trade on PrometheX is gasless. The platform sponsors all blockchain transaction costs through **account abstraction** (a technology that lets the platform pay fees on your behalf).
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Fees" icon="receipt" href="/user-guide/trading/fees">
+    Understand what fees apply and how they work.
+  </Card>
+  <Card title="Providing Liquidity" icon="droplet" href="/user-guide/trading/providing-liquidity">
+    Learn how to earn fees by providing liquidity to markets.
+  </Card>
+</CardGroup>

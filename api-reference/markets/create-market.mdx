@@ -1,0 +1,172 @@
+---
+title: Create Market
+description: "Create a new prediction market (admin-only)"
+---
+
+```
+POST /api/v1/market/create-market
+```
+
+**Auth required:** Yes (Admin)
+
+Creates a new prediction market on-chain. This endpoint is restricted to admin accounts. It deploys a new market contract via the factory, initializes the APMM pool, and creates option tokens.
+
+<Warning>
+This is an **admin-only** endpoint. Regular user accounts will receive a `403` error.
+</Warning>
+
+## Request Body
+
+<ParamField body="title" type="string" required>
+  Market question (e.g., "Will BTC exceed $100k by March 2026?").
+</ParamField>
+
+<ParamField body="description" type="string" required>
+  Detailed description and resolution criteria.
+</ParamField>
+
+<ParamField body="rules" type="string" required>
+  Resolution rules — what data source is used and how the market resolves.
+</ParamField>
+
+<ParamField body="options" type="array" required>
+  Array of option labels (minimum 2). Each option becomes a tradeable token.
+  <Expandable title="Option object">
+    <ParamField body="title" type="string" required>
+      Option label (e.g., "Yes", "No").
+    </ParamField>
+    <ParamField body="imageUrl" type="string">
+      Optional icon for the option.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="categoryId" type="string" required>
+  Category to place the market in.
+</ParamField>
+
+<ParamField body="tags" type="string[]">
+  Tags for discoverability.
+</ParamField>
+
+<ParamField body="endTime" type="string" required>
+  ISO 8601 timestamp for when the market stops accepting trades.
+</ParamField>
+
+<ParamField body="baseTokenAddress" type="string" required>
+  Collateral token address (e.g., USDC).
+</ParamField>
+
+<ParamField body="initialLiquidity" type="string" required>
+  Initial liquidity to seed the APMM pool (in base token units).
+</ParamField>
+
+<ParamField body="imageUrl" type="string">
+  Market cover image URL.
+</ParamField>
+
+<ParamField body="userOperation" type="object" required>
+  Signed ERC-4337 UserOperation for the on-chain deployment transaction.
+</ParamField>
+
+## Example Request
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/market/create-market" \
+  -H "Authorization: Bearer $ADMIN_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Will ETH reach $5000 by Q2 2026?",
+    "description": "Resolves Yes if ETH/USD exceeds $5000...",
+    "rules": "Resolution source: CoinGecko ETH/USD price...",
+    "options": [
+      { "title": "Yes" },
+      { "title": "No" }
+    ],
+    "categoryId": "1",
+    "tags": ["crypto", "ethereum"],
+    "endTime": "2026-06-30T00:00:00Z",
+    "baseTokenAddress": "0xUSDC...",
+    "initialLiquidity": "50000000000",
+    "userOperation": { ... }
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch('https://api-staging.promethex.market/api/v1/market/create-market', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${adminJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    title: 'Will ETH reach $5000 by Q2 2026?',
+    description: 'Resolves Yes if ETH/USD exceeds $5000...',
+    rules: 'Resolution source: CoinGecko ETH/USD price...',
+    options: [{ title: 'Yes' }, { title: 'No' }],
+    categoryId: '1',
+    tags: ['crypto', 'ethereum'],
+    endTime: '2026-06-30T00:00:00Z',
+    baseTokenAddress: '0xUSDC...',
+    initialLiquidity: '50000000000',
+    userOperation: signedUserOp,
+  }),
+});
+const { data } = await res.json();
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "marketAddress": "0xNewMarket...1234",
+    "opHash": "0xabcdef...",
+    "options": [
+      {
+        "optionAddress": "0xOption1...aaaa",
+        "title": "Yes"
+      },
+      {
+        "optionAddress": "0xOption2...bbbb",
+        "title": "No"
+      }
+    ]
+  }
+}
+```
+
+<ResponseField name="marketAddress" type="string">
+  Newly deployed market contract address.
+</ResponseField>
+
+<ResponseField name="opHash" type="string">
+  UserOperation hash to track the deployment transaction.
+</ResponseField>
+
+<ResponseField name="options" type="array">
+  Created option tokens with their on-chain addresses.
+</ResponseField>
+
+## Market Creation Flow
+
+```
+Admin                    PrometheX API             Blockchain
+  │                          │                         │
+  ├── POST /create-market ─► │                         │
+  │                          ├── Submit UserOp ──────► │
+  │                          │                         ├── Deploy market contract
+  │                          │                         ├── Create option tokens
+  │                          │                         ├── Initialize APMM pool
+  │                          │  ◄── Tx confirmed ──── │
+  │  ◄── { marketAddress } ─ │                         │
+```
+
+<Info>
+After creation, the market is in `running` status. It will appear in the public market list immediately after the on-chain transaction confirms.
+</Info>

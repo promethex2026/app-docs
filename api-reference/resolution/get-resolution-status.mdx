@@ -1,0 +1,141 @@
+---
+title: Get Resolution Status
+description: "Check the resolution status of a prediction market"
+---
+
+```
+GET /api/v1/market/get-resolution-status
+```
+
+**Auth required:** No
+
+Returns the current resolution status of a market, including which option won, the resolution source, and timestamps.
+
+## Query Parameters
+
+<ParamField query="marketAddress" type="string" required>
+  Market contract address.
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/market/get-resolution-status?marketAddress=0x1234...abcd"
+```
+
+```javascript JavaScript
+const res = await fetch(
+  'https://api-staging.promethex.market/api/v1/market/get-resolution-status?marketAddress=0x1234...abcd'
+);
+const { data } = await res.json();
+
+if (data.status === 'ended') {
+  console.log(`Winner: ${data.winningOption.title}`);
+  console.log(`Source: ${data.resolutionSource}`);
+}
+```
+
+```python Python
+import requests
+
+resp = requests.get(
+    'https://api-staging.promethex.market/api/v1/market/get-resolution-status',
+    params={'marketAddress': '0x1234...abcd'},
+)
+data = resp.json()['data']
+print(f"Status: {data['status']}")
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "marketAddress": "0x1234...abcd",
+    "status": "ended",
+    "winningOption": {
+      "optionAddress": "0xaaaa...1111",
+      "title": "Yes"
+    },
+    "resolutionSource": "https://coingecko.com/btc-usd",
+    "resolutionNote": "BTC/USD exceeded $100k on March 15, 2026",
+    "settledAt": "2026-03-31T12:00:00Z",
+    "settledBy": {
+      "uid": "admin-001",
+      "name": "PrometheX Resolver"
+    },
+    "claimable": true,
+    "totalClaimableAmount": "52340000000",
+    "totalClaimedAmount": "28000000000"
+  }
+}
+```
+
+<ResponseField name="marketAddress" type="string">
+  Market contract address.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  `running` (not yet resolved), `settling` (resolution in progress), or `ended` (fully resolved).
+</ResponseField>
+
+<ResponseField name="winningOption" type="object">
+  The option that won. `null` if market is not yet settled.
+  <Expandable title="Winning option">
+    <ResponseField name="optionAddress" type="string">
+      Winning option token address.
+    </ResponseField>
+    <ResponseField name="title" type="string">
+      Winning option label.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="resolutionSource" type="string">
+  Data source used for resolution.
+</ResponseField>
+
+<ResponseField name="resolutionNote" type="string">
+  Resolver's notes on the outcome.
+</ResponseField>
+
+<ResponseField name="settledAt" type="string">
+  ISO 8601 timestamp of settlement.
+</ResponseField>
+
+<ResponseField name="settledBy" type="object">
+  Resolver account info.
+  <Expandable title="Resolver">
+    <ResponseField name="uid" type="string">
+      Resolver's user ID.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Resolver's display name.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="claimable" type="boolean">
+  Whether winning tokens can currently be claimed.
+</ResponseField>
+
+<ResponseField name="totalClaimableAmount" type="string">
+  Total base tokens available for claims.
+</ResponseField>
+
+<ResponseField name="totalClaimedAmount" type="string">
+  Amount already claimed by winners.
+</ResponseField>
+
+## Status Values
+
+| Status | Description | Trading | Claiming |
+|--------|-------------|:-------:|:--------:|
+| `running` | Active market | Yes | No |
+| `settling` | Resolution tx submitted, awaiting confirmation | No | No |
+| `ended` | Fully resolved | No | Yes |

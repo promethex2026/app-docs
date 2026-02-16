@@ -1,58 +1,142 @@
 ---
 title: Contract Addresses
-description: "Deployed contract addresses on Arbitrum"
+description: "Deployed and external contract addresses across Arbitrum networks"
 ---
+
+<Info>
+All PrometheX core contracts are currently deployed on **Arbitrum Sepolia** (testnet). Mainnet deployment on **Arbitrum One** is planned after staging validation and audit completion.
+</Info>
 
 ## Arbitrum Sepolia (Testnet)
 
-<Warning>
-Contracts are being upgraded to support the Conditional Token Framework (CTF). Addresses will be updated after the CTF migration is complete (target: end of February 2026).
-</Warning>
+### Core Contracts
 
-| Contract | Address | Status |
-|----------|---------|--------|
-| PredictionFactory (Proxy) | Deploying with CTF upgrade | Pending |
-| Prediction (Implementation) | — | Pending |
-| ConditionalTokens (CTF) | — | Pending |
-| MultisigResolution | — | Sprint 1 |
-| Test USDC | `0x934E616cA9538397E3f9a12895C40ea2E8C45E48` | Active |
-| MockOptimisticOracleV3 | — | Pending |
+| Contract | Address | Type | Status |
+|----------|---------|------|--------|
+| PredictionFactory (Proxy) | [`0x2c3E6717C1CC3787dBf420985188e2562F1aE62B`](https://sepolia.arbiscan.io/address/0x2c3E6717C1CC3787dBf420985188e2562F1aE62B) | `TransparentUpgradeableProxy` | Active |
+| Prediction (Implementation) | Queried via proxy | EIP-1167 clone source | Active |
+| Option (Implementation) | Queried via proxy | EIP-1167 clone source | Active |
 
-**Network details:**
+### Resolution Modules
+
+| Module | Address | Status |
+|--------|---------|--------|
+| MockOptimisticOracleV3 | [`0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6`](https://sepolia.arbiscan.io/address/0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6) | Active |
+| ConditionalTokens (CTF) | — | Pending ([CTF Migration](/contracts/ctf-migration)) |
+| MultisigResolution | — | In Development |
+
+### Token Contracts
+
+| Token | Address | Decimals | Notes |
+|-------|---------|:--------:|-------|
+| tUSDC (Test USDC) | [`0x934E616cA9538397E3f9a12895C40ea2E8C45E48`](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48) | 6 | Faucet-mintable test token |
+| tUSDC (Admin) | [`0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490`](https://sepolia.arbiscan.io/address/0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490) | 6 | Admin-deployed test token |
+
+### Infrastructure (External)
+
+| Contract | Address | Purpose |
+|----------|---------|---------|
+| ERC-4337 EntryPoint | [`0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789`](https://sepolia.arbiscan.io/address/0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789) | Account abstraction entry point (v0.6) |
+| Multicall3 | [`0xcA11bde05977b3631167028862bE2a173976CA11`](https://sepolia.arbiscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11) | Batch contract reads |
+
+### Network Details
 
 | Property | Value |
 |----------|-------|
 | Chain | Arbitrum Sepolia |
 | Chain ID | `421614` |
 | RPC | `https://sepolia-rollup.arbitrum.io/rpc` |
-| Explorer | [sepolia.arbiscan.io](https://sepolia.arbiscan.io/) |
+| Block Explorer | [sepolia.arbiscan.io](https://sepolia.arbiscan.io/) |
+| Native Token | ETH (Sepolia) |
+
+<Accordion title="Add Arbitrum Sepolia to MetaMask">
+```json
+{
+  "chainId": "0x66EEE",
+  "chainName": "Arbitrum Sepolia",
+  "rpcUrls": ["https://sepolia-rollup.arbitrum.io/rpc"],
+  "nativeCurrency": { "name": "ETH", "symbol": "ETH", "decimals": 18 },
+  "blockExplorerUrls": ["https://sepolia.arbiscan.io"]
+}
+```
+</Accordion>
+
+---
 
 ## Arbitrum One (Mainnet)
 
-<Info>
-Mainnet deployment is planned for after the staging validation is complete.
-</Info>
+<Warning>
+Mainnet deployment has **not yet occurred**. The addresses below are planned or external references only.
+</Warning>
+
+### PrometheX Contracts (Planned)
 
 | Contract | Address | Status |
 |----------|---------|--------|
-| PredictionFactory | — | Not deployed |
-| ConditionalTokens | — | Not deployed |
-| UMA OptimisticOracleV3 | Existing UMA deployment | — |
-| USDC | `0xaf88d065e77c8cC2239327C5EDb3A432268e5831` | Native USDC |
+| PredictionFactory (Proxy) | — | Not deployed |
+| ConditionalTokens (CTF) | — | Not deployed |
+| MultisigResolution | — | Not deployed |
 
-**Network details:**
+### External Contracts (Live)
+
+| Contract | Address | Purpose |
+|----------|---------|---------|
+| USDC (Native) | [`0xaf88d065e77c8cC2239327C5EDb3A432268e5831`](https://arbiscan.io/address/0xaf88d065e77c8cC2239327C5EDb3A432268e5831) | Base token for production markets |
+| UMA OptimisticOracleV3 | [`0xa6147867264374F324524E30C02C331cF28aa879`](https://arbiscan.io/address/0xa6147867264374F324524E30C02C331cF28aa879) | Production dispute resolution |
+| ERC-4337 EntryPoint | [`0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789`](https://arbiscan.io/address/0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789) | Account abstraction entry point (v0.6) |
+| Multicall3 | [`0xcA11bde05977b3631167028862bE2a173976CA11`](https://arbiscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11) | Batch contract reads |
+| Gnosis CTF | [Gnosis Docs](https://docs.gnosis.io/conditionaltokens/) | ERC-1155 conditional tokens |
+
+### Network Details
 
 | Property | Value |
 |----------|-------|
 | Chain | Arbitrum One |
 | Chain ID | `42161` |
-| Explorer | [arbiscan.io](https://arbiscan.io/) |
+| RPC | `https://arb1.arbitrum.io/rpc` |
+| Block Explorer | [arbiscan.io](https://arbiscan.io/) |
+| Native Token | ETH |
 
-## Key External Contracts
+---
 
-| Contract | Network | Purpose |
-|----------|---------|---------|
-| Gnosis CTF | Arbitrum | ERC1155 conditional tokens |
-| UMA OptimisticOracleV3 | Arbitrum | Dispute resolution oracle |
-| Alchemy EntryPoint | Arbitrum | ERC-4337 bundler entry point |
-| USDC | Arbitrum | Base trading token |
+## Using Addresses in Code
+
+<CodeGroup>
+
+```typescript viem
+import { getAddress } from "viem";
+
+export const ADDRESSES = {
+  arbitrumSepolia: {
+    predictionFactory: getAddress("0x2c3E6717C1CC3787dBf420985188e2562F1aE62B"),
+    oracleV3: getAddress("0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6"),
+    tUSDC: getAddress("0x934E616cA9538397E3f9a12895C40ea2E8C45E48"),
+    entryPoint: getAddress("0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"),
+  },
+  arbitrumOne: {
+    usdc: getAddress("0xaf88d065e77c8cC2239327C5EDb3A432268e5831"),
+    oracleV3: getAddress("0xa6147867264374F324524E30C02C331cF28aa879"),
+    entryPoint: getAddress("0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"),
+  },
+} as const;
+```
+
+```typescript ethers.js
+import { ethers } from "ethers";
+
+export const ADDRESSES = {
+  arbitrumSepolia: {
+    predictionFactory: ethers.getAddress("0x2c3E6717C1CC3787dBf420985188e2562F1aE62B"),
+    oracleV3: ethers.getAddress("0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6"),
+    tUSDC: ethers.getAddress("0x934E616cA9538397E3f9a12895C40ea2E8C45E48"),
+    entryPoint: ethers.getAddress("0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"),
+  },
+  arbitrumOne: {
+    usdc: ethers.getAddress("0xaf88d065e77c8cC2239327C5EDb3A432268e5831"),
+    oracleV3: ethers.getAddress("0xa6147867264374F324524E30C02C331cF28aa879"),
+    entryPoint: ethers.getAddress("0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"),
+  },
+};
+```
+
+</CodeGroup>

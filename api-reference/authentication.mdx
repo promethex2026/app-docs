@@ -1,74 +1,126 @@
 ---
 title: Authentication
-description: "Privy JWT authentication for the PrometheX API"
+description: "Privy JWT authentication flow for the PrometheX API"
 ---
 
 ## Overview
 
-PrometheX uses **Privy** for authentication. After a user logs in via the Privy SDK, your app receives a JWT token that authenticates API requests.
+PrometheX uses **[Privy](https://privy.io)** for authentication. Users log in via email, social accounts, or crypto wallets. Privy issues a JWT that authenticates all subsequent API requests.
 
 ## Auth Flow
 
 ```
-1. User logs in via Privy SDK (email, social, or wallet)
-2. Privy issues a JWT (ES256 signed)
-3. Your app sends the JWT in the Authorization header
-4. PrometheX backend validates: aud, iss, exp, signature
-5. User DID extracted → mapped to PrometheX UID
+User                   Privy SDK              PrometheX API
+ │                        │                        │
+ ├── Login (email/        │                        │
+ │   social/wallet) ────► │                        │
+ │                        │                        │
+ │  ◄── JWT (ES256) ──── │                        │
+ │                        │                        │
+ ├── POST /user/login ──────────────────────────► │
+ │   Authorization: Bearer <JWT>                   │
+ │                        │                        │
+ │  ◄── { uid, isNewUser } ────────────────────── │
 ```
+
+<Steps>
+  <Step title="User authenticates via Privy SDK">
+    Email, social login, or wallet connection. Privy handles MFA and account linking.
+  </Step>
+  <Step title="Privy issues a JWT">
+    Signed with ES256. Contains the user's Privy DID as the `sub` claim.
+  </Step>
+  <Step title="Send JWT with API requests">
+    Include the token in the `Authorization: Bearer` header.
+  </Step>
+  <Step title="PrometheX validates the token">
+    Checks audience, issuer, expiry, and signature against Privy's public keys.
+  </Step>
+  <Step title="Privy DID maps to PrometheX UID">
+    The `sub` claim (Privy DID) is mapped to an internal PrometheX user ID.
+  </Step>
+</Steps>
+
+## Token Format
+
+The Privy JWT is a standard JWT with these claims:
+
+| Claim | Value | Description |
+|-------|-------|-------------|
+| `alg` | `ES256` | Signing algorithm (ECDSA P-256) |
+| `iss` | `privy.io` | Issuer |
+| `aud` | Your Privy App ID | Audience — must match your app |
+| `sub` | `did:privy:...` | User's Privy decentralized identifier |
+| `exp` | Unix timestamp | Token expiration |
+| `iat` | Unix timestamp | Token issued at |
 
 ## Using the Token
 
-Include the Privy JWT in the `Authorization` header:
+Include the JWT in every authenticated request:
 
-```bash
-curl -X POST "https://api-staging.promethex.market/bayes/user/login" \
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/market/place-order" \
   -H "Authorization: Bearer eyJhbGciOiJFUzI1NiIs..." \
   -H "Content-Type: application/json" \
-  -d '{"address": "0x..."}'
+  -d '{ ... }'
 ```
 
-## Token Validation
+```javascript JavaScript
+const response = await fetch('https://api-staging.promethex.market/api/v1/market/place-order', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${privyToken}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ ... }),
+});
+```
 
-The backend validates:
+```python Python
+import requests
 
-| Field | Expected Value |
-|-------|---------------|
-| `alg` | ES256 |
-| `iss` | privy.io |
-| `aud` | Your Privy App ID |
-| `exp` | Not expired |
-| `sub` | User's Privy DID |
+headers = {
+    'Authorization': f'Bearer {privy_token}',
+    'Content-Type': 'application/json',
+}
+response = requests.post(
+    'https://api-staging.promethex.market/api/v1/market/place-order',
+    headers=headers,
+    json={ ... },
+)
+```
 
-## Which Endpoints Need Auth?
-
-Endpoints are marked with auth requirements:
-
-| Auth Required | Examples |
-|:---:|---------|
-| **Yes** | `place-order`, `claim-result`, `login`, `set-avatar`, `follow-user` |
-| **No** | `get-markets`, `get-market-detail`, `get-hot-markets`, `search` |
-
-Read-only market data is public. Any action that modifies state (trading, profile updates, following) requires authentication.
+</CodeGroup>
 
 ## First-Time Login
 
-When a user authenticates for the first time, call the login endpoint to register them:
+When a user authenticates for the first time, register them with PrometheX:
 
-```bash
-POST /bayes/user/login
+```
+POST /api/v1/user/login
 ```
 
-```json Request
-{
-  "address": "0x...",          // Smart account address
-  "inviteByCode": "ABC123",   // Optional referral code
-  "userName": "alice",         // Optional display name
-  "avatarUrl": "https://..."  // Optional avatar
-}
-```
+<ParamField body="address" type="string" required>
+  User's smart account address (ERC-4337 account).
+</ParamField>
 
-```json Response
+<ParamField body="inviteByCode" type="string">
+  Referral code from another user.
+</ParamField>
+
+<ParamField body="userName" type="string">
+  Display name.
+</ParamField>
+
+<ParamField body="avatarUrl" type="string">
+  Avatar image URL.
+</ParamField>
+
+**Response:**
+
+```json
 {
   "code": 0,
   "data": {
@@ -78,4 +130,44 @@ POST /bayes/user/login
 }
 ```
 
-If `isNewUser` is `true`, the user was just created. Otherwise, they're an existing user logging in again.
+<ResponseField name="uid" type="string">
+  PrometheX internal user ID.
+</ResponseField>
+
+<ResponseField name="isNewUser" type="boolean">
+  `true` if the user was just created. `false` for returning users.
+</ResponseField>
+
+## Endpoint Auth Requirements
+
+### Public (no auth)
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/v1/market/get-markets` | List markets |
+| `GET /api/v1/market/get-market-detail` | Market detail |
+| `GET /api/v1/market/get-hot-markets` | Trending markets |
+| `GET /api/v1/market/get-price-history` | Price charts |
+| `GET /api/v1/market/get-market-trades` | Trade history |
+
+### Authenticated
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /api/v1/user/login` | Register / login |
+| `POST /api/v1/market/place-order` | Buy or sell tokens |
+| `POST /api/v1/market/claim-market-result` | Claim winnings |
+| `POST /api/v1/market/add-liquidity` | Add liquidity |
+| `POST /api/v1/market/remove-liquidity` | Remove liquidity |
+| `POST /api/v1/sse/connect` | SSE stream |
+| `POST /api/v1/user/set-avatar` | Update avatar |
+| `POST /api/v1/user/set-username` | Update username |
+| `POST /api/v1/market/follow-market` | Follow a market |
+
+<Info>
+Each endpoint's reference page indicates whether authentication is required.
+</Info>
+
+## Token Expiry & Refresh
+
+Privy JWTs have a short lifespan. The Privy SDK handles token refresh automatically. If you receive a `401` or error code `110303` (PRIVY), the token may be expired — refresh it via the Privy SDK and retry.

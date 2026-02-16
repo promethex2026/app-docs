@@ -1,0 +1,111 @@
+---
+title: Supported Chains
+description: "Blockchain networks supported by PrometheX"
+---
+
+## Current Support
+
+PrometheX smart contracts are deployed on **Arbitrum** — an Ethereum Layer 2 rollup that provides low gas costs, fast finality, and full EVM compatibility. All PrometheX contracts, trading, and settlement happen on-chain on Arbitrum.
+
+<CardGroup cols={2}>
+  <Card title="Arbitrum Sepolia" icon="flask-vial">
+    **Testnet — Live now.** Full platform deployment for development, testing, and partner onboarding. Uses test USDC (tUSDC) with no real value at stake.
+  </Card>
+  <Card title="Arbitrum One" icon="rocket">
+    **Mainnet — Planned Q2 2026.** Production deployment for live markets with real USDC. Launching after staging validation and audit completion.
+  </Card>
+</CardGroup>
+
+## Arbitrum Sepolia (Testnet)
+
+The staging environment is fully functional and mirrors the production architecture.
+
+| Property | Value |
+|----------|-------|
+| **Network** | Arbitrum Sepolia |
+| **Chain ID** | `421614` |
+| **Currency** | ETH (Sepolia) |
+| **Base Token** | Test USDC (tUSDC) — 6 decimals |
+| **RPC Endpoint** | `https://sepolia-rollup.arbitrum.io/rpc` |
+| **Block Explorer** | [sepolia.arbiscan.io](https://sepolia.arbiscan.io/) |
+| **Avg Block Time** | ~250ms |
+| **Finality** | ~15 minutes (L1 confirmation) |
+
+### Getting Testnet Tokens
+
+<Steps>
+  <Step title="Get Sepolia ETH">
+    Use the [Arbitrum Sepolia faucet](https://faucet.quicknode.com/arbitrum/sepolia) or bridge Sepolia ETH from L1. You'll need a small amount for direct contract interaction (not required for gasless API trading).
+  </Step>
+  <Step title="Get Test USDC">
+    Mint tUSDC from the test token contract at [`0x934E616cA9538397E3f9a12895C40ea2E8C45E48`](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48), or request tUSDC through the staging app faucet.
+  </Step>
+  <Step title="Start trading">
+    Connect to the [staging app](https://staging.promethex.market) and trade on test markets with zero gas fees.
+  </Step>
+</Steps>
+
+## Arbitrum One (Mainnet)
+
+| Property | Value |
+|----------|-------|
+| **Network** | Arbitrum One |
+| **Chain ID** | `42161` |
+| **Currency** | ETH |
+| **Base Token** | USDC ([`0xaf88d065e77c8cC2239327C5EDb3A432268e5831`](https://arbiscan.io/address/0xaf88d065e77c8cC2239327C5EDb3A432268e5831)) |
+| **Block Explorer** | [arbiscan.io](https://arbiscan.io/) |
+| **Avg Block Time** | ~250ms |
+| **Finality** | ~15 minutes (L1 confirmation) |
+| **Status** | Planned — Q2 2026 |
+
+<Info>
+Mainnet deployment is contingent on successful staging validation, completion of the CTF protocol upgrade, and smart contract audit. See the [Roadmap](/platform/roadmap) for details.
+</Info>
+
+## Why Arbitrum?
+
+| Factor | Benefit |
+|--------|---------|
+| **Low gas costs** | Trades cost fractions of a cent — critical for micro-markets and frequent trading |
+| **Fast finality** | Sub-second block times on L2, with L1 finality in ~15 minutes |
+| **EVM compatible** | Standard Solidity contracts, no custom VM or language |
+| **Ecosystem** | Large DeFi ecosystem including UMA Oracle, Alchemy AA, and native USDC |
+| **Security** | Inherits Ethereum L1 security through rollup proofs |
+| **Adoption** | Highest TVL among Ethereum L2s, strong developer community |
+
+## Multi-Chain Roadmap
+
+PrometheX smart contracts are chain-agnostic — the factory-clone pattern and APMM engine work on any EVM chain. Multi-chain expansion is planned after Arbitrum mainnet launch.
+
+| Phase | Network | Timeline | Notes |
+|-------|---------|----------|-------|
+| **Current** | Arbitrum Sepolia | Live | Full staging environment |
+| **Next** | Arbitrum One | Q2 2026 | Mainnet launch |
+| **Future** | Base | H2 2026 | Coinbase ecosystem, high growth |
+| **Future** | Polygon | H2 2026 | Low cost, large user base |
+| **Evaluating** | Additional L2s | 2027+ | Based on partner demand |
+
+<Note>
+Multi-chain deployment is driven by partner demand. If your use case requires a specific chain, [contact us](mailto:team@promethex.market) to discuss priorities.
+</Note>
+
+## Adding a Custom Network
+
+For partners with specific chain requirements, PrometheX can deploy to any EVM-compatible network. The deployment process involves:
+
+1. **Contract deployment** — Deploy PredictionFactory and supporting contracts to the target chain
+2. **Oracle configuration** — Set up resolution module (UMA availability varies by chain; multisig works everywhere)
+3. **Base token whitelisting** — Configure the accepted stablecoin (USDC, USDT, etc.)
+4. **Infrastructure setup** — Configure Block Listener, RPC endpoints, and bundler for the target chain
+5. **Testing** — Full integration test on the target chain's testnet
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Staging Environment" icon="flask-vial" href="/platform/deployment/staging-environment">
+    Connect to the live testnet deployment.
+  </Card>
+  <Card title="Contract Addresses" icon="file-contract" href="/platform/deployment/contract-addresses">
+    All deployed contract addresses by network.
+  </Card>
+</CardGroup>

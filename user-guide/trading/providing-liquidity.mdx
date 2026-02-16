@@ -1,0 +1,122 @@
+---
+title: Providing Liquidity
+description: "Earn fees by adding funds to prediction market pools."
+---
+
+## What Is Liquidity?
+
+**Liquidity** is the pool of money that makes trading possible. When you buy or sell shares on PrometheX, you're trading against a pool — not against another person directly. That pool needs funds in it for trades to happen smoothly.
+
+When you **provide liquidity**, you're adding your USDC to this pool. In return, you earn a share of the trading fees that other traders pay.
+
+Think of it like owning a piece of a marketplace: every time someone buys or sells, you earn a small cut.
+
+## How It Works
+
+<Steps>
+  <Step title="Choose a market">
+    Browse markets and find one you'd like to provide liquidity to. Active markets with lots of trading generate more fees.
+  </Step>
+  <Step title="Add liquidity">
+    Enter the amount of USDC you want to add. The pool converts your USDC into a balanced set of shares across all outcomes.
+  </Step>
+  <Step title="Receive LP tokens">
+    You receive **LP tokens** (Liquidity Provider tokens) — these are like a receipt that represents your share of the pool. The more LP tokens you hold, the bigger your cut of the fees.
+  </Step>
+  <Step title="Earn fees">
+    Every time someone trades in that market, a small fee (typically 1%) is collected. That fee is distributed to all liquidity providers proportionally. Your earnings accumulate automatically.
+  </Step>
+  <Step title="Remove liquidity whenever you want">
+    When you're ready, you can remove your liquidity. You'll receive your original USDC plus any fees you've earned, minus any **impermanent loss** (more on that below).
+  </Step>
+</Steps>
+
+## What You Earn
+
+Your earnings come from **trading fees**. The default trading fee on PrometheX is **1%** of each trade, and all of it goes to liquidity providers.
+
+**Example:**
+- A market has $10,000 in total liquidity
+- You provided $1,000 (10% of the pool)
+- Someone makes a $500 trade → $5 fee collected
+- You earn $0.50 (10% of the $5 fee)
+
+<Tip>
+Markets with higher trading volume generate more fees. Look for popular, actively traded markets if you want to maximize your earnings.
+</Tip>
+
+## Understanding the Risks
+
+Providing liquidity isn't risk-free. Here's what you should know:
+
+### Impermanent Loss
+
+**Impermanent loss** happens when the price of shares in the pool moves significantly from when you added liquidity. In prediction markets, this typically means:
+
+- If one outcome becomes very likely (price moves toward $1.00), the pool ends up holding mostly the losing side's shares
+- When you remove liquidity, you might get back less USDC than you put in, because the pool's value has shifted
+
+<Warning>
+The more dramatically a market's prices move after you add liquidity, the larger the potential impermanent loss. If you provide liquidity to a market where one side goes from $0.50 to $0.95, you may lose more in impermanent loss than you earned in fees.
+</Warning>
+
+### When to Provide Liquidity
+
+<CardGroup cols={2}>
+  <Card title="Good Candidates" icon="circle-check">
+    - Markets with high trading activity
+    - Markets where prices are expected to stay relatively balanced
+    - Markets with a long time before resolution
+  </Card>
+  <Card title="Be Cautious With" icon="triangle-exclamation">
+    - Markets near resolution (prices moving sharply)
+    - Low-activity markets (few fees to earn)
+    - Markets where one side is already very high or very low
+  </Card>
+</CardGroup>
+
+## Adding Liquidity — Step by Step
+
+<Steps>
+  <Step title="Open the market">
+    Go to the market you want to provide liquidity to.
+  </Step>
+  <Step title="Find the Liquidity tab">
+    On the market detail page, look for the **Liquidity** or **Pool** section.
+  </Step>
+  <Step title="Enter your amount">
+    Type in how much USDC you'd like to add. The interface will show you how many LP tokens you'll receive.
+  </Step>
+  <Step title="Confirm">
+    Review the details and tap **Confirm**. Just like trading, there are no gas fees — PrometheX covers them.
+  </Step>
+</Steps>
+
+## Removing Liquidity
+
+<Steps>
+  <Step title="Go to the market">
+    Open the market where you have an LP position.
+  </Step>
+  <Step title="Select Remove Liquidity">
+    Choose how many LP tokens to redeem — all of them, or just a portion.
+  </Step>
+  <Step title="Receive your funds">
+    You'll receive USDC back, including your share of accumulated trading fees. The amount may be more or less than what you put in, depending on impermanent loss.
+  </Step>
+</Steps>
+
+<Info>
+After a market resolves, any remaining liquidity is automatically converted. You can withdraw your share at any time after resolution.
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Fees" icon="receipt" href="/user-guide/trading/fees">
+    Full breakdown of trading fees and how they work.
+  </Card>
+  <Card title="How Trading Works" icon="arrows-rotate" href="/user-guide/trading/how-trading-works">
+    Understand the fundamentals of buying and selling shares.
+  </Card>
+</CardGroup>

@@ -1,0 +1,133 @@
+---
+title: Settle Market
+description: "Resolve a prediction market with the winning outcome"
+---
+
+```
+POST /api/v1/market/settle-market
+```
+
+**Auth required:** Yes (Admin / Resolver)
+
+Settles a prediction market by declaring the winning outcome. This triggers the on-chain resolution process, after which winning token holders can claim their rewards.
+
+<Warning>
+This is a privileged endpoint. Only authorized resolvers or admin accounts can settle markets.
+</Warning>
+
+## Request Body
+
+<ParamField body="marketAddress" type="string" required>
+  Market contract address to settle.
+</ParamField>
+
+<ParamField body="winningOptionAddress" type="string" required>
+  Address of the option token that won (the correct outcome).
+</ParamField>
+
+<ParamField body="resolutionSource" type="string">
+  URL or description of the data source used to determine the outcome.
+</ParamField>
+
+<ParamField body="resolutionNote" type="string">
+  Additional notes about why this outcome was chosen.
+</ParamField>
+
+<ParamField body="userOperation" type="object" required>
+  Signed ERC-4337 UserOperation for the on-chain settlement transaction.
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/market/settle-market" \
+  -H "Authorization: Bearer $ADMIN_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketAddress": "0x1234...abcd",
+    "winningOptionAddress": "0xaaaa...1111",
+    "resolutionSource": "https://coingecko.com/btc-usd",
+    "resolutionNote": "BTC/USD exceeded $100k on March 15, 2026",
+    "userOperation": {
+      "sender": "0x...",
+      "nonce": "0x...",
+      "callData": "0x...",
+      "callGasLimit": "0x...",
+      "verificationGasLimit": "0x...",
+      "preVerificationGas": "0x...",
+      "maxFeePerGas": "0x...",
+      "maxPriorityFeePerGas": "0x...",
+      "paymasterAndData": "0x...",
+      "signature": "0x..."
+    }
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch('https://api-staging.promethex.market/api/v1/market/settle-market', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${adminJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    marketAddress: '0x1234...abcd',
+    winningOptionAddress: '0xaaaa...1111',
+    resolutionSource: 'https://coingecko.com/btc-usd',
+    resolutionNote: 'BTC/USD exceeded $100k on March 15, 2026',
+    userOperation: signedUserOp,
+  }),
+});
+const { data } = await res.json();
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "opHash": "0xSettleOpHash...",
+    "status": "settling"
+  }
+}
+```
+
+<ResponseField name="opHash" type="string">
+  UserOperation hash for the settlement transaction.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Market status after settlement submission. Transitions from `running` → `settling` → `ended`.
+</ResponseField>
+
+## Settlement Flow
+
+```
+Resolver                 PrometheX API            Blockchain
+  │                          │                         │
+  ├── POST /settle-market ─► │                         │
+  │                          ├── Validate resolver     │
+  │                          ├── Submit UserOp ──────► │
+  │  ◄── { settling } ────── │                         │
+  │                          │                         ├── Execute settlement
+  │                          │                         ├── Mark winning option
+  │                          │  ◄── Tx confirmed ──── │
+  │                          ├── Update status: ended  │
+  │                          ├── Notify users (SSE) ─► │
+```
+
+## Market Status Transitions
+
+| From | To | Trigger |
+|------|----|---------|
+| `running` | `settling` | Settlement transaction submitted |
+| `settling` | `ended` | On-chain transaction confirmed |
+
+<Info>
+After settlement, winning token holders can [claim their rewards](/api-reference/trading/claim). Trading is disabled once a market enters `settling` status.
+</Info>

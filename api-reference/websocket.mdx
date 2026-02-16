@@ -1,0 +1,292 @@
+---
+title: Real-time Events (SSE)
+description: "Server-Sent Events for live market data, price updates, and user notifications"
+---
+
+## Overview
+
+PrometheX uses **Server-Sent Events (SSE)** for real-time data. Connect once and receive push updates for prices, trades, position changes, and notifications.
+
+<Info>
+SSE is a one-way channel (server → client). Use the REST API for sending data. SSE connections have a **10-minute timeout** — reconnect when the connection drops.
+</Info>
+
+## Connect
+
+```
+POST /api/v1/sse/connect
+```
+
+**Auth required:** Yes
+
+Opens an SSE stream. The first event contains your `connection_id`:
+
+```
+event: base:connected
+data: {"connection_id": "conn-abc-123"}
+```
+
+Save the `connection_id` — you'll need it to subscribe to market-specific topics.
+
+### Example
+
+<CodeGroup>
+
+```javascript JavaScript (EventSource)
+const eventSource = new EventSource('/api/v1/sse/connect', {
+  headers: { 'Authorization': `Bearer ${privyJwt}` }
+});
+
+eventSource.addEventListener('base:connected', (e) => {
+  const { connection_id } = JSON.parse(e.data);
+  console.log('Connected:', connection_id);
+  subscribeToMarkets(connection_id);
+});
+
+eventSource.addEventListener('market:price_change', (e) => {
+  const data = JSON.parse(e.data);
+  console.log('Price update:', data.market_address, data.option_address);
+});
+
+eventSource.addEventListener('user:position_changed', (e) => {
+  const data = JSON.parse(e.data);
+  console.log('Position changed:', data.market_address);
+});
+
+eventSource.onerror = () => {
+  console.log('Connection lost, reconnecting...');
+  // Implement reconnection logic
+};
+```
+
+```bash cURL
+curl -N -X POST "https://api-staging.promethex.market/api/v1/sse/connect" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Accept: text/event-stream"
+```
+
+```python Python
+import requests
+import json
+
+response = requests.post(
+    'https://api-staging.promethex.market/api/v1/sse/connect',
+    headers={
+        'Authorization': f'Bearer {privy_jwt}',
+        'Accept': 'text/event-stream',
+    },
+    stream=True,
+)
+
+for line in response.iter_lines():
+    if line:
+        decoded = line.decode('utf-8')
+        if decoded.startswith('data: '):
+            payload = json.loads(decoded[6:])
+            print('Event:', payload)
+```
+
+</CodeGroup>
+
+---
+
+## Subscribe to Markets
+
+```
+POST /api/v1/sse/subscribe
+```
+
+**Auth required:** Yes
+
+Subscribe to market-specific events (price changes, new trades, info updates).
+
+### Request Body
+
+<ParamField body="connection_id" type="string" required>
+  The `connection_id` received from the `base:connected` event.
+</ParamField>
+
+<ParamField body="topics" type="string[]" required>
+  Array of topic strings in the format `market:{marketAddress}`.
+</ParamField>
+
+### Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/sse/subscribe" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "connection_id": "conn-abc-123",
+    "topics": [
+      "market:0x1234...abcd",
+      "market:0x5678...efgh"
+    ]
+  }'
+```
+
+```javascript JavaScript
+async function subscribeToMarkets(connectionId) {
+  await fetch('https://api-staging.promethex.market/api/v1/sse/subscribe', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${privyJwt}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      connection_id: connectionId,
+      topics: [
+        'market:0x1234...abcd',
+        'market:0x5678...efgh',
+      ],
+    }),
+  });
+}
+```
+
+</CodeGroup>
+
+---
+
+## Unsubscribe
+
+```
+POST /api/v1/sse/unsubscribe
+```
+
+**Auth required:** Yes
+
+Remove subscriptions from specific market topics. Same request format as subscribe.
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/sse/unsubscribe" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "connection_id": "conn-abc-123",
+    "topics": ["market:0x1234...abcd"]
+  }'
+```
+
+```javascript JavaScript
+await fetch('https://api-staging.promethex.market/api/v1/sse/unsubscribe', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${privyJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    connection_id: connectionId,
+    topics: ['market:0x1234...abcd'],
+  }),
+});
+```
+
+</CodeGroup>
+
+---
+
+## Event Reference
+
+### Automatic Events
+
+These events are sent without subscribing — you receive them as soon as you connect.
+
+| Event | Payload | Trigger |
+|-------|---------|---------|
+| `base:connected` | `{ connection_id }` | Connection established |
+| `base:ping` | `{}` | Keepalive (every 30s) |
+| `user:position_changed` | `{ uid, market_address, option_address }` | Your trade was executed |
+| `user:asset_changed` | `{ uid, base_token_address }` | Your balance updated |
+| `user:new_notification` | `{ uid }` | New notification available |
+
+### Subscription Events
+
+These events require subscribing to specific market topics.
+
+| Event | Payload | Trigger |
+|-------|---------|---------|
+| `market:new_trades` | `{ market_address, option_address }` | New trade on the market |
+| `market:price_change` | `{ market_address, option_address }` | Price movement |
+| `market:info_update` | `{ market_address, option_address }` | Market metadata change |
+
+### Event Payload Examples
+
+<Tabs>
+  <Tab title="base:connected">
+```json
+{
+  "connection_id": "conn-abc-123"
+}
+```
+  </Tab>
+  <Tab title="market:price_change">
+```json
+{
+  "market_address": "0x1234...abcd",
+  "option_address": "0xaaaa...1111"
+}
+```
+  </Tab>
+  <Tab title="user:position_changed">
+```json
+{
+  "uid": "12345",
+  "market_address": "0x1234...abcd",
+  "option_address": "0xaaaa...1111"
+}
+```
+  </Tab>
+  <Tab title="user:asset_changed">
+```json
+{
+  "uid": "12345",
+  "base_token_address": "0xUSDC..."
+}
+```
+  </Tab>
+</Tabs>
+
+---
+
+## Connection Management
+
+### Reconnection Strategy
+
+Implement exponential backoff when reconnecting:
+
+```javascript
+let retryDelay = 1000; // Start at 1s
+
+function connect() {
+  const es = new EventSource('/api/v1/sse/connect', {
+    headers: { 'Authorization': `Bearer ${privyJwt}` }
+  });
+
+  es.addEventListener('base:connected', () => {
+    retryDelay = 1000; // Reset on successful connect
+  });
+
+  es.onerror = () => {
+    es.close();
+    setTimeout(() => {
+      retryDelay = Math.min(retryDelay * 2, 30000); // Max 30s
+      connect();
+    }, retryDelay);
+  };
+}
+```
+
+### Best Practices
+
+| Practice | Description |
+|----------|-------------|
+| **Reconnect on drop** | SSE connections timeout after 10 minutes |
+| **Monitor `base:ping`** | If no ping for 60s, consider reconnecting |
+| **Resubscribe** | After reconnecting, resubscribe to market topics |
+| **One connection** | Use a single SSE connection per client session |
+| **Parse carefully** | Always validate event data before using it |

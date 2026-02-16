@@ -1,0 +1,109 @@
+---
+title: How Markets Work
+description: "The lifecycle of a prediction market, from creation to payout."
+---
+
+## Every Market Tells a Story
+
+A prediction market on PrometheX is built around a **question** about a real-world event — something like "Will Bitcoin hit $100k by June 2026?" or "Who will win the 2026 World Cup?"
+
+Each market goes through a clear lifecycle. Here's what happens at each stage and what it means for you as a trader.
+
+## Market Lifecycle
+
+<Steps>
+  <Step title="Created">
+    The market is set up with a question, possible outcomes (like Yes/No), initial liquidity, and an end date. At this point, the **APMM** (Automated Prediction Market Maker — the smart contract pool that prices shares) is funded and ready.
+
+    **What you can do:** Start trading right away. Prices start near $0.50 for equal-weight markets, then quickly move as people trade.
+  </Step>
+  <Step title="Running">
+    The market is live and actively trading. People buy and sell shares, prices move based on supply and demand, and the market reflects the crowd's best guess at the probability of each outcome.
+
+    **What you can do:** Buy shares, sell shares, add or remove liquidity. This is the main trading period.
+  </Step>
+  <Step title="Settling">
+    The real-world event has happened (or its deadline has passed). Someone asserts the outcome — "Yes won" or "No won" — and a **challenge window** opens. During this time, anyone can dispute the assertion if they think it's wrong.
+
+    **What you can do:** Wait for the challenge window to close. Trading is typically paused during settlement.
+  </Step>
+  <Step title="Ended">
+    The outcome has been confirmed. Winners can claim their payout. Each winning share is worth **$1.00 USDC**, and losing shares are worth $0.
+
+    **What you can do:** If you hold winning shares, tap **Claim** to collect your USDC. If you provided liquidity, you can withdraw your remaining funds.
+  </Step>
+</Steps>
+
+## What Each Status Means for You
+
+| Status | Can you trade? | Can you claim? | What's happening? |
+|--------|:-:|:-:|---|
+| **Created** | Yes | No | Market just opened, prices are forming |
+| **Running** | Yes | No | Active trading, prices moving with the crowd |
+| **Settling** | No | No | Outcome asserted, waiting for challenge window |
+| **Ended** | No | Yes | Market resolved — winners can claim |
+
+## How Outcomes Work
+
+### Binary Markets (Yes / No)
+
+Most markets have two outcomes. You buy **Yes** if you think something will happen, or **No** if you don't.
+
+- Yes shares + No shares always sum to **$1.00**
+- If Yes wins → Yes shares pay $1.00, No shares pay $0
+- If No wins → No shares pay $1.00, Yes shares pay $0
+
+### Multi-Outcome Markets
+
+Some markets have three or more options (e.g., "Who will win the election?" with multiple candidates). In these markets:
+
+- All outcome prices still add up to **$1.00**
+- Only the winning outcome pays **$1.00 per share**
+- All other outcomes pay $0
+
+<Info>
+Multi-outcome markets work exactly the same as binary markets — the only difference is there are more options to choose from. The APMM handles pricing for any number of outcomes.
+</Info>
+
+## When Does a Market End?
+
+A market resolves when:
+
+1. **The event happens** — Someone asserts the correct outcome (e.g., "Bitcoin reached $100k"), and no one disputes it within the challenge window.
+2. **The deadline passes** — If the event hasn't happened by the market's end date, it can be resolved accordingly (e.g., "No, Bitcoin did not reach $100k by the deadline").
+
+The resolution is handled by a decentralized **oracle** — an independent system that verifies real-world outcomes. No single person at PrometheX decides who wins.
+
+<Tip>
+Want to know more about how outcomes are verified? Check out our [Resolution](/user-guide/markets/resolution) and [Disputes](/user-guide/markets/disputes) guides.
+</Tip>
+
+## Finding Good Markets
+
+Here are some tips for choosing markets to trade:
+
+<CardGroup cols={2}>
+  <Card title="High Volume" icon="chart-bar">
+    Markets with lots of trading activity have better prices and smaller slippage (the gap between expected and actual price).
+  </Card>
+  <Card title="Clear Resolution" icon="circle-check">
+    Look for markets with clear, unambiguous resolution criteria. "Will BTC close above $100k on June 30?" is better than "Will BTC be around $100k?"
+  </Card>
+  <Card title="Time Horizon" icon="clock">
+    Markets with more time before resolution tend to have more price movement — and more trading opportunities.
+  </Card>
+  <Card title="Your Edge" icon="lightbulb">
+    Trade on topics where you have genuine knowledge or insight. That's where you're most likely to spot mispriced markets.
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Resolution" icon="gavel" href="/user-guide/markets/resolution">
+    How market outcomes are determined and verified.
+  </Card>
+  <Card title="Disputes" icon="flag" href="/user-guide/markets/disputes">
+    What happens if someone disagrees with a market's outcome.
+  </Card>
+</CardGroup>

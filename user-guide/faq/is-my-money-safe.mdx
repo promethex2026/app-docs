@@ -1,0 +1,104 @@
+---
+title: Is My Money Safe?
+description: "How PrometheX protects your funds with smart contracts and on-chain settlement."
+---
+
+## Your Funds, Your Control
+
+The short answer: **PrometheX never holds your money.** Your funds live in your personal smart account on the Arbitrum blockchain, and only you can access them. We can't move, freeze, or take your money — it's yours, always.
+
+This is called being **non-custodial**, and it's one of the core principles of how PrometheX works.
+
+## How Your Funds Are Protected
+
+<CardGroup cols={2}>
+  <Card title="Non-Custodial" icon="key">
+    Your USDC sits in your own smart account — a wallet controlled by you, not by PrometheX. We have no ability to access your funds.
+  </Card>
+  <Card title="Smart Contract Settlement" icon="file-contract">
+    All trades happen through **smart contracts** — programs on the blockchain that execute automatically and can't be tampered with. No human is involved in moving funds.
+  </Card>
+  <Card title="On-Chain Transparency" icon="magnifying-glass">
+    Every trade, every position, and every payout is recorded on the Arbitrum blockchain. Anyone can verify what's happening at any time.
+  </Card>
+  <Card title="Decentralized Resolution" icon="scale-balanced">
+    Market outcomes are verified by the UMA oracle — an independent, decentralized system. No single person at PrometheX decides who wins.
+  </Card>
+</CardGroup>
+
+## The Security Model in Plain English
+
+Here's what happens to your money at each step:
+
+<Steps>
+  <Step title="You deposit USDC">
+    Your USDC is transferred from your smart account to the market's **smart contract** (a program on the blockchain). The smart contract holds the funds — not PrometheX, not any person.
+  </Step>
+  <Step title="You hold shares">
+    Your shares are tokens on the blockchain, owned by your smart account. PrometheX can't take or modify them.
+  </Step>
+  <Step title="The market resolves">
+    The oracle determines the winning outcome through a transparent, disputeable process. No one at PrometheX can override this.
+  </Step>
+  <Step title="You claim winnings">
+    The smart contract sends USDC directly to your smart account. This is automatic — no approval from PrometheX is needed.
+  </Step>
+</Steps>
+
+## Common Concerns
+
+<AccordionGroup>
+  <Accordion title="What if PrometheX goes offline?">
+    Your funds are on the blockchain, not on our servers. Even if the PrometheX website went down, your funds would still be safe in your smart account and in market smart contracts. You could interact with the contracts directly (or through any other interface) to claim your positions.
+  </Accordion>
+  <Accordion title="What if there's a bug in the smart contracts?">
+    Smart contract security is a top priority. PrometheX's contracts are based on well-tested, open-source standards (OpenZeppelin). That said, all smart contracts carry some inherent risk. We recommend only trading with money you can afford to lose, especially during the testnet phase.
+  </Accordion>
+  <Accordion title="What if someone hacks my account?">
+    Your smart account is secured by the same login method you use to sign in (email, Google, Twitter, or wallet). It uses the same security standards as major financial apps. If you sign in with email, use a strong password and enable two-factor authentication where possible.
+  </Accordion>
+  <Accordion title="What if the oracle gives the wrong answer?">
+    The UMA Optimistic Oracle has a built-in dispute process. If an incorrect outcome is asserted, anyone can challenge it. Disputed outcomes go to a decentralized vote by UMA token holders. This multi-layer system makes incorrect resolutions very unlikely. See our [Disputes guide](/user-guide/markets/disputes) for more.
+  </Accordion>
+  <Accordion title="Is my data private?">
+    Your trades are on a public blockchain, so they're visible to anyone who looks. However, your identity is only tied to your wallet address — PrometheX doesn't publish your name or email alongside your trades. If you signed in with email/social, your identity is managed privately by Privy.
+  </Accordion>
+  <Accordion title="Can PrometheX freeze my funds?">
+    No. PrometheX is non-custodial. Your funds are in smart contracts on Arbitrum, controlled by your smart account. We have no admin keys or backdoors to freeze or seize user funds.
+  </Accordion>
+</AccordionGroup>
+
+## What PrometheX Can and Can't Do
+
+| Action | Can PrometheX do this? |
+|--------|:---:|
+| Move your funds | **No** |
+| Freeze your account | **No** |
+| See your trades | Yes (they're public on-chain) |
+| Reverse a trade | **No** |
+| Override an oracle decision | **No** |
+| Create or close markets | Yes (admin function) |
+| Change trading fees | Yes (per-market setting) |
+
+<Tip>
+The blockchain is your source of truth. If you ever want to verify anything — your balance, your trades, market payouts — you can check directly on the [Arbitrum block explorer](https://sepolia.arbiscan.io/) (or Arbiscan for mainnet).
+</Tip>
+
+## Smart Contract Risks
+
+While PrometheX is designed to be secure, it's important to be aware of the risks that exist in any blockchain-based system:
+
+<Warning>
+**No system is 100% risk-free.** Smart contracts can have bugs, blockchain networks can experience issues, and oracles can make mistakes (though disputes exist to correct them). Never trade with more money than you can afford to lose — especially on testnet or in the early days of mainnet.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Supported Chains" icon="link" href="/user-guide/faq/supported-chains">
+    Learn about the blockchain networks PrometheX runs on.
+  </Card>
+  <Card title="Glossary" icon="book" href="/user-guide/faq/glossary">
+    Look up any term you're not sure about.
+  </Card>
+</CardGroup>

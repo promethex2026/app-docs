@@ -1,0 +1,207 @@
+---
+title: Architecture
+description: "How PrometheX is designed — from API request to on-chain settlement"
+---
+
+## System Overview
+
+PrometheX is a modular platform composed of backend microservices, a smart contract layer on Arbitrum, and client-facing APIs. Every component is designed for multi-tenant operation and horizontal scaling.
+
+```mermaid
+graph TB
+  subgraph Client["Client Layer"]
+    WL["White-Label Frontend"]
+    EMB["Embedded Widget"]
+    API_C["API Integration"]
+  end
+
+  subgraph Gateway["API Gateway"]
+    BFF["Market Backend (BFF)"]
+    AUTH["Auth (Privy JWT)"]
+    RL["Rate Limiter"]
+    SSE["SSE Push"]
+  end
+
+  subgraph Core["Core Services"]
+    MS["Market Service (gRPC)"]
+    REC["Recommendation Engine"]
+    BL["Block Listener"]
+    ADMIN["Admin Service"]
+  end
+
+  subgraph Data["Data Layer"]
+    PG["PostgreSQL + pgvector"]
+    REDIS["Redis"]
+    S3["S3 Storage"]
+  end
+
+  subgraph Chain["Arbitrum"]
+    PF["PredictionFactory"]
+    PRED["Prediction Markets"]
+    AMM["APMM Engine"]
+    ORACLE["Resolution Oracle"]
+    AA["ERC-4337 EntryPoint"]
+  end
+
+  WL --> BFF
+  EMB --> BFF
+  API_C --> BFF
+
+  BFF --> AUTH
+  BFF --> RL
+  BFF --> SSE
+  BFF -->|gRPC| MS
+
+  MS --> PG
+  MS --> REDIS
+  MS -->|UserOp| AA
+
+  REC --> PG
+  BL -->|Index events| Chain
+  BL -->|gRPC| MS
+  ADMIN --> PG
+
+  AA --> PF
+  PF -->|Clone| PRED
+  PRED --> AMM
+  PRED --> ORACLE
+```
+
+## Service Architecture
+
+PrometheX follows a backend-for-frontend (BFF) pattern. The API gateway is the only service exposed to the internet. Internal services communicate via gRPC.
+
+### Request Flow
+
+<Steps>
+  <Step title="Client sends request">
+    A user action (place trade, browse markets, check positions) hits the Market Backend via REST API. White-label frontends, embedded widgets, and API integrations all use the same endpoints.
+  </Step>
+  <Step title="Authentication & rate limiting">
+    The BFF validates the Privy JWT token, applies rate limiting (BBR adaptive algorithm), and routes the request to the appropriate internal service.
+  </Step>
+  <Step title="Business logic execution">
+    The Market Service processes the request — querying PostgreSQL for market data, computing prices via APMM math, or preparing an on-chain transaction.
+  </Step>
+  <Step title="On-chain execution">
+    For trading operations, the Market Service constructs an ERC-4337 UserOperation and submits it to the Alchemy bundler. The bundler executes the transaction through the EntryPoint contract, with gas sponsored by the Paymaster.
+  </Step>
+  <Step title="Event indexing">
+    The Block Listener continuously scans Arbitrum blocks for contract events (trades, settlements, disputes). When it detects a relevant event, it updates the database via gRPC calls to the Market Service.
+  </Step>
+  <Step title="Real-time push">
+    State changes trigger SSE events pushed to connected clients — live price updates, trade confirmations, and market state transitions.
+  </Step>
+</Steps>
+
+## Service Breakdown
+
+| Service | Tech | Protocol | Role |
+|---------|------|----------|------|
+| **Market Backend** | Go / Kratos | HTTP (port 8000) | API gateway, auth, rate limiting, SSE |
+| **Market Service** | Go / Kratos | gRPC (port 9000) | Core business logic, trading, positions |
+| **Block Listener** | Go | Daemon | On-chain event indexer |
+| **Recommendation** | Python | gRPC (port 50051) | Semantic search, trending rankings |
+| **Admin Service** | Go / Fiber | HTTP (port 8080) | Market management, content, RBAC |
+
+## Smart Contract Layer
+
+The on-chain layer follows a **factory-clone** pattern for gas-efficient market deployment.
+
+```mermaid
+graph LR
+  PF["PredictionFactory<br/>(TransparentProxy)"]
+  IMPL["Prediction<br/>Implementation"]
+  M1["Market A<br/>(Clone)"]
+  M2["Market B<br/>(Clone)"]
+  M3["Market C<br/>(Clone)"]
+  OPT["Option Tokens<br/>(ERC20 → CTF)"]
+  UMA["UMA Oracle"]
+  MSIG["Multisig<br/>Resolution"]
+
+  PF -->|"cloneDeterministic()"| M1
+  PF -->|"cloneDeterministic()"| M2
+  PF -->|"cloneDeterministic()"| M3
+  IMPL -.->|"implementation"| PF
+
+  M1 --> OPT
+  M2 --> OPT
+  M3 --> OPT
+
+  M1 -->|"settle()"| UMA
+  M2 -->|"settle()"| MSIG
+  M3 -->|"settle()"| UMA
+```
+
+Each market is an isolated clone with its own APMM state, option tokens, and resolution module. The factory manages creation, token whitelisting, and access control.
+
+## Data Flow
+
+### Trading Flow
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant BFF as Market Backend
+  participant MS as Market Service
+  participant Bundler as Alchemy Bundler
+  participant EP as EntryPoint
+  participant Market as Prediction Contract
+  participant BL as Block Listener
+
+  User->>BFF: POST /api/v1/market/place-order
+  BFF->>BFF: Validate JWT + rate limit
+  BFF->>MS: gRPC PlaceOrder
+  MS->>MS: Build UserOperation
+  MS->>Bundler: Submit UserOp
+  Bundler->>EP: handleOps()
+  EP->>Market: deposit(optionIndex, amount)
+  Market->>Market: APMM swap calculation
+  Market-->>EP: Option tokens minted
+
+  BL->>Market: Index Deposit event
+  BL->>MS: gRPC UpdatePosition
+  MS->>BFF: SSE price update
+  BFF->>User: Real-time confirmation
+```
+
+### Market Lifecycle
+
+```mermaid
+stateDiagram-v2
+  [*] --> Created: Factory.createPrediction()
+  Created --> Running: Automatic
+  Running --> Settling: Owner calls settle()
+  Settling --> Ended: Oracle confirms (no dispute)
+  Settling --> Disputed: Challenger posts counter-bond
+  Disputed --> Ended: Oracle DVM resolves
+  Ended --> [*]: Users claim winnings
+```
+
+## Multi-Tenant Design
+
+Every tenant (partner) gets logically isolated resources while sharing the same infrastructure.
+
+| Resource | Isolation Model |
+|----------|----------------|
+| **Markets** | Tenant-scoped, separate market pools |
+| **Users** | Separate user pools per tenant |
+| **Configuration** | Independent feature flags, fees, branding |
+| **Admin access** | RBAC scoped to tenant |
+| **Smart contracts** | Shared factory, isolated market clones |
+| **Data** | Logical separation in PostgreSQL (tenant_id) |
+
+<Info>
+Multi-tenant isolation is enforced at the API layer, admin layer, and database layer. Each tenant's data is logically partitioned — a tenant admin can only see and manage their own markets and users.
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Integration Models" icon="puzzle-piece" href="/platform/integration/integration-overview">
+    Choose how to connect to this architecture.
+  </Card>
+  <Card title="Security Model" icon="shield-halved" href="/platform/security/security-model">
+    Understand access control, upgrades, and oracle security.
+  </Card>
+</CardGroup>

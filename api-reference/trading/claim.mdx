@@ -1,0 +1,128 @@
+---
+title: Claim Winnings
+description: "Claim base tokens after a prediction market settles"
+---
+
+```
+POST /api/v1/market/claim-market-result
+```
+
+**Auth required:** Yes
+
+Claims winnings from a settled prediction market. Burns the user's winning option tokens and transfers base tokens (e.g., USDC) to their smart account at a 1:1 redemption ratio.
+
+## Request Body
+
+<ParamField body="marketAddress" type="string" required>
+  Settled market contract address.
+</ParamField>
+
+<ParamField body="optionAddress" type="string" required>
+  Winning option token address. Must be the option that resolved as correct.
+</ParamField>
+
+<ParamField body="userOperation" type="object" required>
+  Signed ERC-4337 UserOperation for the claim transaction.
+  <Expandable title="UserOperation fields">
+    <ParamField body="sender" type="string" required>
+      Smart account address.
+    </ParamField>
+    <ParamField body="nonce" type="string" required>
+      Hex-encoded nonce.
+    </ParamField>
+    <ParamField body="callData" type="string" required>
+      Encoded claim contract call.
+    </ParamField>
+    <ParamField body="signature" type="string" required>
+      Hex-encoded signature.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/market/claim-market-result" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketAddress": "0x1234...abcd",
+    "optionAddress": "0xaaaa...1111",
+    "userOperation": {
+      "sender": "0xSenderAddress...",
+      "nonce": "0x05",
+      "callData": "0xClaimCallData...",
+      "callGasLimit": "0x30000",
+      "verificationGasLimit": "0x20000",
+      "preVerificationGas": "0x10000",
+      "maxFeePerGas": "0x3B9ACA00",
+      "maxPriorityFeePerGas": "0x3B9ACA00",
+      "paymasterAndData": "0xPaymaster...",
+      "signature": "0xSignature..."
+    }
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch('https://api-staging.promethex.market/api/v1/market/claim-market-result', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${privyJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    marketAddress: '0x1234...abcd',
+    optionAddress: '0xaaaa...1111',
+    userOperation: signedClaimUserOp,
+  }),
+});
+const { data } = await res.json();
+console.log('Claim tx hash:', data.opHash);
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "opHash": "0xClaimOpHash..."
+  }
+}
+```
+
+<ResponseField name="opHash" type="string">
+  UserOperation hash for the claim transaction. Track on-chain for confirmation.
+</ResponseField>
+
+## Claim Flow
+
+```
+User                     PrometheX API            Blockchain
+  │                          │                         │
+  ├── POST /claim ─────────► │                         │
+  │                          ├── Validate market       │
+  │                          │   is settled             │
+  │                          ├── Submit UserOp ──────► │
+  │  ◄── { opHash } ──────── │                        │
+  │                          │                         ├── Burn winning tokens
+  │                          │                         ├── Transfer USDC to user
+  │                          │  ◄── Tx confirmed ──── │
+  │  ◄── SSE: asset_changed ── │                      │
+```
+
+## Important Notes
+
+<Info>
+Only callable after a market has settled (status = `ended`). The `optionAddress` must be the winning outcome.
+</Info>
+
+- **Winning tokens** are redeemed at 1:1 for base tokens (1 winning token = 1 USDC unit)
+- **Losing tokens** are worthless and cannot be claimed
+- Claims are gasless — the paymaster covers gas fees
+- After confirmation, an SSE event `user:asset_changed` is emitted
+- You can verify claimability by checking `market.status === 'ended'` and confirming which option won

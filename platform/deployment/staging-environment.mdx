@@ -1,0 +1,135 @@
+---
+title: Staging Environment
+description: "Test the full PrometheX platform on Arbitrum Sepolia"
+---
+
+## Try It Now
+
+The PrometheX staging environment is a fully functional deployment on Arbitrum Sepolia. Every feature available in production is available here — trading, market browsing, gasless transactions, real-time data, and admin tools.
+
+<Card title="Launch Staging App" icon="rocket" href="https://staging.promethex.market">
+  Open the live staging environment at **staging.promethex.market** — sign in, get test USDC, and place your first trade in under a minute.
+</Card>
+
+## Network Details
+
+| Property | Value |
+|----------|-------|
+| **App URL** | [staging.promethex.market](https://staging.promethex.market) |
+| **API Base URL** | `https://staging.promethex.market/api/v1` |
+| **Network** | Arbitrum Sepolia |
+| **Chain ID** | `421614` |
+| **RPC Endpoint** | `https://sepolia-rollup.arbitrum.io/rpc` |
+| **Block Explorer** | [sepolia.arbiscan.io](https://sepolia.arbiscan.io/) |
+
+## Core Contract Addresses
+
+| Contract | Address | Explorer |
+|----------|---------|----------|
+| **PredictionFactory** (Proxy) | `0x2c3E6717C1CC3787dBf420985188e2562F1aE62B` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0x2c3E6717C1CC3787dBf420985188e2562F1aE62B) |
+| **MockOptimisticOracleV3** | `0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6) |
+| **Test USDC (tUSDC)** | `0x934E616cA9538397E3f9a12895C40ea2E8C45E48` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48) |
+| **ERC-4337 EntryPoint** | `0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789) |
+
+For the full list of deployed contracts, see [Contract Addresses](/platform/deployment/contract-addresses).
+
+## Quick Start
+
+<Steps>
+  <Step title="Open the staging app">
+    Navigate to [staging.promethex.market](https://staging.promethex.market) in your browser.
+  </Step>
+  <Step title="Sign in">
+    Click **Connect** and sign in with email, Google, Twitter, or an external wallet. Privy creates a smart account for you automatically — no wallet setup needed.
+  </Step>
+  <Step title="Get test USDC">
+    Use the in-app faucet to receive tUSDC, or mint directly from the [tUSDC contract](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48). Test tokens have no real value.
+  </Step>
+  <Step title="Browse markets">
+    Explore active prediction markets. Each market shows current prices (probabilities), volume, and expiry date.
+  </Step>
+  <Step title="Place a trade">
+    Select an outcome, enter your amount, and confirm. The trade executes on-chain with zero gas fees — the Paymaster covers everything.
+  </Step>
+  <Step title="Monitor positions">
+    Track your open positions, P&L, and trade history in the portfolio view.
+  </Step>
+</Steps>
+
+## API Access
+
+The staging API is open for integration testing. All endpoints documented in the [API Reference](/api-reference/overview) are available.
+
+```bash
+# List active markets
+curl https://staging.promethex.market/api/v1/market/get-markets?status=running
+
+# Get market detail
+curl https://staging.promethex.market/api/v1/market/get-market-detail?marketAddress=0x...
+
+# Subscribe to real-time events (SSE)
+curl -N https://staging.promethex.market/api/v1/sse/subscribe?channels=market:0x...
+```
+
+<Info>
+The staging environment uses the same API endpoints, authentication flow, and smart contracts as production. Code written against staging will work on mainnet with only a URL change.
+</Info>
+
+## Getting Testnet Tokens
+
+### Sepolia ETH
+
+You only need Sepolia ETH if you plan to interact with contracts directly (not through the API). For gasless trading via the app or API, no ETH is required.
+
+| Faucet | URL |
+|--------|-----|
+| QuickNode | [faucet.quicknode.com/arbitrum/sepolia](https://faucet.quicknode.com/arbitrum/sepolia) |
+| Alchemy | [sepoliafaucet.com](https://sepoliafaucet.com/) |
+| Arbitrum Bridge | Bridge Sepolia ETH via [bridge.arbitrum.io](https://bridge.arbitrum.io/) |
+
+### Test USDC (tUSDC)
+
+| Method | Details |
+|--------|---------|
+| **In-app faucet** | Click the faucet button in the staging app after signing in |
+| **Direct mint** | Call `mint()` on the [tUSDC contract](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48) |
+
+## Infrastructure
+
+The staging environment runs on dedicated infrastructure that mirrors the production topology:
+
+| Component | Host | Details |
+|-----------|------|---------|
+| **Backend Services** | `54.179.181.210` | Docker Compose: Market Backend (8000), Market Service (9000), Recommendation (50051), Block Listener (8080) |
+| **Admin Service** | `13.229.202.228` | Docker Compose: Admin App (8080), PostgreSQL, Redis, MinIO |
+| **Frontend** | Cloudflare Workers | Edge-deployed React SPA |
+| **Database** | PostgreSQL + pgvector | Markets, users, positions, embeddings |
+| **Cache** | Redis | Rate limiting, locks, block tracking |
+| **Storage** | MinIO (S3-compatible) | Images, assets |
+
+## Limitations
+
+The staging environment has a few differences from production:
+
+| Area | Staging | Production |
+|------|---------|------------|
+| **Network** | Arbitrum Sepolia | Arbitrum One |
+| **Token** | tUSDC (test, mintable) | USDC (real) |
+| **Oracle** | MockOptimisticOracleV3 | UMA OptimisticOracleV3 |
+| **Data** | Test markets, may be reset | Persistent |
+| **SLA** | Best effort | Production SLA |
+
+<Note>
+The staging environment may be reset periodically as we deploy new features. Test data (markets, positions, trades) may not persist across resets.
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Contract Addresses" icon="file-contract" href="/platform/deployment/contract-addresses">
+    Full list of deployed contract addresses.
+  </Card>
+  <Card title="API Reference" icon="book-open" href="/api-reference/overview">
+    Start building against the staging API.
+  </Card>
+</CardGroup>

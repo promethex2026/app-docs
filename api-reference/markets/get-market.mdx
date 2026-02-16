@@ -1,0 +1,183 @@
+---
+title: Get Market
+description: "Get full details for a single prediction market"
+---
+
+```
+GET /api/v1/market/get-market-detail
+```
+
+**Auth required:** No
+
+Returns comprehensive details for a specific market, including options, pricing, volume, creator info, and follow status.
+
+## Query Parameters
+
+<ParamField query="marketAddress" type="string" required>
+  On-chain market contract address.
+</ParamField>
+
+<ParamField query="baseTokenAddress" type="string">
+  Base collateral token filter.
+</ParamField>
+
+## Response
+
+<ResponseField name="marketAddress" type="string">
+  Market contract address.
+</ResponseField>
+
+<ResponseField name="title" type="string">
+  Market question/title.
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Full market description and resolution criteria.
+</ResponseField>
+
+<ResponseField name="rules" type="string">
+  Resolution rules and data sources.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  `running`, `settling`, or `ended`.
+</ResponseField>
+
+<ResponseField name="volume" type="string">
+  Total trading volume in base token units.
+</ResponseField>
+
+<ResponseField name="participantCount" type="number">
+  Number of unique traders.
+</ResponseField>
+
+<ResponseField name="liquidity" type="string">
+  Total liquidity in the APMM pool.
+</ResponseField>
+
+<ResponseField name="startTime" type="string">
+  ISO 8601 market start time.
+</ResponseField>
+
+<ResponseField name="endTime" type="string">
+  ISO 8601 market end time.
+</ResponseField>
+
+<ResponseField name="options" type="array">
+  <Expandable title="Option object">
+    <ResponseField name="optionAddress" type="string">
+      Option token contract address.
+    </ResponseField>
+    <ResponseField name="title" type="string">
+      Option label (e.g., "Yes", "No").
+    </ResponseField>
+    <ResponseField name="price" type="string">
+      Current price (0–1 range).
+    </ResponseField>
+    <ResponseField name="volume" type="string">
+      Option-specific trading volume.
+    </ResponseField>
+    <ResponseField name="holdersCount" type="number">
+      Number of token holders.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="tags" type="string[]">
+  Market tags.
+</ResponseField>
+
+<ResponseField name="categoryId" type="string">
+  Category identifier.
+</ResponseField>
+
+<ResponseField name="isFollowed" type="boolean">
+  Whether the authenticated user follows this market. `false` if unauthenticated.
+</ResponseField>
+
+<ResponseField name="creator" type="object">
+  <Expandable title="Creator object">
+    <ResponseField name="uid" type="string">
+      Creator's PrometheX user ID.
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Creator's display name.
+    </ResponseField>
+    <ResponseField name="avatarUrl" type="string">
+      Creator's avatar URL.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Examples
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/market/get-market-detail?marketAddress=0x1234...abcd"
+```
+
+```javascript JavaScript
+const res = await fetch(
+  'https://api-staging.promethex.market/api/v1/market/get-market-detail?marketAddress=0x1234...abcd'
+);
+const { data } = await res.json();
+console.log(data.title, `$${(Number(data.volume) / 1e6).toFixed(2)} volume`);
+```
+
+```python Python
+import requests
+
+resp = requests.get(
+    'https://api-staging.promethex.market/api/v1/market/get-market-detail',
+    params={'marketAddress': '0x1234...abcd'},
+)
+data = resp.json()['data']
+print(f"{data['title']} — {data['status']}")
+```
+
+</CodeGroup>
+
+**Response:**
+
+```json
+{
+  "code": 0,
+  "data": {
+    "marketAddress": "0x1234...abcd",
+    "title": "Will BTC exceed $100k by March 2026?",
+    "description": "This market resolves Yes if the price of Bitcoin...",
+    "rules": "Resolution source: CoinGecko BTC/USD price at...",
+    "status": "running",
+    "volume": "52340000000",
+    "participantCount": 1823,
+    "liquidity": "25000000000",
+    "startTime": "2026-02-01T00:00:00Z",
+    "endTime": "2026-03-31T00:00:00Z",
+    "options": [
+      {
+        "optionAddress": "0xaaaa...1111",
+        "title": "Yes",
+        "price": "0.65",
+        "volume": "34000000000",
+        "holdersCount": 1200
+      },
+      {
+        "optionAddress": "0xbbbb...2222",
+        "title": "No",
+        "price": "0.35",
+        "volume": "18340000000",
+        "holdersCount": 623
+      }
+    ],
+    "tags": ["crypto", "bitcoin"],
+    "categoryId": "1",
+    "isFollowed": false,
+    "creator": {
+      "uid": "12345",
+      "name": "PrometheX Official",
+      "avatarUrl": "https://..."
+    }
+  }
+}
+```

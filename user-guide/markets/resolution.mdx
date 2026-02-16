@@ -1,0 +1,99 @@
+---
+title: Resolution
+description: "How market outcomes are determined — no single person decides who wins."
+---
+
+## How Do We Know Who Wins?
+
+When a real-world event happens, someone needs to confirm the result so the market can pay out winners. This process is called **resolution**.
+
+On PrometheX, resolution is handled by a decentralized system — not by one person or company. This ensures fairness and transparency.
+
+## The Resolution Process
+
+<Steps>
+  <Step title="The event happens">
+    The real-world event that the market is based on occurs. For example, an election concludes, a game finishes, or a deadline passes.
+  </Step>
+  <Step title="Someone asserts the outcome">
+    After the event, an authorized party (usually the market creator) submits the result to the blockchain. This is called an **assertion** — a formal statement like "Yes, Bitcoin did hit $100k."
+
+    To make this assertion, the asserter puts up a **bond** — a deposit of real money that they'll lose if their assertion turns out to be wrong. This financial incentive keeps people honest.
+  </Step>
+  <Step title="Challenge window opens">
+    A countdown begins (typically **2 hours**). During this time, anyone in the world can check the assertion. If someone sees that the asserted outcome is wrong, they can **dispute** it.
+
+    If nobody disputes, the assertion is accepted as correct.
+  </Step>
+  <Step title="Market settles">
+    Once the challenge window closes without a dispute (or after a dispute is resolved), the market is officially settled:
+    - **Winning shares** are redeemable for $1.00 USDC each
+    - **Losing shares** become worthless
+    - Winners can tap **Claim** to collect their payout
+  </Step>
+</Steps>
+
+## The Oracle: Your Neutral Referee
+
+PrometheX uses the **UMA Optimistic Oracle** to verify outcomes. An **oracle** is an independent system that brings real-world information onto the blockchain.
+
+Here's why it's called "optimistic":
+
+<Note>
+The UMA Optimistic Oracle **assumes assertions are correct** unless someone disputes them. This makes resolution fast — most markets settle in just a couple of hours. It's only when there's a disagreement that the process takes longer.
+</Note>
+
+Think of it like a referee in a sports game. Most of the time, the call stands. But if someone challenges it, there's a review process to get the right answer.
+
+### Why This Matters to You
+
+- **No trust required** — You don't have to trust PrometheX or any single person to declare the right outcome
+- **Anyone can verify** — The assertion is public, and anyone can check it against reality
+- **Financial incentives** — The bond system ensures that asserting the wrong outcome is expensive
+- **Dispute protection** — If something is wrong, anyone can challenge it
+
+## What Happens After Resolution?
+
+Once a market is resolved:
+
+| Your position | What happens | Action needed |
+|---------------|-------------|---------------|
+| You hold **winning** shares | Each share is worth $1.00 USDC | Tap **Claim** to collect |
+| You hold **losing** shares | Shares are worth $0 | None — they expire |
+| You provided **liquidity** | Remaining pool value is available | Withdraw your LP position |
+
+<Tip>
+There's no deadline to claim your winnings. The USDC will be waiting for you in the smart contract whenever you're ready to collect. And as always, claiming is gas-free.
+</Tip>
+
+## Resolution Timeline
+
+Here's a typical timeline for how resolution works:
+
+| Step | Duration | What's happening |
+|------|----------|-----------------|
+| Event occurs | — | The real-world event plays out |
+| Assertion submitted | Within hours | Someone submits the result on-chain |
+| Challenge window | ~2 hours | Anyone can verify and dispute |
+| Market settled | Instant | Winners can claim once the window closes |
+
+<Info>
+Most markets resolve smoothly within a few hours of the event happening. Disputes are rare because the bond system incentivizes honest assertions.
+</Info>
+
+## What if the Outcome Is Wrong?
+
+If you believe the asserted outcome is incorrect, you can **dispute** it. The dispute process escalates the question to a broader group of voters who determine the correct answer.
+
+For full details on how disputes work, see the [Disputes guide](/user-guide/markets/disputes).
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Disputes" icon="flag" href="/user-guide/markets/disputes">
+    What happens when someone challenges a market's outcome.
+  </Card>
+  <Card title="Is My Money Safe?" icon="shield-halved" href="/user-guide/faq/is-my-money-safe">
+    Learn about the security measures protecting your funds.
+  </Card>
+</CardGroup>

@@ -1,0 +1,286 @@
+---
+title: Get Positions
+description: "View user positions, trade history, and portfolio summary"
+---
+
+## Get Positions
+
+```
+GET /api/v1/market/get-user-positions
+```
+
+**Auth required:** No (but `uid` is needed to query another user)
+
+Returns paginated positions for a user, including current price, PnL, and average entry price.
+
+### Query Parameters
+
+<ParamField query="page" type="number" required>
+  Page number (1-indexed).
+</ParamField>
+
+<ParamField query="pageSize" type="number" required>
+  Items per page.
+</ParamField>
+
+<ParamField query="uid" type="string">
+  User ID. Defaults to the authenticated user if omitted.
+</ParamField>
+
+<ParamField query="marketAddress" type="string">
+  Filter positions to a specific market.
+</ParamField>
+
+### Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/market/get-user-positions?page=1&pageSize=10" \
+  -H "Authorization: Bearer $PRIVY_JWT"
+```
+
+```javascript JavaScript
+const res = await fetch(
+  'https://api-staging.promethex.market/api/v1/market/get-user-positions?page=1&pageSize=10',
+  { headers: { 'Authorization': `Bearer ${privyJwt}` } }
+);
+const { data } = await res.json();
+data.positions.forEach(p => {
+  console.log(`${p.marketTitle} / ${p.optionTitle}: ${p.amount} (PnL: ${p.pnlPercent}%)`);
+});
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "total": 8,
+    "positions": [
+      {
+        "marketAddress": "0x1234...abcd",
+        "marketTitle": "Will BTC hit $100k?",
+        "optionTitle": "Yes",
+        "amount": "15000000",
+        "avgPrice": "0.62",
+        "currentPrice": "0.65",
+        "pnl": "450000",
+        "pnlPercent": "4.8"
+      }
+    ]
+  }
+}
+```
+
+<ResponseField name="total" type="number">
+  Total positions matching the query.
+</ResponseField>
+
+<ResponseField name="positions" type="array">
+  <Expandable title="Position object">
+    <ResponseField name="marketAddress" type="string">
+      Market contract address.
+    </ResponseField>
+    <ResponseField name="marketTitle" type="string">
+      Market question.
+    </ResponseField>
+    <ResponseField name="optionTitle" type="string">
+      Option label (e.g., "Yes").
+    </ResponseField>
+    <ResponseField name="amount" type="string">
+      Token balance in base token units.
+    </ResponseField>
+    <ResponseField name="avgPrice" type="string">
+      Volume-weighted average entry price.
+    </ResponseField>
+    <ResponseField name="currentPrice" type="string">
+      Current market price (0–1).
+    </ResponseField>
+    <ResponseField name="pnl" type="string">
+      Profit/loss in base token units.
+    </ResponseField>
+    <ResponseField name="pnlPercent" type="string">
+      PnL as a percentage.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Get Trade History
+
+```
+GET /api/v1/market/get-user-trades
+```
+
+**Auth required:** Yes
+
+Returns paginated trade history for the authenticated user.
+
+### Query Parameters
+
+<ParamField query="page" type="number" required>
+  Page number (1-indexed).
+</ParamField>
+
+<ParamField query="pageSize" type="number" required>
+  Items per page.
+</ParamField>
+
+<ParamField query="marketAddress" type="string">
+  Filter trades to a specific market.
+</ParamField>
+
+### Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/market/get-user-trades?page=1&pageSize=20" \
+  -H "Authorization: Bearer $PRIVY_JWT"
+```
+
+```javascript JavaScript
+const res = await fetch(
+  'https://api-staging.promethex.market/api/v1/market/get-user-trades?page=1&pageSize=20',
+  { headers: { 'Authorization': `Bearer ${privyJwt}` } }
+);
+const { data } = await res.json();
+```
+
+</CodeGroup>
+
+---
+
+## Get Portfolio Summary
+
+```
+GET /api/v1/market/get-user-asset-info
+```
+
+**Auth required:** Yes
+
+Returns an aggregate portfolio summary: total value, balance, positions value, and PnL.
+
+### Query Parameters
+
+<ParamField query="uid" type="string" required>
+  User ID.
+</ParamField>
+
+<ParamField query="baseTokenAddress" type="string" required>
+  Base token address to denominate the portfolio in.
+</ParamField>
+
+### Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/market/get-user-asset-info?uid=12345&baseTokenAddress=0xUSDC..." \
+  -H "Authorization: Bearer $PRIVY_JWT"
+```
+
+```javascript JavaScript
+const res = await fetch(
+  `https://api-staging.promethex.market/api/v1/market/get-user-asset-info?uid=12345&baseTokenAddress=0xUSDC...`,
+  { headers: { 'Authorization': `Bearer ${privyJwt}` } }
+);
+const { data } = await res.json();
+console.log(`Total: $${(Number(data.value) / 1e6).toFixed(2)}, PnL: $${(Number(data.pnl) / 1e6).toFixed(2)}`);
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "value": "125000000",
+    "balance": "50000000",
+    "portfolio": "75000000",
+    "pnl": "12500000",
+    "decimal": 6,
+    "volume": "340000000",
+    "pnlRank": 42
+  }
+}
+```
+
+<ResponseField name="value" type="string">
+  Total account value (balance + positions) in base token units.
+</ResponseField>
+
+<ResponseField name="balance" type="string">
+  Available (uninvested) balance.
+</ResponseField>
+
+<ResponseField name="portfolio" type="string">
+  Total value of open positions.
+</ResponseField>
+
+<ResponseField name="pnl" type="string">
+  Total profit/loss.
+</ResponseField>
+
+<ResponseField name="decimal" type="number">
+  Token decimal precision (e.g., 6 for USDC).
+</ResponseField>
+
+<ResponseField name="volume" type="string">
+  Total trading volume.
+</ResponseField>
+
+<ResponseField name="pnlRank" type="number">
+  User's PnL leaderboard rank.
+</ResponseField>
+
+---
+
+## Get Asset History
+
+```
+GET /api/v1/user/get-user-asset-history
+```
+
+**Auth required:** Yes
+
+Returns time-series data for portfolio value over time. Useful for rendering portfolio charts.
+
+### Query Parameters
+
+<ParamField query="uid" type="string" required>
+  User ID.
+</ParamField>
+
+<ParamField query="timeInterval" type="string" required>
+  Time range: `1d`, `1w`, `1m`, `3m`, `all`.
+</ParamField>
+
+<ParamField query="baseTokenAddress" type="string" required>
+  Base token address for denomination.
+</ParamField>
+
+### Example
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/user/get-user-asset-history?uid=12345&timeInterval=1w&baseTokenAddress=0xUSDC..."
+```
+
+```javascript JavaScript
+const res = await fetch(
+  `https://api-staging.promethex.market/api/v1/user/get-user-asset-history?uid=12345&timeInterval=1w&baseTokenAddress=0xUSDC...`
+);
+const { data } = await res.json();
+// data contains time-series points for chart rendering
+```
+
+</CodeGroup>

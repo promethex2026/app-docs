@@ -1,0 +1,248 @@
+---
+title: API-Only Integration
+description: "Build your own prediction market UI with the PrometheX REST API"
+---
+
+## Overview
+
+The API-Only model gives you direct access to PrometheX infrastructure without any prescribed UI. Fetch markets, execute trades, manage positions, and stream real-time data — then render everything in your own interface, your own way.
+
+<Tip>
+API-Only is for teams with strong frontend engineering that want complete control over the user experience. Expect **4–8 weeks** of development time depending on scope.
+</Tip>
+
+## What You Build vs. What We Provide
+
+| You Build | We Provide |
+|-----------|-----------|
+| Frontend UI and UX | REST API for all operations |
+| User authentication flow | Privy SDK or your own auth + API keys |
+| Market browsing and search | Market listing and detail endpoints |
+| Trading interface | Order placement and execution API |
+| Position tracking | Position and P&L query endpoints |
+| Real-time updates | SSE event stream for live data |
+| Notifications | Notification query API |
+
+## API Capabilities
+
+### Market Operations
+
+```bash
+# List all active markets
+GET /api/v1/market/get-markets?status=running&page=1&pageSize=20
+
+# Get market detail with current prices
+GET /api/v1/market/get-market-detail?marketAddress=0x1234...abcd
+
+# Get price history for charting
+GET /api/v1/market/get-price-history?marketAddress=0x1234...abcd&interval=1h
+
+# Get recent trades
+GET /api/v1/market/get-market-trades?marketAddress=0x1234...abcd&limit=50
+```
+
+### Trading Operations
+
+```bash
+# Place a buy order
+POST /api/v1/market/place-order
+{
+  "marketAddress": "0x1234...abcd",
+  "optionIndex": 0,
+  "amount": "10000000",
+  "minReceive": "9500000",
+  "side": "buy"
+}
+
+# Claim winnings after market resolution
+POST /api/v1/market/claim-result
+{
+  "marketAddress": "0x1234...abcd"
+}
+```
+
+### User Operations
+
+```bash
+# Authenticate (returns JWT)
+POST /api/v1/user/login
+{
+  "privyToken": "eyJ..."
+}
+
+# Get user positions and P&L
+GET /api/v1/user/positions?status=active
+
+# Get trade history
+GET /api/v1/user/trades?page=1&pageSize=50
+```
+
+### Real-Time Data (SSE)
+
+Subscribe to Server-Sent Events for live updates:
+
+```javascript
+const eventSource = new EventSource(
+  'https://api.promethex.market/api/v1/sse/subscribe?channels=market:0x1234...abcd',
+  { headers: { 'Authorization': 'Bearer your-jwt-token' } }
+);
+
+eventSource.addEventListener('price_update', (event) => {
+  const data = JSON.parse(event.data);
+  // { marketAddress, prices: [0.65, 0.35], timestamp }
+  updateUI(data);
+});
+
+eventSource.addEventListener('trade', (event) => {
+  const data = JSON.parse(event.data);
+  // { marketAddress, optionIndex, amount, price, trader, txHash }
+  showTradeNotification(data);
+});
+
+eventSource.addEventListener('market_state', (event) => {
+  const data = JSON.parse(event.data);
+  // { marketAddress, state: "ended", winningOption: 0 }
+  handleMarketEnd(data);
+});
+```
+
+## Authentication
+
+API-Only integrations can authenticate in two ways:
+
+<Tabs>
+  <Tab title="Privy (Recommended)">
+    Use Privy on your frontend for user auth. Pass the Privy JWT to PrometheX API endpoints.
+
+    ```typescript
+    import { usePrivy } from '@privy-io/react-auth';
+
+    const { getAccessToken } = usePrivy();
+
+    async function fetchMarkets() {
+      const token = await getAccessToken();
+      const res = await fetch('https://api.promethex.market/api/v1/market/get-markets', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      return res.json();
+    }
+    ```
+
+    **Benefits:** Social login, embedded wallets, ERC-4337 smart accounts, gasless transactions — all handled.
+  </Tab>
+  <Tab title="API Key">
+    For server-to-server integration or when you manage your own auth, use tenant-scoped API keys.
+
+    ```bash
+    curl -H "X-API-Key: your-api-key" \
+         -H "X-Tenant-ID: your-tenant-id" \
+         https://api.promethex.market/api/v1/market/get-markets
+    ```
+
+    **Benefits:** Simple integration, no Privy dependency, works from any backend.
+    **Note:** API key auth is for read operations and server-side calls. User-facing trading still requires Privy JWT for transaction signing.
+  </Tab>
+</Tabs>
+
+## Gasless Transactions
+
+Even in API-Only mode, your users benefit from gasless trading. The flow works the same:
+
+<Steps>
+  <Step title="User authenticates via Privy">
+    Privy creates or connects an embedded wallet and derives an ERC-4337 smart account.
+  </Step>
+  <Step title="Your UI calls the order API">
+    `POST /api/v1/market/place-order` with the trade parameters.
+  </Step>
+  <Step title="Backend builds a UserOperation">
+    The Market Service constructs a UserOp targeting the Prediction contract's `deposit()` or `withdraw()` function.
+  </Step>
+  <Step title="Paymaster sponsors gas">
+    The PrometheX Paymaster pays for the transaction. The user's wallet is never charged ETH.
+  </Step>
+  <Step title="Bundler executes on-chain">
+    Alchemy bundler submits the UserOp to the EntryPoint contract. The trade settles on Arbitrum.
+  </Step>
+</Steps>
+
+## Direct Contract Interaction
+
+For advanced integrations, you can interact with PrometheX smart contracts directly:
+
+```typescript
+import { createPublicClient, http } from 'viem';
+import { arbitrumSepolia } from 'viem/chains';
+
+const client = createPublicClient({
+  chain: arbitrumSepolia,
+  transport: http()
+});
+
+// Read market state
+const marketState = await client.readContract({
+  address: '0x1234...abcd',
+  abi: predictionABI,
+  functionName: 'getState',
+});
+
+// Read current prices
+const prices = await client.readContract({
+  address: '0x1234...abcd',
+  abi: predictionABI,
+  functionName: 'getAllPrices',
+});
+```
+
+<Note>
+Direct contract interaction is recommended for read operations (prices, state, balances). For write operations (trading, liquidity), use the REST API — it handles UserOp construction, gas sponsorship, and nonce management for you.
+</Note>
+
+## Rate Limits
+
+| Endpoint Type | Rate Limit | Notes |
+|---------------|:----------:|-------|
+| Public reads (markets, prices) | 100 req/min | Per API key |
+| Authenticated reads (positions, trades) | 60 req/min | Per user |
+| Write operations (orders, claims) | 20 req/min | Per user |
+| SSE connections | 5 concurrent | Per user |
+
+<Info>
+Rate limits are enforced per tenant. If you need higher limits, contact us to discuss your use case.
+</Info>
+
+## Error Handling
+
+All API responses follow a consistent error format:
+
+```json
+{
+  "code": 400,
+  "reason": "INVALID_AMOUNT",
+  "message": "Order amount must be greater than minimum trade size",
+  "metadata": {
+    "minAmount": "1000000",
+    "providedAmount": "100"
+  }
+}
+```
+
+| Error Code | Description |
+|:----------:|-------------|
+| `400` | Invalid request parameters |
+| `401` | Authentication required or token expired |
+| `403` | Insufficient permissions for this tenant/operation |
+| `404` | Market or resource not found |
+| `429` | Rate limit exceeded |
+| `500` | Internal server error |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="book-open" href="/api-reference/overview">
+    Full API documentation with request/response examples.
+  </Card>
+  <Card title="Contract Addresses" icon="file-contract" href="/platform/deployment/contract-addresses">
+    Deployed smart contract addresses for direct interaction.
+  </Card>
+</CardGroup>

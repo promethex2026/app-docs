@@ -1,0 +1,189 @@
+---
+title: Error Codes
+description: "Complete error code reference for the PrometheX API"
+---
+
+## Error Response Format
+
+All errors follow the standard response envelope:
+
+```json
+{
+  "code": 110101,
+  "reason": "PARAM",
+  "msg": "marketAddress is required",
+  "data": null
+}
+```
+
+<ResponseField name="code" type="number">
+  Numeric error code. `0` means success. Non-zero indicates an error.
+</ResponseField>
+
+<ResponseField name="reason" type="string">
+  Machine-readable error key. Use this for programmatic error handling.
+</ResponseField>
+
+<ResponseField name="msg" type="string">
+  Human-readable error description. May vary — do not parse this for logic.
+</ResponseField>
+
+---
+
+## Client Errors (110100–110199)
+
+Errors caused by invalid requests. Fix the request and retry.
+
+| Code | Reason | Description | Action |
+|:----:|--------|-------------|--------|
+| `110101` | `PARAM` | Missing or invalid parameter | Check required fields, types, and formats |
+| `110102` | `NOT_FOUND` | Requested resource doesn't exist | Verify the ID, address, or slug |
+| `110103` | `PLEASE_WAIT` | Rate limited | Back off with exponential delay, then retry |
+
+### Examples
+
+<Tabs>
+  <Tab title="PARAM">
+```json
+{
+  "code": 110101,
+  "reason": "PARAM",
+  "msg": "marketAddress is required",
+  "data": null
+}
+```
+
+**Fix:** Include the `marketAddress` field in your request.
+  </Tab>
+  <Tab title="NOT_FOUND">
+```json
+{
+  "code": 110102,
+  "reason": "NOT_FOUND",
+  "msg": "market not found",
+  "data": null
+}
+```
+
+**Fix:** Verify the `marketAddress` exists by listing markets first.
+  </Tab>
+  <Tab title="PLEASE_WAIT">
+```json
+{
+  "code": 110103,
+  "reason": "PLEASE_WAIT",
+  "msg": "too many requests, please try again later",
+  "data": null
+}
+```
+
+**Fix:** Wait and retry with exponential backoff. See [Rate Limits](/api-reference/rate-limits).
+  </Tab>
+</Tabs>
+
+---
+
+## Server Errors (110200–110299)
+
+Internal server errors. These are typically transient — retry after a short delay.
+
+| Code | Reason | Description | Action |
+|:----:|--------|-------------|--------|
+| `110201` | `INTERNAL` | Internal server error | Retry; report if persistent |
+| `110202` | `NETWORK` | Network connectivity issue | Retry after a short delay |
+| `110203` | `DATABASE` | Database error | Retry; report if persistent |
+| `110204` | `REDIS` | Cache layer error | Retry; usually transient |
+| `110205` | `RPC` | Internal gRPC call failed | Retry; may indicate service degradation |
+
+### Retry Strategy
+
+```javascript
+async function apiCall(url, options, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    const res = await fetch(url, options);
+    const json = await res.json();
+
+    if (json.code === 0) return json.data;
+
+    // Server errors — retry with backoff
+    if (json.code >= 110200 && json.code < 110300) {
+      const delay = Math.min(1000 * Math.pow(2, i), 10000);
+      await new Promise(r => setTimeout(r, delay));
+      continue;
+    }
+
+    // Client errors — don't retry
+    throw new Error(`API Error ${json.code}: ${json.msg}`);
+  }
+  throw new Error('Max retries exceeded');
+}
+```
+
+---
+
+## Third-Party Errors (110300–110399)
+
+Errors from external services. Usually transient — retry after a delay.
+
+| Code | Reason | Description | Action |
+|:----:|--------|-------------|--------|
+| `110301` | `S3` | File storage (S3) error | Retry the upload |
+| `110302` | `ALCHEMY` | Blockchain RPC / bundler error | Retry; may be transient node issues |
+| `110303` | `PRIVY` | Authentication provider error | Refresh your JWT token and retry |
+| `110304` | `OPENAI` | AI service error | Retry; non-critical feature |
+
+### Handling Auth Errors
+
+When you receive `110303` (PRIVY), your token may be expired or invalid:
+
+```javascript
+async function authenticatedFetch(url, options) {
+  let res = await fetch(url, {
+    ...options,
+    headers: { ...options.headers, 'Authorization': `Bearer ${getToken()}` },
+  });
+  let json = await res.json();
+
+  if (json.code === 110303) {
+    // Token expired — refresh and retry
+    await refreshPrivyToken();
+    res = await fetch(url, {
+      ...options,
+      headers: { ...options.headers, 'Authorization': `Bearer ${getToken()}` },
+    });
+    json = await res.json();
+  }
+
+  return json;
+}
+```
+
+---
+
+## HTTP Status Codes
+
+The API also uses standard HTTP status codes alongside the custom error codes:
+
+| HTTP Status | Meaning |
+|:-----------:|---------|
+| `200` | Success (check `code` field for app-level errors) |
+| `400` | Bad request |
+| `401` | Unauthorized — missing or invalid JWT |
+| `403` | Forbidden — insufficient permissions |
+| `404` | Endpoint not found |
+| `429` | Rate limited |
+| `500` | Internal server error |
+
+<Warning>
+Always check the `code` field in the response body, not just the HTTP status. A `200` response may contain an application-level error (non-zero `code`).
+</Warning>
+
+---
+
+## Error Code Quick Reference
+
+| Range | Category | Retryable | Common Causes |
+|-------|----------|:---------:|---------------|
+| `110101–110103` | Client | No (fix request) | Bad params, missing resource, rate limit |
+| `110201–110205` | Server | Yes (with backoff) | Transient internal issues |
+| `110301–110304` | Third-party | Yes (with backoff) | External service outages |

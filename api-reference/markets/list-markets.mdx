@@ -1,33 +1,150 @@
 ---
 title: List Markets
-description: "Get paginated list of prediction markets with filters"
+description: "Get a paginated list of prediction markets with filters and sorting"
 ---
 
-## Endpoint
-
 ```
-GET /bayes/market/get-markets
+GET /api/v1/market/get-markets
 ```
 
 **Auth required:** No
 
+Returns a paginated list of prediction markets. Supports filtering by status, category, tags, and sorting.
+
 ## Query Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|:--------:|-------------|
-| `page` | number | Yes | Page number (1-indexed) |
-| `pageSize` | number | Yes | Items per page (max 50) |
-| `tag` | string | No | Filter by tag |
-| `status` | string | No | Filter by status (`running`, `settling`, `ended`) |
-| `sortType` | string | No | Sort order (`hot`, `newest`, `ending_soon`, `volume`) |
-| `categoryId` | string | No | Filter by category |
-| `hotWords` | string | No | Filter by trending keywords |
-| `followed` | boolean | No | Only followed markets (requires auth) |
-| `newMarket` | boolean | No | Only recently created |
-| `soonExpired` | boolean | No | Ending within 24 hours |
-| `baseTokenAddress` | string | No | Filter by base token |
+<ParamField query="page" type="number" required>
+  Page number (1-indexed).
+</ParamField>
+
+<ParamField query="pageSize" type="number" required>
+  Items per page. Maximum `50`.
+</ParamField>
+
+<ParamField query="tag" type="string">
+  Filter by tag slug (e.g., `crypto`, `politics`).
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by market status: `running`, `settling`, `ended`.
+</ParamField>
+
+<ParamField query="sortType" type="string">
+  Sort order: `hot`, `newest`, `ending_soon`, `volume`.
+</ParamField>
+
+<ParamField query="categoryId" type="string">
+  Filter by category ID.
+</ParamField>
+
+<ParamField query="hotWords" type="string">
+  Filter by trending keywords.
+</ParamField>
+
+<ParamField query="followed" type="boolean">
+  Only return markets the authenticated user follows. Requires auth.
+</ParamField>
+
+<ParamField query="newMarket" type="boolean">
+  Only recently created markets.
+</ParamField>
+
+<ParamField query="soonExpired" type="boolean">
+  Markets ending within 24 hours.
+</ParamField>
+
+<ParamField query="baseTokenAddress" type="string">
+  Filter by base collateral token address.
+</ParamField>
 
 ## Response
+
+<ResponseField name="totalCount" type="number">
+  Total number of markets matching the filter criteria.
+</ResponseField>
+
+<ResponseField name="markets" type="array">
+  Array of market objects.
+  <Expandable title="Market object">
+    <ResponseField name="marketAddress" type="string">
+      On-chain market contract address.
+    </ResponseField>
+    <ResponseField name="title" type="string">
+      Market question/title.
+    </ResponseField>
+    <ResponseField name="description" type="string">
+      Market description.
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      `running`, `settling`, or `ended`.
+    </ResponseField>
+    <ResponseField name="volume" type="string">
+      Total trading volume in base token units.
+    </ResponseField>
+    <ResponseField name="participantCount" type="number">
+      Number of unique traders.
+    </ResponseField>
+    <ResponseField name="endTime" type="string">
+      ISO 8601 market end time.
+    </ResponseField>
+    <ResponseField name="options" type="array">
+      <Expandable title="Option object">
+        <ResponseField name="optionAddress" type="string">
+          Option token contract address.
+        </ResponseField>
+        <ResponseField name="title" type="string">
+          Option label (e.g., "Yes", "No").
+        </ResponseField>
+        <ResponseField name="price" type="string">
+          Current price (0–1 range).
+        </ResponseField>
+        <ResponseField name="volume" type="string">
+          Option-specific trading volume.
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="tags" type="string[]">
+      Market tags.
+    </ResponseField>
+    <ResponseField name="categoryId" type="string">
+      Category identifier.
+    </ResponseField>
+    <ResponseField name="createdAt" type="string">
+      ISO 8601 creation timestamp.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Examples
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api-staging.promethex.market/api/v1/market/get-markets?page=1&pageSize=5&sortType=hot"
+```
+
+```javascript JavaScript
+const res = await fetch(
+  'https://api-staging.promethex.market/api/v1/market/get-markets?page=1&pageSize=5&sortType=hot'
+);
+const { data } = await res.json();
+console.log(`${data.totalCount} markets found`);
+```
+
+```python Python
+import requests
+
+resp = requests.get(
+    'https://api-staging.promethex.market/api/v1/market/get-markets',
+    params={'page': 1, 'pageSize': 5, 'sortType': 'hot'},
+)
+data = resp.json()['data']
+print(f"{data['totalCount']} markets found")
+```
+
+</CodeGroup>
+
+**Response:**
 
 ```json
 {
@@ -64,10 +181,4 @@ GET /bayes/market/get-markets
     ]
   }
 }
-```
-
-## Example
-
-```bash
-curl "https://api-staging.promethex.market/bayes/market/get-markets?page=1&pageSize=5&sortType=hot"
 ```

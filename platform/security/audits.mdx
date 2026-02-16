@@ -1,0 +1,141 @@
+---
+title: Audits & Security Practices
+description: "Smart contract audit status, security practices, and responsible disclosure"
+---
+
+## Audit Status
+
+<Info>
+PrometheX smart contracts are currently undergoing security review. A formal third-party audit is scheduled for Q1–Q2 2026, prior to mainnet deployment on Arbitrum One.
+</Info>
+
+### Audit Timeline
+
+| Milestone | Status | Target Date |
+|-----------|:------:|-------------|
+| Internal security review | Completed | Jan 2026 |
+| CTF protocol upgrade | In progress | Feb 2026 |
+| Pre-audit code freeze | Planned | Mar 2026 |
+| Third-party smart contract audit | Planned | Q1–Q2 2026 |
+| Audit remediation | Planned | Following audit |
+| Mainnet deployment | Planned | Q2 2026 |
+
+### Scope
+
+The audit will cover all deployed smart contracts:
+
+| Contract | Description | Lines of Code |
+|----------|-------------|:-------------:|
+| **PredictionFactory** | Market factory with upgradeable proxy | ~300 |
+| **Prediction** | APMM market logic (deposit, withdraw, settle, claim) | ~500 |
+| **Option** | ERC20 outcome tokens (migrating to CTF ERC1155) | ~100 |
+| **ConditionalTokens** | Gnosis CTF integration | ~200 |
+| **MultisigResolution** | Multi-signer resolution module | ~150 |
+| **Paymaster** | ERC-4337 gas sponsorship | ~100 |
+
+## Security Practices
+
+### Smart Contract Development
+
+<CardGroup cols={2}>
+  <Card title="OpenZeppelin Base" icon="shield-halved">
+    All contracts inherit from OpenZeppelin's audited, battle-tested libraries — AccessControl, Upgradeable, ReentrancyGuard, Pausable.
+  </Card>
+  <Card title="Foundry Testing" icon="flask-vial">
+    Comprehensive test suite using Foundry (forge). Unit tests, fuzz tests, and invariant tests for APMM math and market lifecycle.
+  </Card>
+  <Card title="Upgrade Safety" icon="lock">
+    TransparentUpgradeableProxy with multisig governance. No single key can upgrade contracts. Storage layout compatibility is verified on every upgrade.
+  </Card>
+  <Card title="Deterministic Deploys" icon="fingerprint">
+    Market clones use `Clones.cloneDeterministic()` — the contract address is predictable from the salt, ensuring consistent deployment behavior.
+  </Card>
+</CardGroup>
+
+### Operational Security
+
+| Practice | Description |
+|----------|-------------|
+| **Multisig governance** | Admin roles (upgrade, pause) controlled by multisig wallet |
+| **Key management** | Private keys stored in hardware security modules (HSMs) |
+| **Least privilege** | Each service has only the permissions it needs — the API cannot upgrade contracts, the admin cannot sign user transactions |
+| **Monitoring** | Block Listener provides real-time alerting on anomalous on-chain events |
+| **Incident playbook** | Documented response procedures for contract pause, fund recovery, and communication |
+
+### Code Quality
+
+| Practice | Tool |
+|----------|------|
+| Static analysis | Slither, Solhint |
+| Fuzz testing | Foundry forge fuzz |
+| Invariant testing | Foundry forge invariant |
+| Gas optimization | Foundry gas snapshots |
+| Dependency scanning | Dependabot, npm audit |
+| CI/CD checks | All PRs require passing tests + linting |
+
+## Known Considerations
+
+The following are known design decisions, not vulnerabilities, but important to understand:
+
+<Accordion title="Mock Oracle on testnet">
+The staging environment uses `MockOptimisticOracleV3` instead of the real UMA Oracle. This mock oracle auto-resolves assertions without a challenge period. On mainnet, the full UMA Optimistic Oracle with bonding and dispute escalation will be used.
+</Accordion>
+
+<Accordion title="Upgradeable proxy pattern">
+The PredictionFactory is upgradeable via TransparentUpgradeableProxy. This means the contract logic can be changed by the `UPGRADER_ROLE` holder (multisig). While this enables bug fixes and feature additions, it also means the system is not fully immutable. Existing market clones are not affected by factory upgrades — only new markets use the updated implementation.
+</Accordion>
+
+<Accordion title="Paymaster gas sponsorship">
+The Paymaster sponsors all user gas, creating a potential grief vector if an attacker submits many transactions to drain the Paymaster's ETH balance. Protections include per-user rate limits, allowlisted operations, and daily sponsorship caps.
+</Accordion>
+
+<Accordion title="Admin service direct database access">
+The Admin service connects directly to PostgreSQL rather than going through the Market Service gRPC layer. This is a conscious design choice for operational flexibility but means the admin service bypasses gRPC-layer validation. Admin access is protected by RBAC and audit logging.
+</Accordion>
+
+## Bug Bounty
+
+A formal bug bounty program will be launched alongside the mainnet deployment. In the meantime, if you discover a security vulnerability:
+
+<Steps>
+  <Step title="Do not publicly disclose">
+    Please do not open a public issue or discuss the vulnerability in public channels.
+  </Step>
+  <Step title="Email the security team">
+    Send a detailed report to **security@promethex.market** with:
+    - Description of the vulnerability
+    - Steps to reproduce
+    - Potential impact assessment
+    - Suggested fix (if any)
+  </Step>
+  <Step title="Expect a response within 48 hours">
+    We will acknowledge receipt and provide an initial assessment within 2 business days.
+  </Step>
+  <Step title="Coordinated disclosure">
+    We will work with you on a responsible disclosure timeline and acknowledge your contribution.
+  </Step>
+</Steps>
+
+## Audit Reports
+
+Audit reports will be published here upon completion.
+
+| Auditor | Scope | Date | Report |
+|---------|-------|------|--------|
+| TBD | Core contracts (Factory, Prediction, APMM) | Q2 2026 | Pending |
+| TBD | CTF integration + resolution modules | Q2 2026 | Pending |
+
+<Note>
+We are evaluating audit firms with deep DeFi and prediction market experience. If you have recommendations, contact us at **team@promethex.market**.
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Security Model" icon="shield-halved" href="/platform/security/security-model">
+    Detailed access control, oracle security, and tenant isolation.
+  </Card>
+  <Card title="Roadmap" icon="road" href="/platform/roadmap">
+    See when audit, mainnet, and CTF migration ship.
+  </Card>
+</CardGroup>

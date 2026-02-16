@@ -1,0 +1,169 @@
+---
+title: White-Label Integration
+description: "Launch a fully branded prediction market under your own domain"
+---
+
+## Overview
+
+The White-Label model gives you a complete prediction market experience — frontend, backend, smart contracts, and admin tools — deployed under your brand. Your users see your domain, your logo, and your color scheme. PrometheX runs invisibly underneath.
+
+<Tip>
+White-Label is the fastest path to a live prediction market. Most partners go from signed agreement to production in **1–2 weeks**.
+</Tip>
+
+## What You Get
+
+<CardGroup cols={2}>
+  <Card title="Custom Domain" icon="globe">
+    Deploy on `markets.yoursite.com` or any domain you own. Full SSL provisioned automatically.
+  </Card>
+  <Card title="Full Branding" icon="palette">
+    Your logo, colors, typography, and UI tone. The PrometheX brand is completely invisible to your users.
+  </Card>
+  <Card title="Feature Flags" icon="toggle-on">
+    Enable or disable features per tenant: trading, community (posts/comments), gamification (leaderboards/rewards), and more.
+  </Card>
+  <Card title="Tenant Isolation" icon="lock">
+    Your markets, users, data, and configuration are logically isolated. Other tenants cannot see or access your data.
+  </Card>
+</CardGroup>
+
+## Configuration
+
+White-Label deployments are configured through the Admin Dashboard. No code changes required.
+
+### Branding
+
+| Setting | Description | Example |
+|---------|-------------|---------|
+| `tenant.name` | Display name | "AcmeMarkets" |
+| `tenant.domain` | Custom domain | `markets.acme.com` |
+| `tenant.logo` | Logo URL (light + dark variants) | `https://acme.com/logo.svg` |
+| `tenant.colors.primary` | Primary brand color | `#6366F1` |
+| `tenant.colors.background` | Background color | `#0D0B1A` |
+| `tenant.favicon` | Browser favicon | `https://acme.com/favicon.ico` |
+
+### Feature Flags
+
+| Flag | Default | Description |
+|------|:-------:|-------------|
+| `features.trading` | `true` | Enable buy/sell trading UI |
+| `features.community` | `true` | Enable posts, comments, likes |
+| `features.gamification` | `true` | Enable leaderboards, tasks, rewards |
+| `features.inviteSystem` | `true` | Enable referral invite codes |
+| `features.notifications` | `true` | Enable push notifications |
+| `features.marketCreation` | `false` | Allow tenant admins to create markets |
+
+### Fee Structure
+
+| Parameter | Default | Description |
+|-----------|:-------:|-------------|
+| `fees.tradingFee` | 100 (1%) | Trading fee in basis points |
+| `fees.platformShare` | 50% | PrometheX share of trading fees |
+| `fees.tenantShare` | 50% | Partner share of trading fees |
+
+<Info>
+Fee splits are configurable per tenant agreement. Contact us for custom fee structures.
+</Info>
+
+## Deployment Architecture
+
+```mermaid
+graph TB
+  subgraph Partner["Your Brand"]
+    DOMAIN["markets.yoursite.com"]
+    USERS["Your Users"]
+  end
+
+  subgraph Edge["Cloudflare Workers"]
+    WL["White-Label Frontend<br/>(your theme + config)"]
+  end
+
+  subgraph PrometheX["PrometheX Infrastructure"]
+    BFF["Market Backend"]
+    MS["Market Service"]
+    ADMIN["Admin Dashboard"]
+    DB["PostgreSQL<br/>(tenant-isolated)"]
+  end
+
+  subgraph Arbitrum["Arbitrum"]
+    PF["PredictionFactory"]
+    MARKETS["Market Contracts"]
+  end
+
+  USERS --> DOMAIN
+  DOMAIN --> WL
+  WL --> BFF
+  BFF --> MS
+  MS --> DB
+  MS --> MARKETS
+  ADMIN --> DB
+  PF --> MARKETS
+```
+
+The White-Label frontend is deployed to Cloudflare Workers at the edge — it loads your tenant configuration (branding, feature flags) at runtime and renders the full prediction market experience under your domain.
+
+## User Authentication
+
+White-Label deployments use **Privy** for authentication, configured per tenant:
+
+- **Social login** — Email, Google, Twitter, Discord
+- **Wallet login** — MetaMask, WalletConnect, Coinbase Wallet
+- **Embedded wallets** — Privy creates a non-custodial wallet for users who sign in with email/social
+- **ERC-4337 Smart Accounts** — Alchemy Light Account for gasless transactions
+
+<Note>
+Users never need to hold ETH. All gas is sponsored through the PrometheX Paymaster.
+</Note>
+
+## Admin Dashboard Access
+
+Each White-Label partner gets admin access scoped to their tenant:
+
+| Capability | Description |
+|------------|-------------|
+| **Market management** | Create, publish, settle, and cancel markets |
+| **Content management** | Configure banners, featured sections, categories |
+| **User management** | View users, manage roles, resolve disputes |
+| **Analytics** | Volume, P&L, user metrics per market |
+| **Configuration** | Update branding, feature flags, fees |
+
+Admin roles follow RBAC:
+- **Super Admin** — Full access (PrometheX team)
+- **Tenant Admin** — Full access within tenant scope
+- **Operator** — Market and content management
+- **Viewer** — Read-only analytics access
+
+## Launch Checklist
+
+<Steps>
+  <Step title="Provide branding assets">
+    Logo (SVG, light + dark variants), brand colors, favicon, and display name.
+  </Step>
+  <Step title="Configure DNS">
+    Point your custom domain (e.g., `markets.yoursite.com`) to the Cloudflare Workers deployment via CNAME.
+  </Step>
+  <Step title="Review feature flags">
+    Decide which features to enable: trading, community, gamification, notifications.
+  </Step>
+  <Step title="Agree on fee structure">
+    Confirm trading fee percentage and revenue split.
+  </Step>
+  <Step title="Test on staging">
+    Verify your branded deployment on [Arbitrum Sepolia](/platform/deployment/staging-environment) with test USDC.
+  </Step>
+  <Step title="Go live">
+    We promote your configuration to production. Your prediction market is live.
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Staging Environment" icon="flask-vial" href="/platform/deployment/staging-environment">
+    Test your white-label deployment on testnet.
+  </Card>
+  <Card title="Security Model" icon="shield-halved" href="/platform/security/security-model">
+    Understand tenant isolation and access control.
+  </Card>
+</CardGroup>

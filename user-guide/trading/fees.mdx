@@ -1,0 +1,87 @@
+---
+title: Fees
+description: "What fees you'll pay (and won't pay) on PrometheX."
+---
+
+## The Short Version
+
+- **Trading fee:** 1% per trade (goes to liquidity providers)
+- **Gas fees:** $0 — PrometheX pays them all
+- **Account creation:** Free
+- **Claiming winnings:** Free
+
+That's it. No hidden fees, no withdrawal fees, no subscription costs.
+
+## Trading Fee
+
+Every time you buy or sell shares, a **1% fee** is applied to your trade amount. This fee goes entirely to **liquidity providers** — the people who put money into the pool that makes trading possible.
+
+**Example:**
+- You buy $100 worth of Yes shares
+- $1.00 goes to liquidity providers as a fee
+- $99.00 is used to buy shares
+
+<Info>
+The trading fee is the **default** rate of 1% (100 basis points). Some markets may have different fee rates — always check the market details page to see the exact fee before trading.
+</Info>
+
+### Where does the fee go?
+
+| Recipient | Share | Description |
+|-----------|-------|-------------|
+| Liquidity providers | 100% | People who add funds to the market pool earn all trading fees proportional to their share of the pool |
+
+<Tip>
+The fee is automatically deducted from your trade. You don't need to approve or pay it separately — it's already factored into the share price and quantity you see on the trade confirmation screen.
+</Tip>
+
+## Gas Fees — None!
+
+On most crypto platforms, every action costs a **gas fee** — a small payment to the blockchain network for processing your transaction. These fees can range from a few cents to several dollars depending on network congestion.
+
+**On PrometheX, you pay zero gas fees.** The platform covers all blockchain transaction costs using a technology called **account abstraction** (specifically, a **paymaster** — a smart contract that sponsors transaction fees on your behalf).
+
+This applies to everything:
+
+| Action | Gas fee |
+|--------|---------|
+| Buying shares | **$0** |
+| Selling shares | **$0** |
+| Adding liquidity | **$0** |
+| Removing liquidity | **$0** |
+| Claiming winnings | **$0** |
+| Creating your account | **$0** |
+
+<Note>
+Gas-free trading is possible because PrometheX runs on **Arbitrum** (a fast, low-cost blockchain) and uses **ERC-4337 account abstraction** to sponsor all transaction costs. You never need to hold ETH or any other token for gas.
+</Note>
+
+## Claiming Winnings
+
+When a market resolves and you hold winning shares, claiming your USDC payout is **completely free**. No fees are deducted from your winnings.
+
+If you bought 100 shares at $0.40 each and your side wins:
+- You spent: $40.00 (plus ~$0.40 in trading fees)
+- You claim: **$100.00** (100 shares × $1.00)
+- Your profit: **~$59.60**
+
+## Comparing Fees
+
+Here's how PrometheX stacks up against other prediction market platforms:
+
+| Platform | Trading fee | Gas fee | Withdrawal fee |
+|----------|-----------|---------|---------------|
+| **PrometheX** | 1% | **Free** | **Free** |
+| Polymarket | ~2% | User pays | User pays |
+| Augur | Variable | User pays | User pays |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="How Trading Works" icon="arrows-rotate" href="/user-guide/trading/how-trading-works">
+    Understand the mechanics of buying and selling shares.
+  </Card>
+  <Card title="Providing Liquidity" icon="droplet" href="/user-guide/trading/providing-liquidity">
+    Earn fees by adding funds to market pools.
+  </Card>
+</CardGroup>

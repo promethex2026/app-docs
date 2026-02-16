@@ -1,0 +1,156 @@
+---
+title: Rate Limits
+description: "API rate limiting policy and best practices"
+---
+
+## Overview
+
+The PrometheX API uses **BBR-based adaptive rate limiting** (Bottleneck Bandwidth and Round-trip propagation time). Unlike fixed-window rate limiters, BBR dynamically adjusts limits based on server load and response times.
+
+## How It Works
+
+| Aspect | Detail |
+|--------|--------|
+| **Algorithm** | BBR adaptive rate limiting |
+| **Scope** | Per IP + per authenticated user |
+| **Error code** | `110103` (`PLEASE_WAIT`) |
+| **HTTP status** | `429 Too Many Requests` |
+
+When the server detects excessive load from a client, it responds with:
+
+```json
+{
+  "code": 110103,
+  "reason": "PLEASE_WAIT",
+  "msg": "too many requests, please try again later",
+  "data": null
+}
+```
+
+## Rate Limit Guidelines
+
+While the exact limits are adaptive, these guidelines will keep you within safe bounds:
+
+| Endpoint Type | Recommended Max | Notes |
+|---------------|:---------------:|-------|
+| Public reads (market list, detail) | 30 req/s | Cacheable — consider local caching |
+| Authenticated reads (positions, portfolio) | 10 req/s | Per user |
+| Trading operations (buy, sell, claim) | 5 req/s | Per user |
+| SSE connections | 1 concurrent | Per user |
+| Bulk operations | 2 req/s | Rate-sensitive |
+
+## Handling Rate Limits
+
+### Exponential Backoff
+
+When you receive a `110103` error, retry with exponential backoff:
+
+<CodeGroup>
+
+```javascript JavaScript
+async function fetchWithRetry(url, options, maxRetries = 5) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const res = await fetch(url, options);
+    const json = await res.json();
+
+    if (json.code !== 110103) return json;
+
+    // Exponential backoff: 1s, 2s, 4s, 8s, 16s
+    const delay = Math.min(1000 * Math.pow(2, attempt), 30000);
+    const jitter = Math.random() * 500;
+    await new Promise(r => setTimeout(r, delay + jitter));
+  }
+
+  throw new Error('Rate limit exceeded after max retries');
+}
+```
+
+```python Python
+import time
+import random
+import requests
+
+def fetch_with_retry(url, headers=None, max_retries=5):
+    for attempt in range(max_retries):
+        resp = requests.get(url, headers=headers)
+        data = resp.json()
+
+        if data['code'] != 110103:
+            return data
+
+        delay = min(2 ** attempt, 30) + random.uniform(0, 0.5)
+        time.sleep(delay)
+
+    raise Exception('Rate limit exceeded after max retries')
+```
+
+```bash cURL (with retry)
+# Simple retry loop
+for i in 1 2 3 4 5; do
+  RESPONSE=$(curl -s "https://api-staging.promethex.market/api/v1/market/get-markets?page=1&pageSize=10")
+  CODE=$(echo "$RESPONSE" | jq '.code')
+
+  if [ "$CODE" != "110103" ]; then
+    echo "$RESPONSE"
+    break
+  fi
+
+  echo "Rate limited, retrying in ${i}s..."
+  sleep $i
+done
+```
+
+</CodeGroup>
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Cache responses" icon="database">
+    Cache market listings and details locally. Most public data changes infrequently.
+  </Card>
+  <Card title="Use SSE" icon="bolt">
+    Instead of polling for updates, subscribe to [SSE events](/api-reference/websocket) for real-time data.
+  </Card>
+  <Card title="Batch requests" icon="layer-group">
+    Fetch multiple items per page instead of making individual requests.
+  </Card>
+  <Card title="Add jitter" icon="shuffle">
+    Add random jitter to retry delays to avoid thundering herd problems.
+  </Card>
+</CardGroup>
+
+### Do's and Don'ts
+
+| Do | Don't |
+|----|-------|
+| Cache public market data | Poll `/get-markets` every second |
+| Use SSE for real-time prices | Poll `/get-market-detail` in a tight loop |
+| Batch with `pageSize=50` | Fetch one market at a time |
+| Retry with exponential backoff | Retry immediately without delay |
+| Use a single SSE connection | Open multiple SSE connections |
+
+## Monitoring
+
+If you're building a high-frequency integration, monitor your error rates:
+
+```javascript
+let rateLimitHits = 0;
+let totalRequests = 0;
+
+async function monitoredFetch(url, options) {
+  totalRequests++;
+  const res = await fetch(url, options);
+  const json = await res.json();
+
+  if (json.code === 110103) {
+    rateLimitHits++;
+    console.warn(`Rate limit hit rate: ${(rateLimitHits / totalRequests * 100).toFixed(1)}%`);
+  }
+
+  return json;
+}
+```
+
+<Info>
+If you consistently hit rate limits and need higher throughput, contact the PrometheX team on [Discord](https://discord.gg/promethex) to discuss dedicated API access.
+</Info>

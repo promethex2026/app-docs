@@ -1,0 +1,180 @@
+---
+title: Glossary
+description: "Simple definitions of every term you'll encounter on PrometheX."
+---
+
+## A
+
+### Account Abstraction
+
+A technology that lets the platform cover blockchain fees (gas) on your behalf. It's the reason you never have to pay transaction fees on PrometheX. Behind the scenes, it uses a standard called **ERC-4337** to make smart contracts act as wallets.
+
+### APMM (Automated Prediction Market Maker)
+
+The engine that powers trading on PrometheX. It's a **smart contract pool** that automatically sets prices and lets you buy or sell shares instantly, without waiting for another person on the other side. When more people buy one outcome, its price goes up. When more people sell, its price goes down.
+
+### Arbitrum
+
+The blockchain network PrometheX runs on. Arbitrum is a **Layer 2** — a faster, cheaper network that sits on top of Ethereum and inherits its security. Think of it as an express lane that still connects to the main highway.
+
+### Assertion
+
+A formal statement about a market's outcome — for example, "Yes, Bitcoin did hit $100k." The person making the assertion puts up a bond (a money deposit) to back their claim. If no one disputes it within the challenge window, it's accepted as true.
+
+## B
+
+### Bond
+
+A deposit of money that backs an assertion or dispute. If you assert an outcome and you're right, you get your bond back. If you're wrong, you lose it. This financial incentive keeps the system honest.
+
+### Bridge
+
+A service that moves tokens from one blockchain to another. For example, you might use a bridge to move USDC from Ethereum to Arbitrum. Think of it as a ferry between two islands.
+
+## C
+
+### Challenge Window
+
+The time period after an outcome is asserted during which anyone can dispute it. On PrometheX, this is typically **2 hours**. If nobody disputes during this window, the assertion is accepted and the market settles.
+
+### Claim
+
+The action of collecting your winnings after a market resolves. If you hold winning shares, you tap "Claim" and the smart contract sends USDC to your account. It's free — no fees, no gas costs.
+
+## D
+
+### Decentralized
+
+Not controlled by any single person or company. PrometheX uses decentralized smart contracts and oracles, meaning no single entity can manipulate trades, outcomes, or your funds.
+
+### Dispute
+
+A challenge filed against an asserted outcome. If someone believes the market's result was declared incorrectly, they can dispute it by posting a counter-bond. The dispute is then resolved by an independent vote.
+
+## G
+
+### Gas Fee
+
+A fee charged by blockchain networks for processing transactions. On most crypto platforms, you pay gas fees every time you do something. **PrometheX covers all gas fees for you** — you never pay them.
+
+## I
+
+### Impermanent Loss
+
+A risk for liquidity providers. It happens when share prices in the pool move significantly from when you added funds. If one outcome becomes very likely, you might get back less than you put in. The trading fees you earn can offset this, but not always.
+
+## L
+
+### Layer 2 (L2)
+
+A network built on top of another blockchain (Layer 1) to make it faster and cheaper. Arbitrum is a Layer 2 on Ethereum. You get Ethereum-level security with much faster and cheaper transactions.
+
+### Liquidity
+
+The pool of funds available for trading in a market. More liquidity means smoother trades with less price impact. Liquidity is provided by users who deposit USDC into market pools.
+
+### Liquidity Provider (LP)
+
+Someone who adds USDC to a market's trading pool. In exchange, they receive **LP tokens** and earn a portion of every trading fee paid in that market.
+
+### LP Token
+
+A token you receive when you provide liquidity. It represents your share of the pool. When you want to withdraw, you return (burn) your LP tokens and receive your USDC back plus any fees earned.
+
+## M
+
+### Market
+
+A question about a real-world event that you can trade on. For example, "Will ETH hit $5,000 by July 2026?" Each market has outcomes (like Yes and No), prices, and an end date.
+
+### Market Maker
+
+A system (or person) that provides buying and selling opportunities in a market. PrometheX uses an automated market maker (the APMM) — a smart contract that always stands ready to trade with you.
+
+## N
+
+### Non-Custodial
+
+A system where **you** control your funds, not the platform. PrometheX is non-custodial — your USDC is held in your smart account or in transparent smart contracts, never in PrometheX's bank account.
+
+## O
+
+### Oracle
+
+An independent system that brings real-world information onto the blockchain. PrometheX uses the **UMA Optimistic Oracle** to verify market outcomes. It's like a neutral referee that determines who won.
+
+### Outcome
+
+One of the possible results of a market question. In a binary market, the outcomes are Yes and No. Multi-outcome markets can have three or more options (like different election candidates).
+
+## P
+
+### Payout
+
+The money you receive when a market resolves in your favor. Each winning share pays out **$1.00 USDC**. Losing shares pay $0.
+
+### Position
+
+Your holdings in a market — the shares you own. Your position shows what you've bought, how much it's currently worth, and what your potential payout would be.
+
+### Prediction Market
+
+A marketplace where you trade on the outcomes of real-world events. Prices reflect the crowd's estimate of how likely each outcome is. PrometheX is a prediction market platform.
+
+### Privy
+
+The sign-in service PrometheX uses. Privy lets you create an account with your email, Google, or Twitter — no crypto wallet or technical setup needed.
+
+## R
+
+### Resolution
+
+The process of determining a market's outcome after the real-world event happens. On PrometheX, this involves an assertion, a challenge window, and (if disputed) a decentralized vote.
+
+## S
+
+### Shares
+
+What you buy and sell on PrometheX. Each share represents a specific outcome in a market and is priced between $0.00 and $1.00 USDC. Winning shares pay $1.00; losing shares pay $0.
+
+### Slippage
+
+The difference between the price you expect and the price you actually get. Larger trades tend to have more slippage because they move the market price more. For most normal-sized trades, slippage is very small.
+
+### Smart Account
+
+Your personal wallet on PrometheX, created automatically when you sign in. It's a **smart contract** that acts as your on-chain identity. You don't need to manage private keys or remember seed phrases — just sign in with your email or social account.
+
+### Smart Contract
+
+A program that runs on the blockchain and executes automatically. Smart contracts handle all trading, payouts, and fund management on PrometheX. They're transparent (anyone can read the code) and tamper-proof (nobody can change them after deployment).
+
+### Stablecoin
+
+A cryptocurrency designed to always be worth $1.00 (or another fixed value). **USDC** is the stablecoin used on PrometheX — each USDC token is backed by real US dollars held in reserve.
+
+## T
+
+### Testnet
+
+A practice version of a blockchain where tokens have no real value. PrometheX is currently on **Arbitrum Sepolia** testnet, which lets you try everything risk-free with free test tokens.
+
+### Trading Fee
+
+A small fee (typically 1%) charged on each trade. This fee goes to **liquidity providers** as a reward for making trading possible. PrometheX doesn't take a cut.
+
+## U
+
+### UMA Optimistic Oracle
+
+The decentralized system PrometheX uses to verify market outcomes. It works by **assuming assertions are correct** unless someone disputes them. If there is a dispute, independent voters determine the truth. "UMA" stands for Universal Market Access.
+
+### USDC
+
+**USD Coin** — a stablecoin worth $1.00, issued by Circle and backed by real US dollars. It's the currency you use to trade on PrometheX. Think of it as digital cash.
+
+## W
+
+### Wallet
+
+A tool for holding and managing cryptocurrency. On PrometheX, your **smart account** is your wallet — it's created automatically and you don't need to install any apps or extensions. If you're a crypto-native user, you can also connect an existing wallet like MetaMask.

@@ -1,0 +1,183 @@
+---
+title: Buy Tokens (Deposit)
+description: "Buy outcome tokens on a prediction market"
+---
+
+```
+POST /api/v1/market/place-order
+```
+
+**Auth required:** Yes
+
+Buys outcome tokens by depositing base tokens (e.g., USDC) into the market's APMM pool. The transaction is executed gaslessly via an ERC-4337 UserOperation.
+
+<Info>
+This endpoint uses `side: 1` for buying. For selling, see [Sell Tokens (Withdraw)](/api-reference/trading/withdraw).
+</Info>
+
+## Request Body
+
+<ParamField body="marketAddress" type="string" required>
+  Prediction market contract address.
+</ParamField>
+
+<ParamField body="optionAddress" type="string" required>
+  Option token to buy (e.g., "Yes" or "No" token address).
+</ParamField>
+
+<ParamField body="side" type="number" required>
+  Must be `1` (buy/deposit).
+</ParamField>
+
+<ParamField body="price" type="string" required>
+  Price per token in base token units (6 decimal precision for USDC).
+</ParamField>
+
+<ParamField body="amount" type="string" required>
+  Amount of base tokens to spend (e.g., `"10000000"` = 10 USDC).
+</ParamField>
+
+<ParamField body="minReceiveAmount" type="string" required>
+  Minimum tokens to receive. Protects against slippage. If the actual output is less than this, the transaction reverts.
+</ParamField>
+
+<ParamField body="deadline" type="string" required>
+  Unix timestamp. Transaction reverts if not executed before this time.
+</ParamField>
+
+<ParamField body="userOperation" type="object" required>
+  Signed ERC-4337 UserOperation.
+  <Expandable title="UserOperation fields">
+    <ParamField body="sender" type="string" required>
+      Smart account address.
+    </ParamField>
+    <ParamField body="nonce" type="string" required>
+      Hex-encoded nonce.
+    </ParamField>
+    <ParamField body="initCode" type="string" required>
+      `"0x"` for existing accounts, or account factory calldata for first tx.
+    </ParamField>
+    <ParamField body="callData" type="string" required>
+      Encoded contract call.
+    </ParamField>
+    <ParamField body="callGasLimit" type="string" required>
+      Hex gas limit for execution.
+    </ParamField>
+    <ParamField body="verificationGasLimit" type="string" required>
+      Hex gas limit for verification.
+    </ParamField>
+    <ParamField body="preVerificationGas" type="string" required>
+      Hex pre-verification gas.
+    </ParamField>
+    <ParamField body="maxFeePerGas" type="string" required>
+      Hex max fee per gas.
+    </ParamField>
+    <ParamField body="maxPriorityFeePerGas" type="string" required>
+      Hex max priority fee per gas.
+    </ParamField>
+    <ParamField body="paymasterAndData" type="string" required>
+      Paymaster contract data (enables gasless tx).
+    </ParamField>
+    <ParamField body="signature" type="string" required>
+      Hex-encoded signature from the smart account owner.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api-staging.promethex.market/api/v1/market/place-order" \
+  -H "Authorization: Bearer $PRIVY_JWT" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "marketAddress": "0x1234...abcd",
+    "optionAddress": "0xaaaa...1111",
+    "side": 1,
+    "price": "650000",
+    "amount": "10000000",
+    "minReceiveAmount": "9500000",
+    "deadline": "1740000000",
+    "userOperation": {
+      "sender": "0xSenderAddress...",
+      "nonce": "0x01",
+      "initCode": "0x",
+      "callData": "0xCallData...",
+      "callGasLimit": "0x30000",
+      "verificationGasLimit": "0x20000",
+      "preVerificationGas": "0x10000",
+      "maxFeePerGas": "0x3B9ACA00",
+      "maxPriorityFeePerGas": "0x3B9ACA00",
+      "paymasterAndData": "0xPaymaster...",
+      "signature": "0xSignature..."
+    }
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch('https://api-staging.promethex.market/api/v1/market/place-order', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${privyJwt}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    marketAddress: '0x1234...abcd',
+    optionAddress: '0xaaaa...1111',
+    side: 1,
+    price: '650000',
+    amount: '10000000',
+    minReceiveAmount: '9500000',
+    deadline: String(Math.floor(Date.now() / 1000) + 300),
+    userOperation: signedUserOp,
+  }),
+});
+const { data } = await res.json();
+console.log('Order submitted:', data.opHash);
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "code": 0,
+  "data": {
+    "opHash": "0xabcdef...",
+    "orderUuid": "order-123-456"
+  }
+}
+```
+
+<ResponseField name="opHash" type="string">
+  UserOperation hash. Use to track the on-chain transaction status.
+</ResponseField>
+
+<ResponseField name="orderUuid" type="string">
+  Internal order identifier.
+</ResponseField>
+
+## Execution Flow
+
+```
+Client                   PrometheX API            Bundler / Chain
+  │                          │                         │
+  ├── Build UserOp           │                         │
+  ├── Sign UserOp            │                         │
+  ├── POST /place-order ──► │                         │
+  │                          ├── Validate order        │
+  │                          ├── Submit to bundler ──► │
+  │  ◄── { opHash } ─────── │                         │
+  │                          │                         ├── Execute on-chain
+  │                          │  ◄── Tx confirmed ──── │
+  │  ◄── SSE: position_changed ─── │                  │
+```
+
+After confirmation, the user's position is updated and an SSE event `user:position_changed` is emitted.
+
+<Warning>
+The `userOperation` must be properly constructed and signed. See the [Gasless Transactions guide](/guides/gasless-transactions) for detailed instructions on building UserOperations.
+</Warning>
