@@ -111,9 +111,7 @@ The UMA oracle provides **economic security** — honesty is enforced through bo
 
 The oracle is secure when the cost of a successful attack exceeds the profit:
 
-$$
-\text{Bond} > \frac{\text{Market Value}}{\text{Number of Monitors}}
-$$
+`Bond > MarketValue / NumberOfMonitors`
 
 As long as at least one rational actor is monitoring the market, incorrect assertions will be disputed.
 
@@ -217,7 +215,7 @@ Users should always set `minReceive` to a reasonable value (e.g., 99% of the quo
 
 The following invariants should always hold and are checked by the test suite:
 
-1. **APMM invariant**: \(\prod r_i^{w_i} = k\) after every trade (within rounding tolerance)
+1. **APMM invariant**: `∏ rᵢʷⁱ = k` after every trade (within rounding tolerance)
 2. **Conservation**: `sum(all_option_supply[i] * price[i]) + fees_collected <= baseToken.balanceOf(market)`
 3. **LP share proportionality**: LP tokens minted/burned are proportional to reserves added/removed
 4. **Settlement finality**: Once `status == Ended`, no further state transitions are possible

@@ -122,15 +122,15 @@ stateDiagram-v2
 
 The Automated Prediction Market Maker uses a **weighted constant-product** invariant:
 
-$$
-\prod_{i} r_i^{w_i} = k
-$$
+```
+∏ rᵢʷⁱ = k
+```
 
-Where \(r_i\) is the reserve of option \(i\), \(w_i\) is its weight, and \(k\) is the invariant constant. The instantaneous price of option \(i\) is:
+Where `rᵢ` is the reserve of option `i`, `wᵢ` is its weight, and `k` is the invariant constant. The instantaneous price of option `i` is:
 
-$$
-\text{Price}_i = w_i \cdot \frac{\sum_j r_j}{r_i}
-$$
+```
+Priceᵢ = wᵢ · (∑ rⱼ) / rᵢ
+```
 
 For a deep dive, see [APMM Mathematics](/concepts/apmm). For implementation details, see [Prediction Contract](/contracts/prediction).
 

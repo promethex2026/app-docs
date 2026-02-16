@@ -120,29 +120,29 @@ function deposit(
 4. Difference = option tokens minted to caller
 
 <Accordion title="Deposit math walkthrough">
-Given current reserves \([r_0, r_1, \ldots, r_n]\), weights \([w_0, w_1, \ldots, w_n]\), and invariant \(k\):
+Given current reserves `[r₀, r₁, …, rₙ]`, weights `[w₀, w₁, …, wₙ]`, and invariant `k`:
 
-$$
-\prod_{i} r_i^{w_i} = k
-$$
+```
+∏ rᵢʷⁱ = k
+```
 
 After depositing `netAmount` into all reserves:
 
-$$
-r'_j = r_j + \text{netAmount} \quad \forall j \neq \text{optionIndex}
-$$
+```
+r'ⱼ = rⱼ + netAmount   ∀ j ≠ optionIndex
+```
 
 Solve for the new target reserve:
 
-$$
-r'_{\text{opt}} = \left(\frac{k}{\prod_{j \neq \text{opt}} (r'_j)^{w_j}}\right)^{1/w_{\text{opt}}}
-$$
+```
+r'_opt = (k / ∏(j≠opt) r'ⱼʷʲ) ^ (1/w_opt)
+```
 
 Tokens minted to user:
 
-$$
-\text{received} = (r_{\text{opt}} + \text{netAmount}) - r'_{\text{opt}}
-$$
+```
+received = (r_opt + netAmount) - r'_opt
+```
 </Accordion>
 
 #### `withdraw` — Sell Option Tokens
@@ -318,24 +318,24 @@ event Claimed(
 
 ### Invariant
 
-The APMM uses a **weighted constant-product** formula generalized from Uniswap's \(x \cdot y = k\):
+The APMM uses a **weighted constant-product** formula generalized from Uniswap's `x · y = k`:
 
-$$
-\prod_{i=0}^{n-1} r_i^{w_i} = k
-$$
+```
+∏ rᵢʷⁱ = k
+```
 
 Where:
-- \(r_i\) = reserve of option \(i\)
-- \(w_i\) = weight of option \(i\) (with \(\sum w_i = 1\))
-- \(k\) = invariant constant (set at initialization)
+- `rᵢ` = reserve of option `i`
+- `wᵢ` = weight of option `i` (with `∑wᵢ = 1`)
+- `k` = invariant constant (set at initialization)
 
 ### Price Formula
 
-The instantaneous price of option \(i\) is:
+The instantaneous price of option `i` is:
 
-$$
-\text{Price}_i = w_i \cdot \frac{\sum_{j=0}^{n-1} r_j}{r_i}
-$$
+```
+Priceᵢ = wᵢ · (∑ rⱼ) / rᵢ
+```
 
 **Properties:**
 - All prices sum to approximately 1 (ignoring fees)
@@ -344,21 +344,18 @@ $$
 
 ### Binary Market Example
 
-For a Yes/No market with equal weights (\(w = 0.5\)):
+For a Yes/No market with equal weights (`w = 0.5`):
 
-$$
-\text{Price}_{\text{Yes}} = \frac{r_{\text{No}}}{r_{\text{Yes}} + r_{\text{No}}}
-$$
+```
+Price_Yes = r_No / (r_Yes + r_No)
+```
 
 If reserves are `[800, 1200]` (Yes, No):
 
-$$
-\text{Price}_{\text{Yes}} = \frac{1200}{800 + 1200} = 0.60 \quad (60\%)
-$$
-
-$$
-\text{Price}_{\text{No}} = \frac{800}{800 + 1200} = 0.40 \quad (40\%)
-$$
+```
+Price_Yes = 1200 / (800 + 1200) = 0.60  (60%)
+Price_No  = 800  / (800 + 1200) = 0.40  (40%)
+```
 
 ### Fee Mechanics
 
