@@ -177,7 +177,6 @@
             "group": "Advanced",
             "pages": [
               "contracts/ctf-migration",
-              "contracts/security",
               "contracts/audit-reports"
             ]
           }
