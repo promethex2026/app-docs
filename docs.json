@@ -37,7 +37,6 @@
             "group": "Trading",
             "pages": [
               "user-guide/trading/how-trading-works",
-              "user-guide/trading/providing-liquidity",
               "user-guide/trading/fees"
             ]
           },
@@ -176,6 +175,6 @@
   "footerSocials": {
     "x": "https://x.com/promethex",
     "github": "https://github.com/promethex2026",
-    "discord": "https://discord.com/invite/EuKaZNwARB"
+    "discord": "https://discord.gg/promethex"
   }
 }
