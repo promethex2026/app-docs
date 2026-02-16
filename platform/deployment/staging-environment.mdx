@@ -1,5 +1,5 @@
 ---
-title: Staging Environment
+title: "Staging Environment"
 description: "Test the full PrometheX platform on Arbitrum Sepolia"
 ---
 
@@ -7,29 +7,29 @@ description: "Test the full PrometheX platform on Arbitrum Sepolia"
 
 The PrometheX staging environment is a fully functional deployment on Arbitrum Sepolia. Every feature available in production is available here — trading, market browsing, gasless transactions, real-time data, and admin tools.
 
-<Card title="Launch Staging App" icon="rocket" href="https://staging.promethex.market">
+<Card icon="rocket" href="https://staging.promethex.market" title="Launch Staging App">
   Open the live staging environment at **staging.promethex.market** — sign in, get test USDC, and place your first trade in under a minute.
 </Card>
 
 ## Network Details
 
-| Property | Value |
-|----------|-------|
-| **App URL** | [staging.promethex.market](https://staging.promethex.market) |
-| **API Base URL** | `https://staging.promethex.market/api/v1` |
-| **Network** | Arbitrum Sepolia |
-| **Chain ID** | `421614` |
-| **RPC Endpoint** | `https://sepolia-rollup.arbitrum.io/rpc` |
-| **Block Explorer** | [sepolia.arbiscan.io](https://sepolia.arbiscan.io/) |
+| Property           | Value                                                        |
+| ------------------ | ------------------------------------------------------------ |
+| **App URL**        | [staging.promethex.market](https://staging.promethex.market) |
+| **API Base URL**   | `https://staging.promethex.market/api/v1`                    |
+| **Network**        | Arbitrum Sepolia                                             |
+| **Chain ID**       | `421614`                                                     |
+| **RPC Endpoint**   | `https://sepolia-rollup.arbitrum.io/rpc`                     |
+| **Block Explorer** | [sepolia.arbiscan.io](https://sepolia.arbiscan.io/)          |
 
 ## Core Contract Addresses
 
-| Contract | Address | Explorer |
-|----------|---------|----------|
+| Contract                      | Address                                      | Explorer                                                                                           |
+| ----------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | **PredictionFactory** (Proxy) | `0x2c3E6717C1CC3787dBf420985188e2562F1aE62B` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0x2c3E6717C1CC3787dBf420985188e2562F1aE62B) |
-| **MockOptimisticOracleV3** | `0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6) |
-| **Test USDC (tUSDC)** | `0x934E616cA9538397E3f9a12895C40ea2E8C45E48` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48) |
-| **ERC-4337 EntryPoint** | `0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789) |
+| **MockOptimisticOracleV3**    | `0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6) |
+| **Test USDC (tUSDC)**         | `0x934E616cA9538397E3f9a12895C40ea2E8C45E48` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48) |
+| **ERC-4337 EntryPoint**       | `0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789` | [View on Arbiscan](https://sepolia.arbiscan.io/address/0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789) |
 
 For the full list of deployed contracts, see [Contract Addresses](/platform/deployment/contract-addresses).
 
@@ -43,7 +43,7 @@ For the full list of deployed contracts, see [Contract Addresses](/platform/depl
     Click **Connect** and sign in with email, Google, Twitter, or an external wallet. Privy creates a smart account for you automatically — no wallet setup needed.
   </Step>
   <Step title="Get test USDC">
-    Use the in-app faucet to receive tUSDC, or mint directly from the [tUSDC contract](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48). Test tokens have no real value.
+    Use the in-app faucet to receive tUSDC, or mint directly from the [tUSDC contract](0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490). Test tokens have no real value.
   </Step>
   <Step title="Browse markets">
     Explore active prediction markets. Each market shows current prices (probabilities), volume, and expiry date.
@@ -72,7 +72,7 @@ curl -N https://staging.promethex.market/api/v1/sse/subscribe?channels=market:0x
 ```
 
 <Info>
-The staging environment uses the same API endpoints, authentication flow, and smart contracts as production. Code written against staging will work on mainnet with only a URL change.
+  The staging environment uses the same API endpoints, authentication flow, and smart contracts as production. Code written against staging will work on mainnet with only a URL change.
 </Info>
 
 ## Getting Testnet Tokens
@@ -81,55 +81,55 @@ The staging environment uses the same API endpoints, authentication flow, and sm
 
 You only need Sepolia ETH if you plan to interact with contracts directly (not through the API). For gasless trading via the app or API, no ETH is required.
 
-| Faucet | URL |
-|--------|-----|
-| QuickNode | [faucet.quicknode.com/arbitrum/sepolia](https://faucet.quicknode.com/arbitrum/sepolia) |
-| Alchemy | [sepoliafaucet.com](https://sepoliafaucet.com/) |
-| Arbitrum Bridge | Bridge Sepolia ETH via [bridge.arbitrum.io](https://bridge.arbitrum.io/) |
+| Faucet          | URL                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------- |
+| QuickNode       | [faucet.quicknode.com/arbitrum/sepolia](https://faucet.quicknode.com/arbitrum/sepolia) |
+| Alchemy         | [sepoliafaucet.com](https://sepoliafaucet.com/)                                        |
+| Arbitrum Bridge | Bridge Sepolia ETH via [bridge.arbitrum.io](https://bridge.arbitrum.io/)               |
 
 ### Test USDC (tUSDC)
 
-| Method | Details |
-|--------|---------|
-| **In-app faucet** | Click the faucet button in the staging app after signing in |
-| **Direct mint** | Call `mint()` on the [tUSDC contract](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48) |
+| Method            | Details                                                                           |
+| ----------------- | --------------------------------------------------------------------------------- |
+| **In-app faucet** | Click the faucet button in the staging app after signing in                       |
+| **Direct mint**   | Call `mint()` on the [tUSDC contract](0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490) |
 
 ## Infrastructure
 
 The staging environment runs on dedicated infrastructure that mirrors the production topology:
 
-| Component | Host | Details |
-|-----------|------|---------|
-| **Backend Services** | `54.179.181.210` | Docker Compose: Market Backend (8000), Market Service (9000), Recommendation (50051), Block Listener (8080) |
-| **Admin Service** | `13.229.202.228` | Docker Compose: Admin App (8080), PostgreSQL, Redis, MinIO |
-| **Frontend** | Cloudflare Workers | Edge-deployed React SPA |
-| **Database** | PostgreSQL + pgvector | Markets, users, positions, embeddings |
-| **Cache** | Redis | Rate limiting, locks, block tracking |
-| **Storage** | MinIO (S3-compatible) | Images, assets |
+| Component            | Host                  | Details                                                                                                     |
+| -------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Backend Services** | `54.179.181.210`      | Docker Compose: Market Backend (8000), Market Service (9000), Recommendation (50051), Block Listener (8080) |
+| **Admin Service**    | `13.229.202.228`      | Docker Compose: Admin App (8080), PostgreSQL, Redis, MinIO                                                  |
+| **Frontend**         | Cloudflare Workers    | Edge-deployed React SPA                                                                                     |
+| **Database**         | PostgreSQL + pgvector | Markets, users, positions, embeddings                                                                       |
+| **Cache**            | Redis                 | Rate limiting, locks, block tracking                                                                        |
+| **Storage**          | MinIO (S3-compatible) | Images, assets                                                                                              |
 
 ## Limitations
 
 The staging environment has a few differences from production:
 
-| Area | Staging | Production |
-|------|---------|------------|
-| **Network** | Arbitrum Sepolia | Arbitrum One |
-| **Token** | tUSDC (test, mintable) | USDC (real) |
-| **Oracle** | MockOptimisticOracleV3 | UMA OptimisticOracleV3 |
-| **Data** | Test markets, may be reset | Persistent |
-| **SLA** | Best effort | Production SLA |
+| Area        | Staging                    | Production             |
+| ----------- | -------------------------- | ---------------------- |
+| **Network** | Arbitrum Sepolia           | Arbitrum One           |
+| **Token**   | tUSDC (test, mintable)     | USDC (real)            |
+| **Oracle**  | MockOptimisticOracleV3     | UMA OptimisticOracleV3 |
+| **Data**    | Test markets, may be reset | Persistent             |
+| **SLA**     | Best effort                | Production SLA         |
 
 <Note>
-The staging environment may be reset periodically as we deploy new features. Test data (markets, positions, trades) may not persist across resets.
+  The staging environment may be reset periodically as we deploy new features. Test data (markets, positions, trades) may not persist across resets.
 </Note>
 
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Contract Addresses" icon="file-contract" href="/platform/deployment/contract-addresses">
+  <Card icon="file-contract" href="/platform/deployment/contract-addresses" title="Contract Addresses">
     Full list of deployed contract addresses.
   </Card>
-  <Card title="API Reference" icon="book-open" href="/api-reference/overview">
+  <Card icon="book-open" href="/api-reference/overview" title="API Reference">
     Start building against the staging API.
   </Card>
 </CardGroup>

@@ -1,5 +1,5 @@
 ---
-title: Embedded Integration
+title: "Embedded Integration"
 description: "Drop prediction markets into your existing app with an iframe or React SDK"
 ---
 
@@ -8,10 +8,10 @@ description: "Drop prediction markets into your existing app with an iframe or R
 The Embedded model lets you add prediction markets to your existing application without building a new product. Drop in an iframe or use the React SDK to render a market widget — your users can browse and trade without leaving your site.
 
 <Tip>
-Embedded integration takes **1–3 days** of engineering effort. You get a fully functional trading widget with a few lines of code.
+  Embedded integration takes **1–3 days** of engineering effort. You get a fully functional trading widget with a few lines of code.
 </Tip>
 
-## Integration Methods
+## Integration Methods(Coming Soon)
 
 <Tabs>
   <Tab title="iframe">
@@ -28,17 +28,16 @@ Embedded integration takes **1–3 days** of engineering effort. You get a fully
     ></iframe>
     ```
 
-    **Pros:** Zero dependencies, works in any web stack, minimal code.
-    **Cons:** Limited cross-origin communication, styling constrained to config options.
+    **Pros:** Zero dependencies, works in any web stack, minimal code. **Cons:** Limited cross-origin communication, styling constrained to config options.
   </Tab>
   <Tab title="JavaScript SDK">
     Load the PrometheX SDK script and initialize a market widget programmatically.
 
     ```html
     <script src="https://cdn.promethex.market/embed/v1/promethex.js"></script>
-
+    
     <div id="promethex-widget"></div>
-
+    
     <script>
       PrometheX.init({
         container: '#promethex-widget',
@@ -53,8 +52,7 @@ Embedded integration takes **1–3 days** of engineering effort. You get a fully
     </script>
     ```
 
-    **Pros:** Event callbacks, dynamic configuration, programmatic control.
-    **Cons:** Requires script tag, slight bundle size increase.
+    **Pros:** Event callbacks, dynamic configuration, programmatic control. **Cons:** Requires script tag, slight bundle size increase.
   </Tab>
   <Tab title="React SDK">
     For React applications, use the `@promethex/react` component library.
@@ -65,7 +63,7 @@ Embedded integration takes **1–3 days** of engineering effort. You get a fully
 
     ```tsx
     import { PrometheXMarket, PrometheXProvider } from '@promethex/react';
-
+    
     function App() {
       return (
         <PrometheXProvider
@@ -85,44 +83,45 @@ Embedded integration takes **1–3 days** of engineering effort. You get a fully
     }
     ```
 
-    **Pros:** Native React integration, TypeScript types, component lifecycle, event callbacks.
-    **Cons:** React 18+ required.
+    **Pros:** Native React integration, TypeScript types, component lifecycle, event callbacks. **Cons:** React 18+ required.
   </Tab>
 </Tabs>
 
 <Note>
-The JavaScript SDK and React SDK are under active development and will be available in Q1 2026. The iframe embed is available now on the staging environment.
+  <Note>
+    The iframe embed, JavaScript SDK and React SDK are under active development and will be available in Q1 2026. 
+  </Note>
 </Note>
 
 ## Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `marketAddress` | `string` | **required** | On-chain market contract address |
-| `tenantId` | `string` | **required** | Your tenant identifier |
-| `apiKey` | `string` | **required** | API key for authentication |
-| `theme` | `"light"` \| `"dark"` | `"light"` | Widget color theme |
-| `width` | `string` | `"100%"` | Widget width (px or %) |
-| `height` | `number` | `600` | Widget height in pixels |
-| `locale` | `string` | `"en"` | Language code (`en`, `zh`) |
-| `hideHeader` | `boolean` | `false` | Hide the market title bar |
-| `tradingEnabled` | `boolean` | `true` | Enable trading (set `false` for view-only) |
-| `showChart` | `boolean` | `true` | Show the price history chart |
-| `showOrderBook` | `boolean` | `false` | Show the order book (when CLOB is available) |
+| Option           | Type                  | Default      | Description                                  |
+| ---------------- | --------------------- | ------------ | -------------------------------------------- |
+| `marketAddress`  | `string`              | **required** | On-chain market contract address             |
+| `tenantId`       | `string`              | **required** | Your tenant identifier                       |
+| `apiKey`         | `string`              | **required** | API key for authentication                   |
+| `theme`          | `"light"` \| `"dark"` | `"light"`    | Widget color theme                           |
+| `width`          | `string`              | `"100%"`     | Widget width (px or %)                       |
+| `height`         | `number`              | `600`        | Widget height in pixels                      |
+| `locale`         | `string`              | `"en"`       | Language code (`en`, `zh`)                   |
+| `hideHeader`     | `boolean`             | `false`      | Hide the market title bar                    |
+| `tradingEnabled` | `boolean`             | `true`       | Enable trading (set `false` for view-only)   |
+| `showChart`      | `boolean`             | `true`       | Show the price history chart                 |
+| `showOrderBook`  | `boolean`             | `false`      | Show the order book (when CLOB is available) |
 
 ## Theming
 
 Customize the widget appearance to match your application.
 
-| Theme Property | Type | Description |
-|----------------|------|-------------|
-| `colors.primary` | `string` | Primary accent color (buttons, links) |
-| `colors.background` | `string` | Widget background color |
-| `colors.text` | `string` | Primary text color |
-| `colors.success` | `string` | Positive outcome / gain color |
-| `colors.danger` | `string` | Negative outcome / loss color |
-| `borderRadius` | `string` | Border radius for cards and buttons |
-| `fontFamily` | `string` | Font family override |
+| Theme Property      | Type     | Description                           |
+| ------------------- | -------- | ------------------------------------- |
+| `colors.primary`    | `string` | Primary accent color (buttons, links) |
+| `colors.background` | `string` | Widget background color               |
+| `colors.text`       | `string` | Primary text color                    |
+| `colors.success`    | `string` | Positive outcome / gain color         |
+| `colors.danger`     | `string` | Negative outcome / loss color         |
+| `borderRadius`      | `string` | Border radius for cards and buttons   |
+| `fontFamily`        | `string` | Font family override                  |
 
 ```javascript
 PrometheX.init({
@@ -149,29 +148,29 @@ PrometheX.init({
 
 Listen for user actions and state changes in the embedded widget.
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `onTradeComplete` | `{ marketAddress, optionIndex, amount, price, txHash }` | User completed a trade |
-| `onMarketLoad` | `{ marketAddress, title, options, prices }` | Market data loaded |
-| `onPriceUpdate` | `{ marketAddress, prices }` | Real-time price change |
-| `onError` | `{ code, message }` | Error occurred in widget |
-| `onAuthRequired` | `{}` | User needs to authenticate to trade |
+| Event             | Payload                                                 | Description                         |
+| ----------------- | ------------------------------------------------------- | ----------------------------------- |
+| `onTradeComplete` | `{ marketAddress, optionIndex, amount, price, txHash }` | User completed a trade              |
+| `onMarketLoad`    | `{ marketAddress, title, options, prices }`             | Market data loaded                  |
+| `onPriceUpdate`   | `{ marketAddress, prices }`                             | Real-time price change              |
+| `onError`         | `{ code, message }`                                     | Error occurred in widget            |
+| `onAuthRequired`  | `{}`                                                    | User needs to authenticate to trade |
 
 ## Widget Views
 
 The embedded widget supports multiple display modes:
 
 <CardGroup cols={2}>
-  <Card title="Full Market" icon="chart-mixed">
+  <Card icon="chart-mixed" title="Full Market">
     Complete market view with title, chart, options, and trading interface. Best for dedicated market pages.
   </Card>
-  <Card title="Compact Card" icon="square">
+  <Card icon="square" title="Compact Card">
     Minimal card showing market title, current prices, and a trade button. Best for market lists and sidebars.
   </Card>
-  <Card title="Price Ticker" icon="chart-line">
+  <Card icon="chart-line" title="Price Ticker">
     Inline price display with sparkline chart. Best for embedding in articles and news feeds.
   </Card>
-  <Card title="Market List" icon="list">
+  <Card icon="list" title="Market List">
     Scrollable list of multiple markets with filters. Best for market discovery pages.
   </Card>
 </CardGroup>
@@ -187,10 +186,10 @@ The embedded widget supports multiple display modes:
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="API-Only Integration" icon="code" href="/platform/integration/api-only">
+  <Card icon="code" href="/platform/integration/api-only" title="API-Only Integration">
     Need more control? Build your own UI with the REST API.
   </Card>
-  <Card title="Staging Environment" icon="flask-vial" href="/platform/deployment/staging-environment">
+  <Card icon="flask-vial" href="/platform/deployment/staging-environment" title="Staging Environment">
     Test the embed widget on the staging environment.
   </Card>
 </CardGroup>

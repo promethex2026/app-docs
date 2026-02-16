@@ -1,5 +1,5 @@
 ---
-title: Providing Liquidity
+title: "Providing Liquidity"
 description: "Earn fees by adding funds to prediction market pools."
 ---
 
@@ -36,13 +36,14 @@ Think of it like owning a piece of a marketplace: every time someone buys or sel
 Your earnings come from **trading fees**. The default trading fee on PrometheX is **1%** of each trade, and all of it goes to liquidity providers.
 
 **Example:**
-- A market has $10,000 in total liquidity
-- You provided $1,000 (10% of the pool)
-- Someone makes a $500 trade → $5 fee collected
-- You earn $0.50 (10% of the $5 fee)
+
+- A market has \$10,000 in total liquidity
+- You provided \$1,000 (10% of the pool)
+- Someone makes a 500 trade → \$5 fee collected
+- You earn 0.50 (10% of the \$5 fee)
 
 <Tip>
-Markets with higher trading volume generate more fees. Look for popular, actively traded markets if you want to maximize your earnings.
+  Markets with higher trading volume generate more fees. Look for popular, actively traded markets if you want to maximize your earnings.
 </Tip>
 
 ## Understanding the Risks
@@ -53,22 +54,22 @@ Providing liquidity isn't risk-free. Here's what you should know:
 
 **Impermanent loss** happens when the price of shares in the pool moves significantly from when you added liquidity. In prediction markets, this typically means:
 
-- If one outcome becomes very likely (price moves toward $1.00), the pool ends up holding mostly the losing side's shares
+- If one outcome becomes very likely (price moves toward \$1.00), the pool ends up holding mostly the losing side's shares
 - When you remove liquidity, you might get back less USDC than you put in, because the pool's value has shifted
 
 <Warning>
-The more dramatically a market's prices move after you add liquidity, the larger the potential impermanent loss. If you provide liquidity to a market where one side goes from $0.50 to $0.95, you may lose more in impermanent loss than you earned in fees.
+  The more dramatically a market's prices move after you add liquidity, the larger the potential impermanent loss. If you provide liquidity to a market where one side goes from 0.50 to 0.95, you may lose more in impermanent loss than you earned in fees.
 </Warning>
 
 ### When to Provide Liquidity
 
 <CardGroup cols={2}>
-  <Card title="Good Candidates" icon="circle-check">
+  <Card icon="circle-check" title="Good Candidates">
     - Markets with high trading activity
     - Markets where prices are expected to stay relatively balanced
     - Markets with a long time before resolution
   </Card>
-  <Card title="Be Cautious With" icon="triangle-exclamation">
+  <Card icon="triangle-exclamation" title="Be Cautious With">
     - Markets near resolution (prices moving sharply)
     - Low-activity markets (few fees to earn)
     - Markets where one side is already very high or very low
@@ -107,16 +108,16 @@ The more dramatically a market's prices move after you add liquidity, the larger
 </Steps>
 
 <Info>
-After a market resolves, any remaining liquidity is automatically converted. You can withdraw your share at any time after resolution.
+  After a market resolves, any remaining liquidity is automatically converted. You can withdraw your share at any time after resolution.
 </Info>
 
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Fees" icon="receipt" href="/user-guide/trading/fees">
+  <Card icon="receipt" href="/user-guide/trading/fees" title="Fees">
     Full breakdown of trading fees and how they work.
   </Card>
-  <Card title="How Trading Works" icon="arrows-rotate" href="/user-guide/trading/how-trading-works">
+  <Card icon="arrows-rotate" href="/user-guide/trading/how-trading-works" title="How Trading Works">
     Understand the fundamentals of buying and selling shares.
   </Card>
 </CardGroup>

@@ -1,27 +1,13 @@
 ---
-title: Authentication
+title: "Authentication"
 description: "Privy JWT authentication flow for the PrometheX API"
 ---
 
 ## Overview
 
-PrometheX uses **[Privy](https://privy.io)** for authentication. Users log in via email, social accounts, or crypto wallets. Privy issues a JWT that authenticates all subsequent API requests.
+PrometheX uses [**Privy**](https://privy.io) for authentication. Users log in via email, social accounts, or crypto wallets. Privy issues a JWT that authenticates all subsequent API requests.
 
 ## Auth Flow
-
-```
-User                   Privy SDK              PrometheX API
- │                        │                        │
- ├── Login (email/        │                        │
- │   social/wallet) ────► │                        │
- │                        │                        │
- │  ◄── JWT (ES256) ──── │                        │
- │                        │                        │
- ├── POST /user/login ──────────────────────────► │
- │   Authorization: Bearer <JWT>                   │
- │                        │                        │
- │  ◄── { uid, isNewUser } ────────────────────── │
-```
 
 <Steps>
   <Step title="User authenticates via Privy SDK">
@@ -45,14 +31,14 @@ User                   Privy SDK              PrometheX API
 
 The Privy JWT is a standard JWT with these claims:
 
-| Claim | Value | Description |
-|-------|-------|-------------|
-| `alg` | `ES256` | Signing algorithm (ECDSA P-256) |
-| `iss` | `privy.io` | Issuer |
-| `aud` | Your Privy App ID | Audience — must match your app |
-| `sub` | `did:privy:...` | User's Privy decentralized identifier |
-| `exp` | Unix timestamp | Token expiration |
-| `iat` | Unix timestamp | Token issued at |
+| Claim | Value             | Description                           |
+| ----- | ----------------- | ------------------------------------- |
+| `alg` | `ES256`           | Signing algorithm (ECDSA P-256)       |
+| `iss` | `privy.io`        | Issuer                                |
+| `aud` | Your Privy App ID | Audience — must match your app        |
+| `sub` | `did:privy:...`   | User's Privy decentralized identifier |
+| `exp` | Unix timestamp    | Token expiration                      |
+| `iat` | Unix timestamp    | Token issued at                       |
 
 ## Using the Token
 
@@ -67,6 +53,7 @@ curl -X POST "https://api-staging.promethex.market/api/v1/market/place-order" \
   -d '{ ... }'
 ```
 
+
 ```javascript JavaScript
 const response = await fetch('https://api-staging.promethex.market/api/v1/market/place-order', {
   method: 'POST',
@@ -77,6 +64,7 @@ const response = await fetch('https://api-staging.promethex.market/api/v1/market
   body: JSON.stringify({ ... }),
 });
 ```
+
 
 ```python Python
 import requests
@@ -142,30 +130,30 @@ POST /api/v1/user/login
 
 ### Public (no auth)
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/v1/market/get-markets` | List markets |
-| `GET /api/v1/market/get-market-detail` | Market detail |
-| `GET /api/v1/market/get-hot-markets` | Trending markets |
-| `GET /api/v1/market/get-price-history` | Price charts |
-| `GET /api/v1/market/get-market-trades` | Trade history |
+| Endpoint                               | Description      |
+| -------------------------------------- | ---------------- |
+| `GET /api/v1/market/get-markets`       | List markets     |
+| `GET /api/v1/market/get-market-detail` | Market detail    |
+| `GET /api/v1/market/get-hot-markets`   | Trending markets |
+| `GET /api/v1/market/get-price-history` | Price charts     |
+| `GET /api/v1/market/get-market-trades` | Trade history    |
 
 ### Authenticated
 
-| Endpoint | Description |
-|----------|-------------|
-| `POST /api/v1/user/login` | Register / login |
-| `POST /api/v1/market/place-order` | Buy or sell tokens |
-| `POST /api/v1/market/claim-market-result` | Claim winnings |
-| `POST /api/v1/market/add-liquidity` | Add liquidity |
-| `POST /api/v1/market/remove-liquidity` | Remove liquidity |
-| `POST /api/v1/sse/connect` | SSE stream |
-| `POST /api/v1/user/set-avatar` | Update avatar |
-| `POST /api/v1/user/set-username` | Update username |
-| `POST /api/v1/market/follow-market` | Follow a market |
+| Endpoint                                  | Description        |
+| ----------------------------------------- | ------------------ |
+| `POST /api/v1/user/login`                 | Register / login   |
+| `POST /api/v1/market/place-order`         | Buy or sell tokens |
+| `POST /api/v1/market/claim-market-result` | Claim winnings     |
+| `POST /api/v1/market/add-liquidity`       | Add liquidity      |
+| `POST /api/v1/market/remove-liquidity`    | Remove liquidity   |
+| `POST /api/v1/sse/connect`                | SSE stream         |
+| `POST /api/v1/user/set-avatar`            | Update avatar      |
+| `POST /api/v1/user/set-username`          | Update username    |
+| `POST /api/v1/market/follow-market`       | Follow a market    |
 
 <Info>
-Each endpoint's reference page indicates whether authentication is required.
+  Each endpoint's reference page indicates whether authentication is required.
 </Info>
 
 ## Token Expiry & Refresh

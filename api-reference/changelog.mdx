@@ -1,12 +1,12 @@
 ---
-title: API Changelog
+title: "API Changelog"
 description: "Version history and breaking changes for the PrometheX API"
 ---
 
 Track API changes, new endpoints, deprecations, and breaking changes.
 
 <Info>
-All endpoints use the `/api/v1/` prefix. Breaking changes will be announced at least 2 weeks in advance.
+  All endpoints use the `/api/v1/` prefix. Breaking changes will be announced at least 2 weeks in advance.
 </Info>
 
 ---
@@ -14,6 +14,7 @@ All endpoints use the `/api/v1/` prefix. Breaking changes will be announced at l
 ## 2026-02-16
 
 ### Added
+
 - API Reference documentation reorganized with full endpoint coverage
 - New sections: Trading, Liquidity, Resolution
 - `GET /api/v1/market/get-resolution-status` — check market resolution status
@@ -23,6 +24,7 @@ All endpoints use the `/api/v1/` prefix. Breaking changes will be announced at l
 - `POST /api/v1/market/create-market` — create new markets (admin)
 
 ### Changed
+
 - Documentation migrated to use Mintlify components (ParamField, ResponseField, CodeGroup)
 - `get-market-detail` documentation renamed to `get-market` in navigation
 
@@ -31,25 +33,28 @@ All endpoints use the `/api/v1/` prefix. Breaking changes will be announced at l
 ## 2026-02-01
 
 ### Added
+
 - SSE real-time events: `market:price_change`, `market:new_trades`, `market:info_update`
 - User events: `user:position_changed`, `user:asset_changed`, `user:new_notification`
 - SSE subscribe/unsubscribe endpoints
 
 ### Changed
+
 - All endpoints migrated from `/bayes/` prefix to `/api/v1/`
-- Legacy `/bayes/*` paths continue to work via redirect middleware
 
 ---
 
 ## 2026-01-15
 
 ### Added
+
 - `GET /api/v1/market/get-price-history` — historical price data for charting
 - `GET /api/v1/market/get-hot-markets` — trending markets endpoint
 - `GET /api/v1/user/get-user-asset-history` — portfolio value time-series
 - Pagination support with `page`, `pageSize`, `totalCount`
 
 ### Changed
+
 - `place-order` now requires `minReceiveAmount` for slippage protection
 - Error codes standardized across all endpoints
 
@@ -58,6 +63,7 @@ All endpoints use the `/api/v1/` prefix. Breaking changes will be announced at l
 ## 2025-12-01
 
 ### Added
+
 - Initial API launch
 - Market listing and detail endpoints
 - ERC-4337 gasless trading via UserOperations
@@ -69,10 +75,10 @@ All endpoints use the `/api/v1/` prefix. Breaking changes will be announced at l
 
 ## Versioning Policy
 
-| Policy | Detail |
-|--------|--------|
-| **Current version** | `v1` |
-| **Prefix** | `/api/v1/` |
-| **Breaking changes** | 2-week advance notice |
-| **Deprecation** | Old endpoints remain active for 3 months |
-| **Notifications** | Announced on [Discord](https://discord.gg/promethex) and this changelog |
+| Policy               | Detail                                                                  |
+| -------------------- | ----------------------------------------------------------------------- |
+| **Current version**  | `v1`                                                                    |
+| **Prefix**           | `/api/v1/`                                                              |
+| **Breaking changes** | 2-week advance notice                                                   |
+| **Deprecation**      | Old endpoints remain active for 3 months                                |
+| **Notifications**    | Announced on [Discord](https://discord.gg/promethex) and this changelog |

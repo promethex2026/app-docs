@@ -1,5 +1,5 @@
 ---
-title: Roadmap
+title: "Roadmap"
 description: "PrometheX public roadmap — what's live, what's next, and where we're headed"
 ---
 
@@ -8,28 +8,28 @@ description: "PrometheX public roadmap — what's live, what's next, and where w
 PrometheX is fully functional on **Arbitrum Sepolia** with the complete end-to-end stack deployed and operational.
 
 <CardGroup cols={2}>
-  <Card title="Trading UI" icon="chart-line">
+  <Card icon="chart-line" title="Trading UI">
     Browse markets, buy/sell positions, track P&L, view price charts, and claim winnings.
   </Card>
-  <Card title="APMM Engine" icon="water">
+  <Card icon="water" title="APMM Engine">
     Automated Prediction Market Maker with weighted constant-product pricing for N-outcome markets.
   </Card>
-  <Card title="Smart Contracts" icon="file-contract">
+  <Card icon="file-contract" title="Smart Contracts">
     PredictionFactory + Prediction clones deployed on Arbitrum Sepolia. Factory-clone pattern with OpenZeppelin upgradeability.
   </Card>
-  <Card title="Gasless Trading" icon="gas-pump">
+  <Card icon="gas-pump" title="Gasless Trading">
     ERC-4337 account abstraction with Paymaster. Users trade without holding ETH.
   </Card>
-  <Card title="Social Login" icon="right-to-bracket">
+  <Card icon="right-to-bracket" title="Social Login">
     Privy authentication — email, Google, Twitter, Discord, and wallet login. Smart accounts created automatically.
   </Card>
-  <Card title="Admin Dashboard" icon="gauge-high">
+  <Card icon="gauge-high" title="Admin Dashboard">
     Multi-tenant RBAC dashboard for market lifecycle management, content, and user administration.
   </Card>
-  <Card title="Community" icon="comments">
+  <Card icon="comments" title="Community">
     Posts, comments, likes, reputation system, leaderboards, invite system, and task rewards.
   </Card>
-  <Card title="Backend Services" icon="server">
+  <Card icon="server" title="Backend Services">
     4 microservices: Market Backend (BFF), Market Service, Block Listener, Recommendation Engine.
   </Card>
 </CardGroup>
@@ -40,58 +40,45 @@ PrometheX is fully functional on **Arbitrum Sepolia** with the complete end-to-e
 
 The current sprint focuses on upgrading the on-chain protocol to the Conditional Token Framework and adding modular resolution.
 
-| Feature | Description | Status |
-|---------|-------------|:------:|
-| **CTF Migration** | Replace ERC20 Option tokens with Gnosis Conditional Tokens (ERC1155). Enables ecosystem compatibility with Polymarket and other CTF-based platforms. | In Progress |
-| **APMM on CTF** | Adapt the APMM pricing engine to work with ERC1155 conditional token positions instead of ERC20 tokens. | In Progress |
-| **Modular Resolution** | Deploy MultisigResolution module alongside UMA Oracle. Partners choose their resolution mechanism per market. | In Progress |
-| **Block Listener CTF** | Index new CTF events: ConditionPreparation, PositionSplit, PositionsMerge, PayoutRedemption. | Planned |
-| **Frontend Adaptation** | Update trading UI for CTF positions: split, merge, redeem flows. | Planned |
+| Feature                 | Description                                                                                                                                          | Status      |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | :---------: |
+| **CTF Migration**       | Replace ERC20 Option tokens with Gnosis Conditional Tokens (ERC1155). Enables ecosystem compatibility with Polymarket and other CTF-based platforms. | In Progress |
+| **APMM on CTF**         | Adapt the APMM pricing engine to work with ERC1155 conditional token positions instead of ERC20 tokens.                                              | In Progress |
+| **Modular Resolution**  | Deploy MultisigResolution module alongside UMA Oracle. Partners choose their resolution mechanism per market.                                        | In Progress |
+| **Block Listener CTF**  | Index new CTF events: ConditionPreparation, PositionSplit, PositionsMerge, PayoutRedemption.                                                         | Planned     |
+| **Frontend Adaptation** | Update trading UI for CTF positions: split, merge, redeem flows.                                                                                     | Planned     |
 
 ### Q1 2026 — CLOB Integration
 
 The Central Limit Order Book matching engine is built and ready for integration.
 
-| Feature | Description | Status |
-|---------|-------------|:------:|
-| **CLOB Match Engine** | RBTree order book, CTF position matching, Kafka event streaming, WAL + snapshots for durability. | Built |
-| **Hybrid Router** | Smart order router that splits trades between APMM (passive liquidity) and CLOB (active market makers) for optimal execution. | Planned |
-| **Backend Integration** | Connect match engine to Market Service and on-chain settlement via gRPC. | Planned |
-| **Maker/Taker Fees** | Separate fee tiers for limit orders (maker) and market orders (taker). | Planned |
+| Feature                 | Description                                                                                                                   | Status  |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- | :-----: |
+| **CLOB Match Engine**   | RBTree order book, CTF position matching, Kafka event streaming, WAL + snapshots for durability.                              | Built   |
+| **Hybrid Router**       | Smart order router that splits trades between APMM (passive liquidity) and CLOB (active market makers) for optimal execution. | Planned |
+| **Backend Integration** | Connect match engine to Market Service and on-chain settlement via gRPC.                                                      | Planned |
+| **Maker/Taker Fees**    | Separate fee tiers for limit orders (maker) and market orders (taker).                                                        | Planned |
 
 ### Q2 2026 — Mainnet & Commercialization
 
 Prepare the platform for production deployment and partner onboarding.
 
-| Feature | Description | Status |
-|---------|-------------|:------:|
-| **Smart Contract Audit** | Third-party security audit of all core contracts (Factory, Prediction, CTF, Resolution). | Planned |
-| **Arbitrum One Deployment** | Deploy all contracts to Arbitrum mainnet with real USDC. | Planned |
-| **Partner Onboarding** | Tier configurations, feature flags, guided deployment playbook, partner landing page. | Planned |
-| **Embed SDK** | JavaScript and React SDK for embedded market widgets. npm packages with TypeScript types. | Planned |
-| **Documentation** | Complete API reference, integration guides, and contract documentation. | In Progress |
+| Feature                     | Description                                                                               | Status      |
+| --------------------------- | ----------------------------------------------------------------------------------------- | :---------: |
+| **Smart Contract Audit**    | Third-party security audit of all core contracts (Factory, Prediction, CTF, Resolution).  | Planned     |
+| **Arbitrum One Deployment** | Deploy all contracts to Arbitrum mainnet with real USDC.                                  | Planned     |
+| **Partner Onboarding**      | Tier configurations, feature flags, guided deployment playbook, partner landing page.     | Planned     |
+| **Embed SDK**               | JavaScript and React SDK for embedded market widgets. npm packages with TypeScript types. | Planned     |
+| **Documentation**           | Complete API reference, integration guides, and contract documentation.                   | In Progress |
 
 ### H2 2026 — Scale & Expand
 
-| Feature | Description | Status |
-|---------|-------------|:------:|
-| **Multi-Chain** | Deploy to Base, Polygon, and additional L2s based on partner demand. | Roadmap |
-| **SDK Libraries** | Python and Go SDKs for server-side integration. | Roadmap |
-| **Advanced Analytics** | Partner-facing analytics dashboard with volume, user engagement, and market performance metrics. | Roadmap |
+| Feature                  | Description                                                                                              | Status  |
+| ------------------------ | -------------------------------------------------------------------------------------------------------- | :-----: |
+| **Multi-Chain**          | Deploy to Base, Polygon, and additional L2s based on partner demand.                                     | Roadmap |
+| **SDK Libraries**        | Python and Go SDKs for server-side integration.                                                          | Roadmap |
+| **Advanced Analytics**   | Partner-facing analytics dashboard with volume, user engagement, and market performance metrics.         | Roadmap |
 | **Programmatic Markets** | API-driven market creation with configurable templates for recurring events (sports seasons, elections). | Roadmap |
-| **First Paying Partners** | 2–3 partners live on mainnet under their own brands. | Goal |
-
-## What We're NOT Building
-
-Clarity on scope is as important as the roadmap itself:
-
-| Not Building | Why |
-|-------------|-----|
-| Consumer-facing prediction market | We're infrastructure, not a destination. Partners run the markets. |
-| Native mobile apps | PWA is sufficient. Partners can wrap in a native shell if needed. |
-| Token / governance / DAO | Too early. Revenue model first, decentralized governance later. |
-| AI-generated markets | Interesting concept, but core platform must be bulletproof first. |
-| Multi-chain (now) | Arbitrum first. Prove the model, then expand based on demand. |
 
 ## How We Prioritize
 
@@ -111,16 +98,16 @@ Clarity on scope is as important as the roadmap itself:
 </Steps>
 
 <Note>
-This roadmap is updated regularly. Timelines are targets, not commitments — they shift based on engineering progress and partner feedback. Last updated: February 2026.
+  This roadmap is updated regularly. Timelines are targets, not commitments — they shift based on engineering progress and partner feedback. Last updated: February 2026.
 </Note>
 
 ## Get Involved
 
 <CardGroup cols={2}>
-  <Card title="Try the Staging Environment" icon="flask-vial" href="/platform/deployment/staging-environment">
+  <Card icon="flask-vial" href="/platform/deployment/staging-environment" title="Try the Staging Environment">
     Test the full platform on Arbitrum Sepolia today.
   </Card>
-  <Card title="Contact Us" icon="envelope" href="mailto:team@promethex.market">
+  <Card icon="envelope" href="mailto:team@promethex.market" title="Contact Us">
     Interested in becoming a launch partner? Let's talk.
   </Card>
 </CardGroup>
