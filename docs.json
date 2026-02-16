@@ -67,8 +67,7 @@
             "group": "Platform Overview",
             "pages": [
               "platform/overview",
-              "platform/why-promethex",
-              "platform/architecture"
+              "platform/why-promethex"
             ]
           },
           {
@@ -144,7 +143,6 @@
             "group": "Developer Resources",
             "pages": [
               "api-reference/websocket",
-              "api-reference/sdks",
               "api-reference/errors",
               "api-reference/rate-limits",
               "api-reference/changelog"
@@ -160,9 +158,7 @@
             "pages": [
               "contracts/overview",
               "contracts/addresses",
-              "contracts/prediction-factory",
-              "contracts/prediction",
-              "contracts/option"
+              "contracts/prediction"
             ]
           },
           {
@@ -171,13 +167,6 @@
               "contracts/resolution/overview",
               "contracts/resolution/uma-oracle",
               "contracts/resolution/multisig"
-            ]
-          },
-          {
-            "group": "Advanced",
-            "pages": [
-              "contracts/ctf-migration",
-              "contracts/audit-reports"
             ]
           }
         ]

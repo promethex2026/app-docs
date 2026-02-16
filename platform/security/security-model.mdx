@@ -22,10 +22,10 @@ PrometheX smart contracts use **OpenZeppelin's AccessControl** for role-based pe
 
 ```mermaid
 graph TD
-  ADMIN["DEFAULT_ADMIN_ROLE<br/>(Multisig)"]
-  CREATOR["CREATOR_ROLE<br/>(Admin Service)"]
-  UPGRADER["UPGRADER_ROLE<br/>(Multisig)"]
-  PAUSER["PAUSER_ROLE<br/>(Multisig)"]
+ ADMIN["DEFAULT_ADMIN_ROLE / (Multisig)"]
+ CREATOR["CREATOR_ROLE / (Admin Service)"]
+ UPGRADER["UPGRADER_ROLE / (Multisig)"]
+ PAUSER["PAUSER_ROLE / (Multisig)"]
 
   FACTORY["PredictionFactory"]
   MARKETS["Prediction Markets"]
@@ -86,7 +86,7 @@ The primary resolution mechanism uses UMA's Optimistic Oracle V3 — a battle-te
 | **Assertion bond** | Configurable per market (denominated in base token) |
 | **Liveness period** | Configurable (default: 2 hours) |
 | **Dispute mechanism** | Counter-bond → escalation to UMA DVM token holder vote |
-| **Track record** | Securing $1B+ in DeFi protocols |
+| **Track record** | Securing \$1B+ in DeFi protocols |
 
 ```mermaid
 sequenceDiagram

@@ -37,8 +37,8 @@ PrometheX follows a **factory-clone** pattern. A single upgradeable `PredictionF
 flowchart TB
     subgraph Factory ["PredictionFactory (TransparentUpgradeableProxy)"]
         direction LR
-        FA["Access Control<br/>CREATOR_ROLE · UPGRADER_ROLE"]
-        TW["Token Whitelist<br/>(USDC, …)"]
+ FA["Access Control / CREATOR_ROLE · UPGRADER_ROLE"]
+ TW["Token Whitelist / (USDC, …)"]
     end
 
     Factory -- "cloneDeterministic()" --> M1["Prediction Clone #1"]
@@ -47,17 +47,17 @@ flowchart TB
 
     subgraph Market ["Prediction Market (Clone)"]
         direction TB
-        APMM["APMM Engine<br/>deposit · withdraw<br/>addLiquidity · removeLiquidity"]
-        LP["ERC-20 LP Token<br/>(Prediction is the LP)"]
-        OPT["Option Tokens<br/>(ERC-20 per outcome)"]
+ APMM["APMM Engine / deposit · withdraw / addLiquidity · removeLiquidity"]
+ LP["ERC-20 LP Token / (Prediction is the LP)"]
+ OPT["Option Tokens / (ERC-20 per outcome)"]
     end
 
     M1 --> Market
 
     Market -- "settle() / claimAll()" --> RM["Resolution Module"]
 
-    RM -- "UMA path" --> UMA["UMA OptimisticOracleV3<br/>assertion → liveness → callback"]
-    RM -- "Multisig path" --> MS["MultisigResolution<br/>N-of-M vote (planned)"]
+ RM -- "UMA path" --> UMA["UMA OptimisticOracleV3 / assertion → liveness → callback"]
+ RM -- "Multisig path" --> MS["MultisigResolution / N-of-M vote (planned)"]
 
     BASE["Base Token (USDC)"] -- "transferFrom" --> Market
     Market -- "transfer" --> BASE
@@ -72,7 +72,7 @@ flowchart TB
 
 | Decision | Rationale |
 |----------|-----------|
-| **Minimal-proxy clones** | Orders of magnitude cheaper than deploying full contracts (~$0.01 vs. ~$5+ per market) |
+| **Minimal-proxy clones** | Orders of magnitude cheaper than deploying full contracts (~\$0.01 vs. ~\$5+ per market) |
 | **Upgradeable factory** | New market logic can be rolled out without redeploying existing clones |
 | **APMM invariant** | Constant-product pricing adapted for multi-outcome markets ensures automated, continuous pricing |
 | **Pluggable resolution** | Markets can use UMA oracle, multisig, or custom modules without changing core logic |
