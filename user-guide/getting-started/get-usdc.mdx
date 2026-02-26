@@ -1,26 +1,24 @@
 ---
 title: "Get Test Tokens"
-description: "Get free testnet ETH and tUSDC using MetaMask to start trading on PrometheX."
+description: "Get free testnet ETH and tUSDC to start trading on PrometheX."
 ---
 
 ## What You Need
 
-PrometheX staging runs on **Arbitrum Sepolia** testnet. To start trading, you need two tokens in your MetaMask wallet:
+PrometheX staging runs on **Arbitrum Sepolia** testnet. To start trading, you need two tokens:
 
 | Token | What It's For | How to Get |
 |-------|---------------|------------|
-| **Sepolia ETH** | Gas fees for claiming tUSDC and depositing | Free from external faucets |
-| **tUSDC** | The trading token on PrometheX | Free from the tUSDC contract |
+| **Sepolia ETH** | Gas fees for depositing | PrometheX official faucet |
+| **tUSDC** | The trading token on PrometheX | PrometheX official faucet |
 
 <Note>
-All tokens on testnet have **no real value** — they're free practice money. You can claim as many times as you need.
+All tokens on testnet have **no real value** — they're free practice money.
 </Note>
 
 ---
 
 ## Prerequisites: Set Up MetaMask
-
-Before claiming tokens, make sure MetaMask is connected to the right network.
 
 <Steps>
   <Step title="Install MetaMask">
@@ -46,60 +44,46 @@ Before claiming tokens, make sure MetaMask is connected to the right network.
 
 ---
 
-## Step 1: Claim Testnet ETH
+## Step 1: Claim Testnet ETH and tUSDC
 
-You need a small amount of Arbitrum Sepolia ETH to pay gas when calling the tUSDC faucet contract.
-
-<Steps>
-  <Step title="Pick a faucet">
-    Open any of these free faucets:
-
-    | Faucet | Link | Notes |
-    |--------|------|-------|
-    | Alchemy | [faucets.alchemy.com](https://faucets.alchemy.com/faucets/arbitrum-sepolia) | Requires free Alchemy account |
-    | QuickNode | [faucet.quicknode.com](https://faucet.quicknode.com/arbitrum/sepolia) | No account needed |
-    | Chainlink | [faucets.chain.link](https://faucets.chain.link/arbitrum-sepolia) | Connect wallet to claim |
-  </Step>
-  <Step title="Paste your MetaMask address">
-    Copy your wallet address from MetaMask (click your address at the top to copy), then paste it into the faucet.
-  </Step>
-  <Step title="Claim">
-    Click **Send** or **Request**. You'll receive **0.01–0.1 ETH** within seconds.
-  </Step>
-  <Step title="Verify">
-    Check your MetaMask balance — make sure you're on the **Arbitrum Sepolia** network. You should see your ETH balance updated.
-  </Step>
-</Steps>
-
-<Warning>
-Most faucets have a 24-hour cooldown. If one is rate-limited or empty, try a different one from the list.
-</Warning>
-
----
-
-## Step 2: Claim tUSDC
-
-tUSDC is the trading token on PrometheX staging. The contract has a public **faucet function** — anyone can mint test tokens directly through Arbiscan.
-
-**tUSDC Contract:** [`0x934E616cA9538397E3f9a12895C40ea2E8C45E48`](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48)
+Use the **PrometheX official faucet** to get both tokens in one step. Just provide your email and wallet address.
 
 <Steps>
-  <Step title="Open the contract on Arbiscan">
-    Go to the [tUSDC Write Contract page](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48#writeContract).
+  <Step title="Copy your MetaMask address">
+    Open MetaMask, make sure you're on the **Arbitrum Sepolia** network, and click your address at the top to copy it.
   </Step>
-  <Step title="Connect your MetaMask">
-    Click **Connect to Web3** on the Arbiscan page and authorize your MetaMask. Make sure MetaMask is on the **Arbitrum Sepolia** network.
+  <Step title="Call the faucet API">
+    Send a request to the PrometheX faucet with your email and wallet address:
+
+    ```bash
+    curl -X POST https://staging.promethex.market/api/faucet \
+      -H "Content-Type: application/json" \
+      -d '{
+        "email": "your-email@example.com",
+        "address": "0xYourMetaMaskAddress"
+      }'
+    ```
+
+    Or use any HTTP client (Postman, browser extension, etc.) to send a POST request.
   </Step>
-  <Step title="Call the faucet function">
-    Find the **`faucet`** function in the list and enter the amount you want. tUSDC uses **6 decimals**, so:
+  <Step title="Receive tokens">
+    The faucet sends both tokens to your wallet automatically:
+    - **0.01 ETH** — enough for gas fees
+    - **10,000 tUSDC** — enough for many test trades
 
-    | Amount | Value to Enter |
-    |--------|----------------|
-    | 100 tUSDC | `100000000` |
-    | 1,000 tUSDC | `1000000000` |
-    | 10,000 tUSDC | `10000000000` |
-
-    Enter the value, click **Write**, and confirm the transaction in MetaMask.
+    You'll get a response with the transaction hashes:
+    ```json
+    {
+      "code": 0,
+      "msg": "success",
+      "data": {
+        "ethTxHash": "0x...",
+        "tusdcTxHash": "0x...",
+        "ethAmount": "0.01",
+        "tusdcAmount": "10000"
+      }
+    }
+    ```
   </Step>
   <Step title="Add tUSDC to MetaMask">
     To see your tUSDC balance in MetaMask:
@@ -107,18 +91,16 @@ tUSDC is the trading token on PrometheX staging. The contract has a public **fau
     2. Paste address: `0x934E616cA9538397E3f9a12895C40ea2E8C45E48`
     3. Symbol: `USDC`, Decimals: `6`
     4. Click **Add**
-
-    Your tUSDC balance should now be visible.
   </Step>
 </Steps>
 
 <Tip>
-You can call the faucet as many times as you want — there's no limit. Claim more whenever you need it.
+The faucet has a **24-hour cooldown** per email and per wallet address. After 24 hours, you can claim again.
 </Tip>
 
 ---
 
-## Step 3: Deposit tUSDC into PrometheX
+## Step 2: Deposit tUSDC into PrometheX
 
 Now that you have tUSDC in MetaMask, deposit it into PrometheX to start trading.
 
@@ -142,7 +124,7 @@ Now that you have tUSDC in MetaMask, deposit it into PrometheX to start trading.
 </Steps>
 
 <Info>
-After depositing, all trades on PrometheX are **gasless** — the platform sponsors gas fees via account abstraction. You only need ETH for the initial faucet claim and deposit steps.
+After depositing, all trades on PrometheX are **gasless** — the platform sponsors gas fees via account abstraction. You only need ETH for the initial deposit step.
 </Info>
 
 ---
@@ -150,16 +132,37 @@ After depositing, all trades on PrometheX are **gasless** — the platform spons
 ## Quick Summary
 
 ```
-MetaMask (Arbitrum Sepolia)
-    │
-    ├─ 1. Claim testnet ETH     ← External faucet
-    │
-    ├─ 2. Claim tUSDC           ← Arbiscan → faucet()
-    │
-    └─ 3. Deposit tUSDC         → PrometheX
-                                     │
-                                     └─ Ready to trade (gasless)
+1. Set up MetaMask on Arbitrum Sepolia
+2. Call PrometheX faucet (email + address) → receive 0.01 ETH + 10,000 tUSDC
+3. Deposit tUSDC into PrometheX → ready to trade (gasless)
 ```
+
+---
+
+## Advanced: Claim tUSDC via Arbiscan
+
+If you prefer to interact with the contract directly, you can call the tUSDC `faucet()` function on Arbiscan.
+
+**tUSDC Contract:** [`0x934E616cA9538397E3f9a12895C40ea2E8C45E48`](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48)
+
+<Steps>
+  <Step title="Open the Write Contract page">
+    Go to the [tUSDC Write Contract page on Arbiscan](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48#writeContract).
+  </Step>
+  <Step title="Connect MetaMask">
+    Click **Connect to Web3** and authorize MetaMask.
+  </Step>
+  <Step title="Call faucet()">
+    Find the **`faucet`** function. tUSDC uses **6 decimals**:
+
+    | Amount | Value to Enter |
+    |--------|----------------|
+    | 1,000 tUSDC | `1000000000` |
+    | 10,000 tUSDC | `10000000000` |
+
+    Enter the value, click **Write**, and confirm in MetaMask. You can call this as many times as you want.
+  </Step>
+</Steps>
 
 ---
 
@@ -199,11 +202,11 @@ Services like **Ramp Network**, **MoonPay**, and **Transak** let you buy USDC di
 ## Troubleshooting
 
 <AccordionGroup>
+  <Accordion title="Faucet returns 429 (rate limited)">
+    The faucet allows one claim per email and per wallet address every 24 hours. Wait for the cooldown to expire, or use a different email/address pair.
+  </Accordion>
   <Accordion title="I don't see my tUSDC in MetaMask">
     You need to import the token manually. In MetaMask: **Import Tokens** → paste `0x934E616cA9538397E3f9a12895C40ea2E8C45E48` → Symbol: `USDC` → Decimals: `6`.
-  </Accordion>
-  <Accordion title="Faucet transaction fails on Arbiscan">
-    You need Sepolia ETH for gas. If your ETH balance is zero, claim from one of the ETH faucets in Step 1 first.
   </Accordion>
   <Accordion title="MetaMask shows wrong network">
     Click the network dropdown in MetaMask and switch to **Arbitrum Sepolia** (Chain ID: 421614). If it's not listed, add it manually using the network details above.
