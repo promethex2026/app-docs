@@ -1,111 +1,225 @@
 ---
-title: "Get USDC"
-description: "How to get USDC on Arbitrum so you can start trading."
+title: "Get Test Tokens"
+description: "Get free testnet ETH and tUSDC using MetaMask to start trading on PrometheX."
 ---
 
-## What Is USDC?
+## What You Need
 
-**USDC** (USD Coin) is a **stablecoin** — a digital token that's always worth \$1.00. It's issued by Circle and backed by real US dollars in reserve. On PrometheX, USDC is what you use to buy and sell shares.
+PrometheX staging runs on **Arbitrum Sepolia** testnet. To start trading, you need two tokens in your MetaMask wallet:
 
-Think of it as digital cash that lives on the blockchain.
-
-## Testnet: Get Free Test Tokens
+| Token | What It's For | How to Get |
+|-------|---------------|------------|
+| **Sepolia ETH** | Gas fees for claiming tUSDC and depositing | Free from external faucets |
+| **tUSDC** | The trading token on PrometheX | Free from the tUSDC contract |
 
 <Note>
-  PrometheX is currently on **Arbitrum Sepolia** — a testnet where everything works the same as the real thing, but the tokens have no real value. This is perfect for learning how the platform works before using real money.
+All tokens on testnet have **no real value** — they're free practice money. You can claim as many times as you need.
 </Note>
 
-To get free test USDC on Arbitrum Sepolia:
+---
+
+## Prerequisites: Set Up MetaMask
+
+Before claiming tokens, make sure MetaMask is connected to the right network.
 
 <Steps>
-  <Step title="Sign in to PrometheX">
-    Go to [staging.promethex.market](https://staging.promethex.market) and sign in.
+  <Step title="Install MetaMask">
+    If you don't have it yet, install MetaMask from [metamask.io](https://metamask.io/). Available as a browser extension for Chrome, Firefox, Brave, and Edge.
   </Step>
-  <Step title="Use the built-in faucet">
-    Navigate to your wallet or portfolio page. You'll see an option to claim free test USDC. Tap it and test tokens will be sent to your smart account.
+  <Step title="Add Arbitrum Sepolia network">
+    Open MetaMask and add the testnet. You can either:
+    - Visit [chainlist.org](https://chainlist.org/?testnets=true&search=arbitrum+sepolia) and click **Add to MetaMask**
+    - Or add manually with these settings:
+
+    | Property | Value |
+    |----------|-------|
+    | Network Name | Arbitrum Sepolia |
+    | RPC URL | `https://sepolia-rollup.arbitrum.io/rpc` |
+    | Chain ID | `421614` |
+    | Currency Symbol | ETH |
+    | Block Explorer | `https://sepolia.arbiscan.io` |
   </Step>
-  <Step title="Start trading">
-    Once the tokens arrive (usually within a few seconds), you're ready to place your first trade!
+  <Step title="Connect MetaMask to PrometheX">
+    Go to [staging.promethex.market](https://staging.promethex.market), click **Sign In** → **Connect Wallet** → select **MetaMask**.
   </Step>
 </Steps>
 
-<Tip>
-  On testnet, you can claim test USDC as many times as you need. Don't worry about running out — it's free practice money.If you can not see the button, contact tech@PrometheX.market.
-</Tip>
+---
 
-## Mainnet: Getting Real USDC
+## Step 1: Claim Testnet ETH
 
-<Info>
-  PrometheX mainnet on **Arbitrum One** is coming soon. The instructions below are for when real trading goes live.
-</Info>
-
-When PrometheX launches on mainnet, you'll need real USDC on the **Arbitrum** network (a fast, low-cost blockchain built on top of Ethereum). Here are the most common ways to get it:
-
-### Option 1: Buy USDC on a Centralized Exchange
-
-The simplest route if you're starting from scratch:
+You need a small amount of Arbitrum Sepolia ETH to pay gas when calling the tUSDC faucet contract.
 
 <Steps>
-  <Step title="Buy USDC on an exchange">
-    Use an exchange like **Coinbase**, **Binance**, or **Kraken** to buy USDC with your bank account or credit card.
+  <Step title="Pick a faucet">
+    Open any of these free faucets:
+
+    | Faucet | Link | Notes |
+    |--------|------|-------|
+    | Alchemy | [faucets.alchemy.com](https://faucets.alchemy.com/faucets/arbitrum-sepolia) | Requires free Alchemy account |
+    | QuickNode | [faucet.quicknode.com](https://faucet.quicknode.com/arbitrum/sepolia) | No account needed |
+    | Chainlink | [faucets.chain.link](https://faucets.chain.link/arbitrum-sepolia) | Connect wallet to claim |
   </Step>
-  <Step title="Withdraw to Arbitrum">
-    When you withdraw, select **Arbitrum One** as the network. Paste your PrometheX smart account address as the destination.
+  <Step title="Paste your MetaMask address">
+    Copy your wallet address from MetaMask (click your address at the top to copy), then paste it into the faucet.
   </Step>
-  <Step title="Done!">
-    The USDC arrives in your smart account within a few minutes. You're ready to trade.
+  <Step title="Claim">
+    Click **Send** or **Request**. You'll receive **0.01–0.1 ETH** within seconds.
+  </Step>
+  <Step title="Verify">
+    Check your MetaMask balance — make sure you're on the **Arbitrum Sepolia** network. You should see your ETH balance updated.
   </Step>
 </Steps>
 
 <Warning>
-  Always double-check that you're withdrawing to the **Arbitrum One** network, not Ethereum mainnet. Sending to the wrong network can delay your funds.
+Most faucets have a 24-hour cooldown. If one is rate-limited or empty, try a different one from the list.
+</Warning>
+
+---
+
+## Step 2: Claim tUSDC
+
+tUSDC is the trading token on PrometheX staging. The contract has a public **faucet function** — anyone can mint test tokens directly through Arbiscan.
+
+**tUSDC Contract:** [`0x934E616cA9538397E3f9a12895C40ea2E8C45E48`](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48)
+
+<Steps>
+  <Step title="Open the contract on Arbiscan">
+    Go to the [tUSDC Write Contract page](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48#writeContract).
+  </Step>
+  <Step title="Connect your MetaMask">
+    Click **Connect to Web3** on the Arbiscan page and authorize your MetaMask. Make sure MetaMask is on the **Arbitrum Sepolia** network.
+  </Step>
+  <Step title="Call the faucet function">
+    Find the **`faucet`** function in the list and enter the amount you want. tUSDC uses **6 decimals**, so:
+
+    | Amount | Value to Enter |
+    |--------|----------------|
+    | 100 tUSDC | `100000000` |
+    | 1,000 tUSDC | `1000000000` |
+    | 10,000 tUSDC | `10000000000` |
+
+    Enter the value, click **Write**, and confirm the transaction in MetaMask.
+  </Step>
+  <Step title="Add tUSDC to MetaMask">
+    To see your tUSDC balance in MetaMask:
+    1. Click **Import Tokens** at the bottom of MetaMask
+    2. Paste address: `0x934E616cA9538397E3f9a12895C40ea2E8C45E48`
+    3. Symbol: `USDC`, Decimals: `6`
+    4. Click **Add**
+
+    Your tUSDC balance should now be visible.
+  </Step>
+</Steps>
+
+<Tip>
+You can call the faucet as many times as you want — there's no limit. Claim more whenever you need it.
+</Tip>
+
+---
+
+## Step 3: Deposit tUSDC into PrometheX
+
+Now that you have tUSDC in MetaMask, deposit it into PrometheX to start trading.
+
+<Steps>
+  <Step title="Open your wallet on PrometheX">
+    Go to [staging.promethex.market](https://staging.promethex.market). Make sure you're signed in with your MetaMask wallet. Click your **profile icon** → **Wallet**.
+  </Step>
+  <Step title="Click Deposit">
+    Click the **Deposit** button and enter the amount of tUSDC you want to deposit.
+  </Step>
+  <Step title="Approve and confirm">
+    MetaMask will prompt you twice:
+    1. **Approve** — Allows the PrometheX contract to spend your tUSDC
+    2. **Deposit** — Transfers tUSDC from your wallet into the platform
+
+    Confirm both transactions in MetaMask.
+  </Step>
+  <Step title="Start trading">
+    Once confirmed, your balance updates on PrometheX. Head to the [Markets](https://staging.promethex.market) page to place your first trade!
+  </Step>
+</Steps>
+
+<Info>
+After depositing, all trades on PrometheX are **gasless** — the platform sponsors gas fees via account abstraction. You only need ETH for the initial faucet claim and deposit steps.
+</Info>
+
+---
+
+## Quick Summary
+
+```
+MetaMask (Arbitrum Sepolia)
+    │
+    ├─ 1. Claim testnet ETH     ← External faucet
+    │
+    ├─ 2. Claim tUSDC           ← Arbiscan → faucet()
+    │
+    └─ 3. Deposit tUSDC         → PrometheX
+                                     │
+                                     └─ Ready to trade (gasless)
+```
+
+---
+
+## Mainnet: Getting Real USDC
+
+<Info>
+PrometheX mainnet on **Arbitrum One** is coming soon. The instructions below are for when real trading goes live.
+</Info>
+
+When PrometheX launches on mainnet, you'll need real USDC on the **Arbitrum** network. Common ways to get it:
+
+### Option 1: Buy on an Exchange
+
+<Steps>
+  <Step title="Buy USDC">
+    Use an exchange like **Coinbase**, **Binance**, or **Kraken** to buy USDC.
+  </Step>
+  <Step title="Withdraw to Arbitrum">
+    When withdrawing, select **Arbitrum One** as the network. Paste your wallet address as the destination.
+  </Step>
+</Steps>
+
+<Warning>
+Always double-check that you're withdrawing to **Arbitrum One**, not Ethereum mainnet.
 </Warning>
 
 ### Option 2: Bridge from Ethereum
 
-If you already have USDC on Ethereum, you can move it to Arbitrum:
-
-<Steps>
-  <Step title="Go to the Arbitrum Bridge">
-    Visit [bridge.arbitrum.io](https://bridge.arbitrum.io) and connect your wallet.
-  </Step>
-  <Step title="Bridge your USDC">
-    Select USDC, enter the amount, and confirm the transaction. The bridge moves your tokens from Ethereum to Arbitrum.
-  </Step>
-  <Step title="Transfer to your PrometheX account">
-    If you bridged to an external wallet, send the USDC from there to your PrometheX smart account address.
-  </Step>
-</Steps>
-
-<Note>
-  Bridging from Ethereum to Arbitrum typically takes about 10 minutes. You'll need a small amount of ETH on Ethereum to pay for the bridge transaction gas fee.
-</Note>
+If you already have USDC on Ethereum, bridge it via [bridge.arbitrum.io](https://bridge.arbitrum.io). Takes about 10 minutes.
 
 ### Option 3: Buy Directly on Arbitrum
 
-Some services let you buy USDC directly on the Arbitrum network:
+Services like **Ramp Network**, **MoonPay**, and **Transak** let you buy USDC directly on Arbitrum with a credit card.
 
-- **Ramp Network** — Buy with credit card or bank transfer
-- **MoonPay** — Buy with card, available in many countries
-- **Transak** — Another on-ramp option with multiple payment methods
+---
 
-These services deposit USDC straight to your wallet address on Arbitrum.
+## Troubleshooting
 
-## Finding Your Wallet Address
+<AccordionGroup>
+  <Accordion title="I don't see my tUSDC in MetaMask">
+    You need to import the token manually. In MetaMask: **Import Tokens** → paste `0x934E616cA9538397E3f9a12895C40ea2E8C45E48` → Symbol: `USDC` → Decimals: `6`.
+  </Accordion>
+  <Accordion title="Faucet transaction fails on Arbiscan">
+    You need Sepolia ETH for gas. If your ETH balance is zero, claim from one of the ETH faucets in Step 1 first.
+  </Accordion>
+  <Accordion title="MetaMask shows wrong network">
+    Click the network dropdown in MetaMask and switch to **Arbitrum Sepolia** (Chain ID: 421614). If it's not listed, add it manually using the network details above.
+  </Accordion>
+  <Accordion title="Deposit approval stuck or fails">
+    If the approve transaction is pending too long, try **Speed Up** in MetaMask (click the pending tx). If it fails, make sure you have enough ETH for gas.
+  </Accordion>
+</AccordionGroup>
 
-To receive USDC, you'll need your smart account address:
-
-1. Sign in to [PrometheX](https://staging.promethex.market)
-2. Click on your **profile** or **wallet** icon
-3. Copy your wallet address (it looks like `0x1234...abcd`)
-
-This is the address you give to exchanges, bridges, or friends when they send you USDC.
+---
 
 ## Next Steps
 
 <CardGroup cols={2}>
   <Card icon="chart-line" href="/user-guide/getting-started/first-trade" title="Make Your First Trade">
-    Got USDC? Let's place your first trade.
+    Got tUSDC? Let's place your first trade.
   </Card>
   <Card icon="arrows-rotate" href="/user-guide/trading/how-trading-works" title="How Trading Works">
     Learn how share pricing and payouts work before you trade.
