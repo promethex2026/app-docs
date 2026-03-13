@@ -1,6 +1,10 @@
-# PrometheX Docs
+# PrometheX App Docs
 
-Documentation site for PrometheX, powered by [Mintlify](https://mintlify.com/).
+End-user documentation site for PrometheX, powered by [Mintlify](https://mintlify.com/).
+
+## See Also
+
+- [Partner Docs (GitBook)](https://github.com/promethex2026/partner-docs) — Partner-facing documentation
 
 ## Tech Stack
 
