@@ -151,6 +151,7 @@
       },
       {
         "tab": "Smart Contracts",
+        "hidden": true,
         "groups": [
           {
             "group": "Architecture",
