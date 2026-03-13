@@ -153,19 +153,37 @@
         "tab": "Smart Contracts",
         "groups": [
           {
-            "group": "Contract Architecture",
+            "group": "Architecture",
             "pages": [
               "contracts/overview",
-              "contracts/addresses",
-              "contracts/prediction"
+              "contracts/addresses"
             ]
           },
           {
-            "group": "Resolution Modules",
+            "group": "Core Contracts",
+            "pages": [
+              "contracts/prediction-ctf",
+              "contracts/conditional-tokens"
+            ]
+          },
+          {
+            "group": "Oracle & Resolution",
             "pages": [
               "contracts/resolution/overview",
-              "contracts/resolution/uma-oracle",
-              "contracts/resolution/multisig"
+              "contracts/resolution/uma-oracle"
+            ]
+          },
+          {
+            "group": "Trading Infrastructure",
+            "pages": [
+              "contracts/clob-settlement",
+              "contracts/router"
+            ]
+          },
+          {
+            "group": "Multi-Outcome (NegRisk)",
+            "pages": [
+              "contracts/negrisk"
             ]
           }
         ]

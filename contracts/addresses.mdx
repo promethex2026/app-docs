@@ -1,36 +1,36 @@
 ---
 title: Contract Addresses
-description: "Deployed and external contract addresses across Arbitrum networks"
+description: "Deployed PrometheX V2 smart contract addresses on Arbitrum Sepolia"
 ---
 
-<Info>
-All PrometheX core contracts are currently deployed on **Arbitrum Sepolia** (testnet). Mainnet deployment on **Arbitrum One** is planned after staging validation and audit completion.
-</Info>
-
 ## Arbitrum Sepolia (Testnet)
+
+<Info>
+All PrometheX V2 contracts are deployed on **Arbitrum Sepolia** (testnet). Mainnet deployment on **Arbitrum One** is planned after staging validation and audit completion.
+</Info>
 
 ### Core Contracts
 
 | Contract | Address | Type | Status |
 |----------|---------|------|--------|
-| PredictionFactory (Proxy) | [`0x2c3E6717C1CC3787dBf420985188e2562F1aE62B`](https://sepolia.arbiscan.io/address/0x2c3E6717C1CC3787dBf420985188e2562F1aE62B) | `TransparentUpgradeableProxy` | Active |
-| Prediction (Implementation) | Queried via proxy | EIP-1167 clone source | Active |
-| Option (Implementation) | Queried via proxy | EIP-1167 clone source | Active |
+| ConditionalTokens (ERC-1155) | [`0xf5E0891F0f5ba4C2b6034720b444eb79926e1DF0`](https://sepolia.arbiscan.io/address/0xf5E0891F0f5ba4C2b6034720b444eb79926e1DF0) | Singleton | Active |
+| PredictionFactory (Proxy) | [`0xD4840C6aAF2e098e6B736e28c3B87DfD7b84c2C4`](https://sepolia.arbiscan.io/address/0xD4840C6aAF2e098e6B736e28c3B87DfD7b84c2C4) | UUPS Proxy | Active |
+| PredictionFactory (Impl) | [`0xEafAF606fFC04fED313324679f58d60Ced7F0E97`](https://sepolia.arbiscan.io/address/0xEafAF606fFC04fED313324679f58d60Ced7F0E97) | Implementation | Active |
+| PredictionCTF (Impl) | [`0xFB642D912f23BA19150d968104d4D988FA054b16`](https://sepolia.arbiscan.io/address/0xFB642D912f23BA19150d968104d4D988FA054b16) | EIP-1167 source | Active |
 
-### Resolution Modules
+### Oracle & Resolution
 
-| Module | Address | Status |
-|--------|---------|--------|
-| MockOptimisticOracleV3 | [`0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6`](https://sepolia.arbiscan.io/address/0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6) | Active |
-| ConditionalTokens (CTF) | — | Pending ([CTF Migration](/contracts/ctf-migration)) |
-| MultisigResolution | — | In Development |
+| Contract | Address | Status |
+|----------|---------|--------|
+| CTFOracle | [`0x982e18db6837D55297c39926dE86ae560cd96f99`](https://sepolia.arbiscan.io/address/0x982e18db6837D55297c39926dE86ae560cd96f99) | Active |
+| UmaOOV3ResolutionModule | [`0x4084526855cf8e6604623506dAB46A9d53941845`](https://sepolia.arbiscan.io/address/0x4084526855cf8e6604623506dAB46A9d53941845) | Active |
+| MockOptimisticOracleV3 | [`0x0E80Ffb6D75C21b015c872923D7A6cD3e6B1Df97`](https://sepolia.arbiscan.io/address/0x0E80Ffb6D75C21b015c872923D7A6cD3e6B1Df97) | Active (testnet only) |
 
 ### Token Contracts
 
 | Token | Address | Decimals | Notes |
 |-------|---------|:--------:|-------|
-| tUSDC (Test USDC) | [`0x934E616cA9538397E3f9a12895C40ea2E8C45E48`](https://sepolia.arbiscan.io/address/0x934E616cA9538397E3f9a12895C40ea2E8C45E48) | 6 | Faucet-mintable test token |
-| tUSDC (Admin) | [`0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490`](https://sepolia.arbiscan.io/address/0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490) | 6 | Admin-deployed test token |
+| tUSDC (Test USDC) | [`0x52cb113e383c654fB78Ff56615ce3719193C6408`](https://sepolia.arbiscan.io/address/0x52cb113e383c654fB78Ff56615ce3719193C6408) | 6 | Faucet-mintable test token |
 
 ### Infrastructure (External)
 
@@ -66,7 +66,7 @@ All PrometheX core contracts are currently deployed on **Arbitrum Sepolia** (tes
 ## Arbitrum One (Mainnet)
 
 <Warning>
-Mainnet deployment has **not yet occurred**. The addresses below are planned or external references only.
+Mainnet deployment has **not yet occurred**. The addresses below are external references only. PrometheX contracts will be deployed to Arbitrum One after staging validation and audit completion.
 </Warning>
 
 ### PrometheX Contracts (Planned)
@@ -74,8 +74,9 @@ Mainnet deployment has **not yet occurred**. The addresses below are planned or 
 | Contract | Address | Status |
 |----------|---------|--------|
 | PredictionFactory (Proxy) | — | Not deployed |
-| ConditionalTokens (CTF) | — | Not deployed |
-| MultisigResolution | — | Not deployed |
+| ConditionalTokens | — | Not deployed |
+| CTFOracle | — | Not deployed |
+| CTFSettlement | — | Not deployed |
 
 ### External Contracts (Live)
 
@@ -85,7 +86,6 @@ Mainnet deployment has **not yet occurred**. The addresses below are planned or 
 | UMA OptimisticOracleV3 | [`0xa6147867264374F324524E30C02C331cF28aa879`](https://arbiscan.io/address/0xa6147867264374F324524E30C02C331cF28aa879) | Production dispute resolution |
 | ERC-4337 EntryPoint | [`0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789`](https://arbiscan.io/address/0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789) | Account abstraction entry point (v0.6) |
 | Multicall3 | [`0xcA11bde05977b3631167028862bE2a173976CA11`](https://arbiscan.io/address/0xcA11bde05977b3631167028862bE2a173976CA11) | Batch contract reads |
-| Gnosis CTF | [Gnosis Docs](https://docs.gnosis.io/conditionaltokens/) | ERC-1155 conditional tokens |
 
 ### Network Details
 
@@ -108,12 +108,18 @@ import { getAddress } from "viem";
 
 export const ADDRESSES = {
   arbitrumSepolia: {
-    predictionFactory: getAddress("0x2c3E6717C1CC3787dBf420985188e2562F1aE62B"),
-    oracleV3: getAddress("0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6"),
-    tUSDC: getAddress("0x934E616cA9538397E3f9a12895C40ea2E8C45E48"),
+    conditionalTokens: getAddress("0xf5E0891F0f5ba4C2b6034720b444eb79926e1DF0"),
+    predictionFactory: getAddress("0xD4840C6aAF2e098e6B736e28c3B87DfD7b84c2C4"),
+    predictionFactoryImpl: getAddress("0xEafAF606fFC04fED313324679f58d60Ced7F0E97"),
+    predictionCTFImpl: getAddress("0xFB642D912f23BA19150d968104d4D988FA054b16"),
+    ctfOracle: getAddress("0x982e18db6837D55297c39926dE86ae560cd96f99"),
+    umaResolutionModule: getAddress("0x4084526855cf8e6604623506dAB46A9d53941845"),
+    mockOracleV3: getAddress("0x0E80Ffb6D75C21b015c872923D7A6cD3e6B1Df97"),
+    tUSDC: getAddress("0x52cb113e383c654fB78Ff56615ce3719193C6408"),
     entryPoint: getAddress("0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"),
   },
   arbitrumOne: {
+    // Not deployed yet — planned after staging validation
     usdc: getAddress("0xaf88d065e77c8cC2239327C5EDb3A432268e5831"),
     oracleV3: getAddress("0xa6147867264374F324524E30C02C331cF28aa879"),
     entryPoint: getAddress("0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"),
@@ -126,12 +132,18 @@ import { ethers } from "ethers";
 
 export const ADDRESSES = {
   arbitrumSepolia: {
-    predictionFactory: ethers.getAddress("0x2c3E6717C1CC3787dBf420985188e2562F1aE62B"),
-    oracleV3: ethers.getAddress("0xD72b4002c472B7084A5A2D21450Ad8092b8E2FF6"),
-    tUSDC: ethers.getAddress("0x934E616cA9538397E3f9a12895C40ea2E8C45E48"),
+    conditionalTokens: ethers.getAddress("0xf5E0891F0f5ba4C2b6034720b444eb79926e1DF0"),
+    predictionFactory: ethers.getAddress("0xD4840C6aAF2e098e6B736e28c3B87DfD7b84c2C4"),
+    predictionFactoryImpl: ethers.getAddress("0xEafAF606fFC04fED313324679f58d60Ced7F0E97"),
+    predictionCTFImpl: ethers.getAddress("0xFB642D912f23BA19150d968104d4D988FA054b16"),
+    ctfOracle: ethers.getAddress("0x982e18db6837D55297c39926dE86ae560cd96f99"),
+    umaResolutionModule: ethers.getAddress("0x4084526855cf8e6604623506dAB46A9d53941845"),
+    mockOracleV3: ethers.getAddress("0x0E80Ffb6D75C21b015c872923D7A6cD3e6B1Df97"),
+    tUSDC: ethers.getAddress("0x52cb113e383c654fB78Ff56615ce3719193C6408"),
     entryPoint: ethers.getAddress("0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"),
   },
   arbitrumOne: {
+    // Not deployed yet — planned after staging validation
     usdc: ethers.getAddress("0xaf88d065e77c8cC2239327C5EDb3A432268e5831"),
     oracleV3: ethers.getAddress("0xa6147867264374F324524E30C02C331cF28aa879"),
     entryPoint: ethers.getAddress("0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"),
@@ -140,3 +152,80 @@ export const ADDRESSES = {
 ```
 
 </CodeGroup>
+
+---
+
+## Contract Architecture Reference
+
+The following diagram shows how V2 contracts relate to each other on Arbitrum Sepolia, annotated with deployed addresses.
+
+```mermaid
+---
+config:
+  look: handDrawn
+  theme: neutral
+---
+flowchart TB
+    Factory["PredictionFactory (UUPS)<br/><code>0xD484…c2C4</code>"]
+    FactoryImpl["PredictionFactory Impl<br/><code>0xEafA…4b16</code>"]
+    CTFImpl["PredictionCTF Impl<br/><code>0xFB64…4b16</code>"]
+    Clone1["PredictionCTF Clone #1"]
+    Clone2["PredictionCTF Clone #N"]
+    CTF["ConditionalTokens (ERC-1155)<br/><code>0xf5E0…1DF0</code>"]
+    Oracle["CTFOracle<br/><code>0x982e…f099</code>"]
+    UMA["UmaOOV3ResolutionModule<br/><code>0x4084…1845</code>"]
+    MockOOv3["MockOptimisticOracleV3<br/><code>0x0E80…Df97</code>"]
+    USDC["tUSDC<br/><code>0x52cb…6408</code>"]
+
+    Factory -. "delegates to" .-> FactoryImpl
+    Factory -- "EIP-1167 clone" --> Clone1
+    Factory -- "EIP-1167 clone" --> Clone2
+    CTFImpl -. "clone source" .-> Clone1
+    CTFImpl -. "clone source" .-> Clone2
+
+    Clone1 -- "split / merge / redeem" --> CTF
+    Clone2 -- "split / merge / redeem" --> CTF
+
+    Clone1 -- "requestResolution" --> Oracle
+    Oracle -- "delegates to" --> UMA
+    UMA -- "assertTruth" --> MockOOv3
+    Oracle -- "reportPayouts" --> CTF
+
+    USDC -- "collateral" --> Clone1
+    USDC -- "collateral" --> Clone2
+```
+
+---
+
+## Verifying Contracts
+
+All V2 contracts are verified on Arbiscan. You can inspect source code, read contract state, and interact with write functions directly on the block explorer.
+
+<Steps>
+  <Step title="Navigate to Arbiscan">
+    Open the contract address link from the tables above (e.g., [PredictionFactory on Arbiscan](https://sepolia.arbiscan.io/address/0xD4840C6aAF2e098e6B736e28c3B87DfD7b84c2C4)).
+  </Step>
+  <Step title="Check the Contract tab">
+    Click the **Contract** tab to view verified Solidity source code. For proxy contracts, click **Read as Proxy** or **Write as Proxy** to interact with the implementation ABI.
+  </Step>
+  <Step title="Verify implementation (proxy contracts)">
+    For the PredictionFactory UUPS proxy, Arbiscan should automatically detect the implementation at `0xEafAF606fFC04fED313324679f58d60Ced7F0E97`. If not, use the "Is this a proxy?" verification feature.
+  </Step>
+</Steps>
+
+<Tip>
+For PredictionCTF clones deployed via EIP-1167, the clone bytecode points to the implementation at `0xFB642D912f23BA19150d968104d4D988FA054b16`. Arbiscan may detect this automatically — if not, you can verify the implementation address by reading the clone's bytecode (it contains the implementation address as a literal).
+</Tip>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Contract Overview" icon="sitemap" href="/contracts/overview">
+    Architecture, contract hierarchy, market lifecycle, and APMM pricing.
+  </Card>
+  <Card title="Security Model" icon="shield-halved" href="/platform/security/security-model">
+    Access control roles, upgrade governance, and threat model.
+  </Card>
+</CardGroup>

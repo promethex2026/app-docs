@@ -41,6 +41,10 @@ The time period after an outcome is asserted during which anyone can dispute it.
 
 The action of collecting your winnings after a market resolves. If you hold winning shares, you tap "Claim" and the smart contract sends USDC to your account. It's free — no fees, no gas costs.
 
+### Conditional Token (CTF)
+
+The underlying technology that represents your shares on PrometheX. Each outcome in a market is represented as a **conditional token** — a special type of digital token (ERC-1155) created by the [Gnosis Conditional Token Framework](https://docs.gnosis.io/conditionaltokens/). When you buy "Yes" shares, you're actually receiving conditional tokens that can be redeemed for USDC if that outcome wins.
+
 ## D
 
 ### Decentralized
@@ -117,6 +121,10 @@ The money you receive when a market resolves in your favor. Each winning share p
 
 Your holdings in a market — the shares you own. Your position shows what you've bought, how much it's currently worth, and what your potential payout would be.
 
+### Position Token
+
+A specific conditional token representing one outcome of a market. For example, in a Yes/No market, there are two position tokens — one for Yes and one for No. Position tokens are ERC-1155 tokens identified by a unique **position ID**. You can hold, transfer, or redeem position tokens just like any other digital token.
+
 ### Prediction Market
 
 A marketplace where you trade on the outcomes of real-world events. Prices reflect the crowd's estimate of how likely each outcome is. PrometheX is a prediction market platform.
@@ -149,6 +157,10 @@ Your personal wallet on PrometheX, created automatically when you sign in. It's 
 
 A program that runs on the blockchain and executes automatically. Smart contracts handle all trading, payouts, and fund management on PrometheX. They're transparent (anyone can read the code) and tamper-proof (nobody can change them after deployment).
 
+### Split / Merge
+
+Two fundamental operations in the conditional token system. **Split** takes your USDC and creates a complete set of outcome tokens (e.g., one Yes token + one No token). **Merge** is the reverse — it takes a complete set of outcome tokens and converts them back to USDC. The APMM handles splitting and merging automatically when you trade, but advanced users can perform these operations directly.
+
 ### Stablecoin
 
 A cryptocurrency designed to always be worth \$1.00 (or another fixed value). **USDC** is the stablecoin used on PrometheX — each USDC token is backed by real US dollars held in reserve.
@@ -172,6 +184,12 @@ The decentralized system PrometheX uses to verify market outcomes. It works by *
 ### USDC
 
 **USD Coin** — a stablecoin worth \$1.00, issued by Circle and backed by real US dollars. It's the currency you use to trade on PrometheX. Think of it as digital cash.
+
+## V
+
+### Voided Market
+
+A market that has been cancelled before resolution. When a market is voided, all outcome tokens are redeemed at equal value — for example, in a Yes/No market, both Yes and No tokens would each be worth \$0.50. This ensures all traders get a fair refund regardless of their position.
 
 ## W
 

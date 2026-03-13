@@ -1,29 +1,29 @@
 ---
 title: Smart Contracts
 sidebarTitle: Overview
-description: "PrometheX on-chain architecture — factory-clone pattern, APMM pricing, and modular resolution"
+description: "PrometheX on-chain architecture — factory-clone pattern, CTF conditional tokens, APMM + CLOB trading, and modular oracle resolution"
 ---
 
 ## Quick Reference
 
 <CardGroup cols={3}>
-  <Card title="PredictionFactory" icon="industry" href="/contracts/prediction-factory">
-    Creates markets via `Clones.cloneDeterministic`. Manages token whitelist, roles, and upgrades.
+  <Card title="PredictionFactory" icon="industry" href="/contracts/overview#contract-hierarchy">
+    UUPS upgradeable factory. Creates events, deploys PredictionCTF clones, manages roles and token whitelist.
   </Card>
-  <Card title="Prediction" icon="chart-mixed" href="/contracts/prediction">
-    APMM core — deposit, withdraw, add/remove liquidity, settle, and claim.
+  <Card title="PredictionCTF" icon="chart-mixed" href="/contracts/prediction-ctf">
+    APMM pool with ERC-20 LP tokens. Buy/sell outcome tokens via weighted constant-product pricing.
   </Card>
-  <Card title="Option" icon="coins" href="/contracts/option">
-    ERC-20 outcome tokens minted/burned exclusively by the parent Prediction contract.
+  <Card title="ConditionalTokens" icon="coins" href="/contracts/conditional-tokens">
+    Gnosis CTF ERC-1155 asset layer. Split, merge, and redeem conditional position tokens.
   </Card>
-  <Card title="Resolution Modules" icon="scale-balanced" href="/contracts/resolution/overview">
-    Pluggable resolution: UMA Optimistic Oracle, Multisig, or custom modules.
+  <Card title="CTFOracle" icon="scale-balanced" href="/contracts/resolution/overview">
+    Oracle coordinator. Routes resolution requests to pluggable IResolutionModule implementations.
   </Card>
-  <Card title="Security" icon="shield-halved" href="/contracts/security">
-    Access control roles, proxy upgrade process, and oracle security model.
+  <Card title="CTFSettlement" icon="arrows-left-right" href="/contracts/clob-settlement">
+    CLOB escrow with EIP-712 signed orders. Three settlement types for order-book trading.
   </Card>
   <Card title="Deployed Addresses" icon="map-pin" href="/contracts/addresses">
-    All contract addresses on Arbitrum Sepolia and Arbitrum One.
+    All contract addresses on Arbitrum Sepolia.
   </Card>
 </CardGroup>
 
@@ -31,52 +31,66 @@ description: "PrometheX on-chain architecture — factory-clone pattern, APMM pr
 
 ## Architecture
 
-PrometheX follows a **factory-clone** pattern. A single upgradeable `PredictionFactory` deploys minimal-proxy clones of the `Prediction` implementation for every new market. Each `Prediction` clone manages its own set of `Option` ERC-20 tokens and delegates outcome verification to a pluggable **resolution module**.
+PrometheX V2 follows a **factory-clone** pattern built on the Gnosis Conditional Token Framework. A single UUPS-upgradeable `PredictionFactory` deploys EIP-1167 minimal-proxy clones of `PredictionCTF` for every new market. Two parallel trading channels — **APMM** (automated pool-based) and **CLOB** (order-book) — share a common ERC-1155 asset layer and modular oracle infrastructure.
 
 ```mermaid
+---
+config:
+  look: handDrawn
+  theme: neutral
+---
 flowchart TB
-    subgraph Factory ["PredictionFactory (TransparentUpgradeableProxy)"]
+    subgraph Factory ["PredictionFactory (UUPS Upgradeable)"]
         direction LR
- FA["Access Control / CREATOR_ROLE · UPGRADER_ROLE"]
- TW["Token Whitelist / (USDC, …)"]
+        FA["AccessControl<br/>CREATOR_ROLE · UPGRADER_ROLE"]
+        TW["Token Whitelist<br/>+ NegRisk Registry"]
     end
 
-    Factory -- "cloneDeterministic()" --> M1["Prediction Clone #1"]
-    Factory -- "cloneDeterministic()" --> M2["Prediction Clone #2"]
-    Factory -- "cloneDeterministic()" --> MN["Prediction Clone #N"]
+    Factory -- "EIP-1167 clone" --> P1["PredictionCTF<br/>Pool #1"]
+    Factory -- "EIP-1167 clone" --> P2["PredictionCTF<br/>Pool #2"]
+    Factory -- "EIP-1167 clone" --> PN["PredictionCTF<br/>Pool #N"]
 
-    subgraph Market ["Prediction Market (Clone)"]
+    subgraph APMM ["APMM Path"]
         direction TB
- APMM["APMM Engine / deposit · withdraw / addLiquidity · removeLiquidity"]
- LP["ERC-20 LP Token / (Prediction is the LP)"]
- OPT["Option Tokens / (ERC-20 per outcome)"]
+        AM["APMM Engine<br/>deposit · withdraw<br/>addLiquidity · removeLiquidity"]
+        LP["ERC-20 LP Token<br/>(PredictionCTF is the LP)"]
     end
 
-    M1 --> Market
+    subgraph CLOB ["CLOB Path"]
+        direction TB
+        CS["CTFSettlement<br/>EIP-712 signed orders<br/>single-market escrow"]
+        NR["NegRiskExchange<br/>multi-outcome CLOB<br/>3-tier pause"]
+    end
 
-    Market -- "settle() / claimAll()" --> RM["Resolution Module"]
+    P1 --> APMM
+    P1 --> CLOB
 
- RM -- "UMA path" --> UMA["UMA OptimisticOracleV3 / assertion → liveness → callback"]
- RM -- "Multisig path" --> MS["MultisigResolution / N-of-M vote (planned)"]
+    subgraph Shared ["Shared Asset & Oracle Layer"]
+        direction TB
+        CTF["ConditionalTokens<br/>ERC-1155 positions"]
+        ORC["CTFOracle"]
+        RM["IResolutionModule"]
+        UMA["UMA OOv3<br/>propose · dispute · finalize"]
+    end
 
-    BASE["Base Token (USDC)"] -- "transferFrom" --> Market
-    Market -- "transfer" --> BASE
-
-    style Factory fill:#4F46E5,color:#fff
-    style Market fill:#6366F1,color:#fff
-    style UMA fill:#FF6B6B,color:#fff
-    style MS fill:#FFB347,color:#000
+    APMM --> CTF
+    CLOB --> CTF
+    APMM --> ORC
+    CLOB --> ORC
+    ORC --> RM
+    RM --> UMA
 ```
 
 ### Key Design Decisions
 
 | Decision | Rationale |
 |----------|-----------|
-| **Minimal-proxy clones** | Orders of magnitude cheaper than deploying full contracts (~\$0.01 vs. ~\$5+ per market) |
-| **Upgradeable factory** | New market logic can be rolled out without redeploying existing clones |
-| **APMM invariant** | Constant-product pricing adapted for multi-outcome markets ensures automated, continuous pricing |
-| **Pluggable resolution** | Markets can use UMA oracle, multisig, or custom modules without changing core logic |
-| **ERC-20 LP tokens** | The Prediction contract itself is the LP token — composable with DeFi protocols |
+| **EIP-1167 minimal-proxy clones** | Orders of magnitude cheaper than full contract deployments (~$0.01 vs. ~$5+ per market) |
+| **UUPS upgradeable factory** | V2 uses UUPS (not TransparentUpgradeable) — simpler proxy pattern with upgrade logic in the implementation |
+| **Dual trading channels (APMM + CLOB)** | APMM provides continuous automated pricing; CLOB enables tighter spreads and professional market-making |
+| **Gnosis CTF ERC-1155** | Industry-standard conditional token layer, interoperable with Polymarket and the broader CTF ecosystem |
+| **Pluggable resolution via CTFOracle** | Markets can use UMA oracle, manual fallback, or custom `IResolutionModule` implementations without changing core logic |
+| **ERC-20 LP tokens on PredictionCTF** | The PredictionCTF contract itself is the LP token — composable with DeFi protocols |
 
 ---
 
@@ -84,83 +98,98 @@ flowchart TB
 
 | Contract | Pattern | Proxy | Inherits |
 |----------|---------|-------|----------|
-| `PredictionFactory` | Singleton | `TransparentUpgradeableProxy` | `AccessControlUpgradeable`, `UUPSUpgradeable` |
-| `Prediction` | Clone (EIP-1167) | Minimal proxy | `ERC20Upgradeable`, `Ownable2StepUpgradeable`, `ReentrancyGuardUpgradeable` |
-| `Option` | Clone (EIP-1167) | Minimal proxy | `ERC20Upgradeable` |
+| `PredictionFactory` | Singleton | UUPS Proxy | `AccessControlUpgradeable`, `ReentrancyGuard` |
+| `PredictionCTF` | Clone (EIP-1167) | Not upgradeable | `ERC20Upgradeable`, `ERC1155Holder`, `Ownable2StepUpgradeable`, `PausableUpgradeable`, `ReentrancyGuard` |
+| `ConditionalTokens` | Singleton | None | `ERC1155` |
+| `CTFOracle` | Singleton | None | `Ownable2Step` |
+| `CTFSettlement` | Singleton | None | `ERC1155Holder`, `Ownable2Step`, `Pausable`, `ReentrancyGuard`, `EIP712` |
+| `CTFRouter` | Singleton | None | `ERC1155Holder`, `Ownable`, `ReentrancyGuard` |
 | `IResolutionModule` | Interface | — | — |
-| `UMAResolution` | Singleton | — | `IResolutionModule`, `OptimisticOracleV3CallbackRecipientInterface` |
-| `MultisigResolution` | Singleton | — | `IResolutionModule` |
+| `UmaOOV3ResolutionModule` | Singleton | None | `IResolutionModule`, `OOv3CallbackRecipient` |
+| `NegRiskRegistry` | Singleton | None | `AccessControl` |
+| `NegRiskAdapter` | Singleton | None | `AccessControl`, `ERC1155Holder`, `ReentrancyGuard` |
+| `NegRiskExchange` | Singleton | None | `ERC1155Holder`, `Ownable2Step`, `Pausable`, `ReentrancyGuard`, `EIP712` |
+
+<Note>
+PredictionCTF uses OpenZeppelin Upgradeable base contracts (e.g., `ERC20Upgradeable`) for the `initialize()` pattern required by EIP-1167 clones, but the clones themselves are **not** upgradeable. Only the PredictionFactory proxy supports UUPS upgrades.
+</Note>
 
 ---
 
 ## Market Lifecycle
 
-Every prediction market transitions through a strict state machine:
+Every prediction market transitions through a strict state machine managed by the PredictionFactory, CTFOracle, and PredictionCTF contracts.
 
 ```mermaid
+---
+config:
+  look: handDrawn
+  theme: neutral
+---
 stateDiagram-v2
-    [*] --> Created : Factory.createMarket()
-    Created --> Running : (automatic)
-    Running --> Settling : owner calls settle()
-    Settling --> Ended : liveness expires (no dispute)
-    Settling --> Disputed : counter-bond posted
-    Disputed --> Ended : UMA DVM resolves
-    Ended --> [*] : claimAll()
+    [*] --> Active : Factory.createMarket()
+    Active --> Frozen : pool paused
+    Active --> Resolving : CTFOracle.requestResolution()
+    Frozen --> Resolving : CTFOracle.requestResolution()
+    Resolving --> Resolved : oracle finalizes payouts
+    Active --> Voided : announceVoid() → 24h timelock → voidMarket()
+    Resolved --> [*]
+    Voided --> [*]
 ```
 
-| State | Trading | LP Ops | Claims | Trigger |
-|-------|:-------:|:------:|:------:|---------|
-| **Created** | — | — | — | Market deployed |
-| **Running** | Yes | Yes | — | Automatic on creation |
-| **Settling** | — | — | — | `settle(optionIndex)` |
-| **Disputed** | — | — | — | UMA dispute raised |
-| **Ended** | — | — | Yes | Oracle callback or DVM vote |
+### State vs. Operations
+
+| State | APMM | CLOB | Resolution | Redeem |
+|-------|:----:|:----:|:----------:|:------:|
+| **Active** | Allowed | Allowed | Proposable | — |
+| **Frozen** | Blocked | Blocked | Proposable | — |
+| **Resolving** | Closed | Restricted | UMA dispute window | — |
+| **Resolved** | — | — | Terminal | Allowed |
+| **Voided** | — | — | Terminal | Allowed (equal payout) |
+
+<Tip>
+The **Voided** state requires a 24-hour timelock: `announceVoid()` starts the timer, and `voidMarket()` can only execute after the delay expires. This protects liquidity providers from abrupt market cancellation.
+</Tip>
 
 ---
 
 ## APMM Pricing (Summary)
 
-The Automated Prediction Market Maker uses a **weighted constant-product** invariant:
+The Automated Prediction Market Maker uses a **weighted constant-product** invariant, implemented in `PredictionCTF` with SD59x18 fixed-point arithmetic via the `APMMMath` library:
 
 ```
 ∏ rᵢʷⁱ = k
 ```
 
-Where `rᵢ` is the reserve of option `i`, `wᵢ` is its weight, and `k` is the invariant constant. The instantaneous price of option `i` is:
+Where `rᵢ` is the reserve of outcome `i`, `wᵢ` is its weight, and `k` is the invariant constant. The instantaneous price of outcome `i` is:
 
 ```
 Priceᵢ = wᵢ · (∑ rⱼ) / rᵢ
 ```
 
-For a deep dive, see [APMM Mathematics](/concepts/apmm). For implementation details, see [Prediction Contract](/contracts/prediction).
+Prices always sum to 1 and directly represent outcome probabilities. For a deep dive into the math and implementation, see [PredictionCTF](/contracts/prediction-ctf).
 
 ---
 
 ## Further Reading
 
 <CardGroup cols={2}>
-  <Card title="Prediction Factory" icon="industry" href="/contracts/prediction-factory">
-    Factory deployment, roles, and upgrade mechanics.
+  <Card title="PredictionCTF" icon="chart-mixed" href="/contracts/prediction-ctf">
+    APMM pool mechanics, LP operations, and pricing implementation.
   </Card>
-  <Card title="Prediction Contract" icon="chart-mixed" href="/contracts/prediction">
-    Full function reference with APMM math and code examples.
+  <Card title="ConditionalTokens" icon="coins" href="/contracts/conditional-tokens">
+    ERC-1155 positions: split, merge, redeem, and ID computation.
   </Card>
-  <Card title="Option Token" icon="coins" href="/contracts/option">
-    ERC-20 option tokens and CTF migration path.
+  <Card title="Oracle & Resolution" icon="scale-balanced" href="/contracts/resolution/overview">
+    CTFOracle coordinator and UMA Optimistic Oracle integration.
   </Card>
-  <Card title="Resolution Modules" icon="scale-balanced" href="/contracts/resolution/overview">
-    UMA Oracle, Multisig, and the `IResolutionModule` interface.
+  <Card title="CLOB Settlement" icon="arrows-left-right" href="/contracts/clob-settlement">
+    EIP-712 order signing, settlement types, and escrow mechanics.
   </Card>
-  <Card title="CTF Migration" icon="arrow-right-arrow-left" href="/contracts/ctf-migration">
-    ERC-20 to Gnosis Conditional Token Framework migration plan.
-  </Card>
-  <Card title="Security Model" icon="shield-halved" href="/contracts/security">
-    Access control, upgrade governance, and threat model.
-  </Card>
-  <Card title="Audit Reports" icon="file-shield" href="/contracts/audit-reports">
-    Audit history, planned audits, and responsible disclosure.
+  <Card title="NegRisk" icon="layer-group" href="/contracts/negrisk">
+    Multi-outcome events via correlated binary markets.
   </Card>
   <Card title="Deployed Addresses" icon="map-pin" href="/contracts/addresses">
-    Live contract addresses on Arbitrum Sepolia and One.
+    All V2 contract addresses on Arbitrum Sepolia.
   </Card>
 </CardGroup>

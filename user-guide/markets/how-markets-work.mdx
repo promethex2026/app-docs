@@ -12,27 +12,31 @@ Each market goes through a clear lifecycle. Here's what happens at each stage an
 ## Market Lifecycle
 
 <Steps>
-  <Step title="Created">
-    The market is set up with a question, possible outcomes (like Yes/No), initial liquidity, and an end date. At this point, the **APMM** (Automated Prediction Market Maker — the smart contract pool that prices shares) is funded and ready.
+  <Step title="Open for Trading">
+    The market is created with a question, possible outcomes (like Yes/No), and an end date. The **APMM pool** is funded with USDC and the CTF condition is prepared on-chain — trading starts immediately. Prices start near \$0.50 for equal-weight markets, then quickly move as people trade.
 
-    **What you can do:** Start trading right away. Prices start near \$0.50 for equal-weight markets, then quickly move as people trade.
+    **What you can do:** Start trading right away.
   </Step>
-  <Step title="Running">
+  <Step title="Trading">
     The market is live and actively trading. People buy and sell shares, prices move based on supply and demand, and the market reflects the crowd's best guess at the probability of each outcome.
 
     **What you can do:** Buy shares, sell shares, add or remove liquidity. This is the main trading period.
   </Step>
   <Step title="Settling">
-    The real-world event has happened (or its deadline has passed). Someone asserts the outcome — "Yes won" or "No won" — and a **challenge window** opens. During this time, anyone can dispute the assertion if they think it's wrong.
+    The real-world event has happened (or its deadline has passed). The oracle system verifies the outcome through a challenge window. During this time, anyone can dispute the assertion if they think it's wrong.
 
-    **What you can do:** Wait for the challenge window to close. Trading is typically paused during settlement.
+    **What you can do:** Wait for the challenge window to close. Trading is paused during settlement.
   </Step>
   <Step title="Ended">
-    The outcome has been confirmed. Winners can claim their payout. Each winning share is worth \$1, and losing shares are worth \$0.
+    The outcome has been confirmed. Winners can redeem their position tokens for USDC. Each winning share is worth \$1, and losing shares are worth \$0.
 
     **What you can do:** If you hold winning shares, tap **Claim** to collect your USDC. If you provided liquidity, you can withdraw your remaining funds.
   </Step>
 </Steps>
+
+<Note>
+  In rare cases, a market may be **voided** (cancelled). If this happens, all positions are redeemed at equal value — you get back a fair share of the pool. For example, in a Yes/No market, both Yes and No tokens would each be worth \$0.50.
+</Note>
 
 ## What Each Status Means for You
 
@@ -42,6 +46,7 @@ Each market goes through a clear lifecycle. Here's what happens at each stage an
 | **Running**  | Yes            | No             | Active trading, prices moving with the crowd   |
 | **Settling** | No             | No             | Outcome asserted, waiting for challenge window |
 | **Ended**    | No             | Yes            | Market resolved — winners can claim            |
+| **Voided**   | No             | Yes (equal payout) | Market cancelled — all positions redeemed equally |
 
 ## How Outcomes Work
 
