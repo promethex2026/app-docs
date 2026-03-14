@@ -7,16 +7,16 @@ description: "Test the full PrometheX platform on Arbitrum Sepolia"
 
 The PrometheX staging environment is a fully functional deployment on Arbitrum Sepolia. Every feature available in production is available here — trading, market browsing, gasless transactions, real-time data, and admin tools.
 
-<Card icon="rocket" href="https://staging.promethex.market" title="Launch Staging App">
-  Open the live staging environment at **staging.promethex.market** — sign in, get test USDC, and place your first trade in under a minute.
+<Card icon="rocket" href="https://app.promethex.market" title="Launch Staging App">
+  Open the live staging environment at **app.promethex.market** — sign in, get test USDC, and place your first trade in under a minute.
 </Card>
 
 ## Network Details
 
 | Property           | Value                                                        |
 | ------------------ | ------------------------------------------------------------ |
-| **App URL**        | [staging.promethex.market](https://staging.promethex.market) |
-| **API Base URL**   | `https://staging.promethex.market/api/v1`                    |
+| **App URL**        | [app.promethex.market](https://app.promethex.market) |
+| **API Base URL**   | `https://app.promethex.market/api/v1`                    |
 | **Network**        | Arbitrum Sepolia                                             |
 | **Chain ID**       | `421614`                                                     |
 | **RPC Endpoint**   | `https://sepolia-rollup.arbitrum.io/rpc`                     |
@@ -37,13 +37,13 @@ For the full list of deployed contracts, see [Contract Addresses](/platform/depl
 
 <Steps>
   <Step title="Open the staging app">
-    Navigate to [staging.promethex.market](https://staging.promethex.market) in your browser.
+    Navigate to [app.promethex.market](https://app.promethex.market) in your browser.
   </Step>
   <Step title="Sign in">
     Click **Connect** and sign in with email, Google, Twitter, or an external wallet. Privy creates a smart account for you automatically — no wallet setup needed.
   </Step>
   <Step title="Get test USDC">
-    Use the in-app faucet to receive tUSDC, or mint directly from the [tUSDC contract](0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490). Test tokens have no real value.
+    Use the in-app faucet to receive tUSDC, or mint directly from the [tUSDC contract](0x52cb113e383c654fB78Ff56615ce3719193C6408). Test tokens have no real value.
   </Step>
   <Step title="Browse markets">
     Explore active prediction markets. Each market shows current prices (probabilities), volume, and expiry date.
@@ -62,13 +62,13 @@ The staging API is open for integration testing. All endpoints documented in the
 
 ```bash
 # List active markets
-curl https://staging.promethex.market/api/v1/market/get-markets?status=running
+curl https://app.promethex.market/api/v1/market/get-markets?status=running
 
 # Get market detail
-curl https://staging.promethex.market/api/v1/market/get-market-detail?marketAddress=0x...
+curl https://app.promethex.market/api/v1/market/get-market-detail?marketAddress=0x...
 
 # Subscribe to real-time events (SSE)
-curl -N https://staging.promethex.market/api/v1/sse/subscribe?channels=market:0x...
+curl -N https://app.promethex.market/api/v1/sse/subscribe?channels=market:0x...
 ```
 
 <Info>
@@ -92,7 +92,7 @@ You only need Sepolia ETH if you plan to interact with contracts directly (not t
 | Method            | Details                                                                           |
 | ----------------- | --------------------------------------------------------------------------------- |
 | **In-app faucet** | Click the faucet button in the staging app after signing in                       |
-| **Direct mint**   | Call `mint()` on the [tUSDC contract](0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490) |
+| **Direct mint**   | Call `mint()` on the [tUSDC contract](0x52cb113e383c654fB78Ff56615ce3719193C6408) |
 
 ## Infrastructure
 
