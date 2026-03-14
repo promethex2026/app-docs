@@ -13,11 +13,11 @@
     "dark": "#5A4FCF"
   },
   "topbarLinks": [
-    { "name": "App", "url": "https://staging.promethex.market" }
+    { "name": "App", "url": "https://app.promethex.market" }
   ],
   "topbarCtaButton": {
     "name": "Launch App",
-    "url": "https://staging.promethex.market"
+    "url": "https://app.promethex.market"
   },
   "navigation": {
     "tabs": [

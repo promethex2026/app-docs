@@ -38,7 +38,7 @@ All tokens on testnet have **no real value** — they're free practice money.
     | Block Explorer | `https://sepolia.arbiscan.io` |
   </Step>
   <Step title="Connect MetaMask to PrometheX">
-    Go to [staging.promethex.market](https://staging.promethex.market), click **Sign In** → **Connect Wallet** → select **MetaMask**.
+    Go to [app.promethex.market](https://app.promethex.market), click **Sign In** → **Connect Wallet** → select **MetaMask**.
   </Step>
 </Steps>
 
@@ -48,13 +48,13 @@ All tokens on testnet have **no real value** — they're free practice money.
 
 Use the **PrometheX official faucet** to get both tokens in one step. Connect your wallet, sign a message, and claim.
 
-<a href="https://promethex-faucet.tech-752.workers.dev" target="_blank" style={{display:'inline-block',padding:'12px 24px',background:'linear-gradient(135deg,#6366f1,#8b5cf6)',color:'#fff',borderRadius:'10px',fontWeight:600,textDecoration:'none',fontSize:'15px'}}>
+<a href="https://faucet.promethex.market" target="_blank" style={{display:'inline-block',padding:'12px 24px',background:'linear-gradient(135deg,#6366f1,#8b5cf6)',color:'#fff',borderRadius:'10px',fontWeight:600,textDecoration:'none',fontSize:'15px'}}>
   Open Faucet
 </a>
 
 <Steps>
   <Step title="Open the faucet page">
-    Visit the [PrometheX Faucet](https://promethex-faucet.tech-752.workers.dev) and click **Connect MetaMask**. Approve the connection in MetaMask.
+    Visit the [PrometheX Faucet](https://faucet.promethex.market) and click **Connect MetaMask**. Approve the connection in MetaMask.
   </Step>
   <Step title="Sign & claim tokens">
     Click **Sign & Claim**. MetaMask will ask you to sign a message to verify wallet ownership — this is **not** a transaction and costs no gas.
@@ -69,7 +69,7 @@ Use the **PrometheX official faucet** to get both tokens in one step. Connect yo
   <Step title="Add tUSDC to MetaMask">
     To see your tUSDC balance in MetaMask:
     1. Click **Import Tokens** at the bottom of MetaMask
-    2. Paste address: `0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490`
+    2. Paste address: `0x52cb113e383c654fB78Ff56615ce3719193C6408`
     3. Symbol: `USDC`, Decimals: `6`
     4. Click **Add**
   </Step>
@@ -87,7 +87,7 @@ Now that you have tUSDC in MetaMask, deposit it into PrometheX to start trading.
 
 <Steps>
   <Step title="Open your wallet on PrometheX">
-    Go to [staging.promethex.market](https://staging.promethex.market). Make sure you're signed in with your MetaMask wallet. Click your **profile icon** → **Wallet**.
+    Go to [app.promethex.market](https://app.promethex.market). Make sure you're signed in with your MetaMask wallet. Click your **profile icon** → **Wallet**.
   </Step>
   <Step title="Click Deposit">
     Click the **Deposit** button and enter the amount of tUSDC you want to deposit.
@@ -102,11 +102,11 @@ Now that you have tUSDC in MetaMask, deposit it into PrometheX to start trading.
     <Warning>
     If the transaction fails, click the **pencil icon** next to the gas fee in MetaMask and **double the gas limit**. Arbitrum Sepolia sometimes underestimates gas for token transfers.
 
-    <img src="/user-guide/getting-started/images/metamask-gas-fee.png" alt="MetaMask gas fee edit" style={{maxWidth:'320px',borderRadius:'12px',marginTop:'12px'}} />
+    <img src="/images/user-guide/trade-panel.png" alt="PrometheX trading interface" style={{maxWidth:'480px',borderRadius:'12px',marginTop:'12px'}} />
     </Warning>
   </Step>
   <Step title="Start trading">
-    Once confirmed, your balance updates on PrometheX. Head to the [Markets](https://staging.promethex.market) page to place your first trade!
+    Once confirmed, your balance updates on PrometheX. Head to the [Markets](https://app.promethex.market) page to place your first trade!
   </Step>
 </Steps>
 
@@ -130,11 +130,11 @@ After depositing, all trades on PrometheX are **gasless** — the platform spons
 
 If you prefer to interact with the contract directly, you can call the tUSDC `faucet()` function on Arbiscan.
 
-**tUSDC Contract:** [`0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490`](https://sepolia.arbiscan.io/address/0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490)
+**tUSDC Contract:** [`0x52cb113e383c654fB78Ff56615ce3719193C6408`](https://sepolia.arbiscan.io/address/0x52cb113e383c654fB78Ff56615ce3719193C6408)
 
 <Steps>
   <Step title="Open the Write Contract page">
-    Go to the [tUSDC Write Contract page on Arbiscan](https://sepolia.arbiscan.io/address/0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490#writeContract).
+    Go to the [tUSDC Write Contract page on Arbiscan](https://sepolia.arbiscan.io/address/0x52cb113e383c654fB78Ff56615ce3719193C6408#writeContract).
   </Step>
   <Step title="Connect MetaMask">
     Click **Connect to Web3** and authorize MetaMask.
@@ -193,7 +193,7 @@ Services like **Ramp Network**, **MoonPay**, and **Transak** let you buy USDC di
     The faucet allows one claim per wallet address every 24 hours. Wait for the cooldown to expire.
   </Accordion>
   <Accordion title="I don't see my tUSDC in MetaMask">
-    You need to import the token manually. In MetaMask: **Import Tokens** → paste `0x1A8da4723A4f7aD0A965cb3dBC31c72435b1B490` → Symbol: `USDC` → Decimals: `6`.
+    You need to import the token manually. In MetaMask: **Import Tokens** → paste `0x52cb113e383c654fB78Ff56615ce3719193C6408` → Symbol: `USDC` → Decimals: `6`.
   </Accordion>
   <Accordion title="MetaMask shows wrong network">
     Click the network dropdown in MetaMask and switch to **Arbitrum Sepolia** (Chain ID: 421614). If it's not listed, add it manually using the network details above.
