@@ -60,43 +60,6 @@
         ]
       },
       {
-        "tab": "Platform",
-        "groups": [
-          {
-            "group": "Platform Overview",
-            "pages": [
-              "platform/overview",
-              "platform/why-promethex"
-            ]
-          },
-          {
-            "group": "Integration",
-            "pages": [
-              "platform/integration/integration-overview",
-              "platform/integration/white-label",
-              "platform/integration/embedded",
-              "platform/integration/api-only"
-            ]
-          },
-          {
-            "group": "Deployment",
-            "pages": [
-              "platform/deployment/supported-chains",
-              "platform/deployment/staging-environment",
-              "platform/deployment/contract-addresses"
-            ]
-          },
-          {
-            "group": "Security & Roadmap",
-            "pages": [
-              "platform/security/security-model",
-              "platform/security/audits",
-              "platform/roadmap"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "API Reference",
         "groups": [
           {
